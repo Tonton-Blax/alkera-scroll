@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" id="Calque_1" x="0" y="0" version="1.1" viewBox="0 0 1360.5 988.92">
+  <circle cx="653.65" cy="393.04" r="90.81" fill="#12473B"/>
+  <path fill="none" stroke="#12473B" stroke-dasharray="8.1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width=".675" d="m540.57.34 289.74 988.25"/>
+  <ellipse cx="680.25" cy="478.73" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="701.55" ry="332.01" transform="rotate(-16.342 680.308 478.821)"/>
+  <ellipse cx="667.44" cy="435.04" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="493.5" ry="237.51" transform="rotate(-16.342 667.5 435.124)"/>
+  <ellipse cx="659.02" cy="406.32" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="310.39" ry="147.85" transform="rotate(-16.342 659.08 406.403)"/>
+  <g fill="#12473B">
+    <circle cx="774.09" cy="797.12" r="73.75"/>
+    <circle cx="734.73" cy="662.82" r="60.94"/>
+    <circle cx="618.01" cy="264.3" r="32.35"/>
+    <circle cx="601.17" cy="206.94" r="25.48"/>
+    <circle cx="587.5" cy="159.97" r="21.49"/>
+    <circle cx="701.24" cy="548.44" r="51.55"/>
+  </g>
+</svg>

@@ -1,272 +1,262 @@
 <script>
-        import { browser } from '$app/environment';
-    	import gsap from 'gsap';
-        import MotionPathPlugin from 'gsap/dist/MotionPathPlugin.js';
-        import { onMount, tick } from 'svelte';
-        import DrawSVGPlugin from "$lib/gsap/DrawSVGPlugin";
-        import { getEllipseLength } from '$lib/utils';
+    import { browser } from '$app/environment';
+    import gsap from 'gsap';
+    import MotionPathPlugin from 'gsap/dist/MotionPathPlugin.js';
+    import { onMount, tick } from 'svelte';
+    import DrawSVGPlugin from "$lib/gsap/DrawSVGPlugin";
+    import { getEllipseLength } from '$lib/utils';
 
-        $: if (browser && readyLine)
-            gsap.to('#arrow-cursor', { ...(arrowPosition ? { y: arrowPosition, opacity: 1 } : { opacity : 0 }) });
+    $: if (browser && readyLine)
+        gsap.to('#arrow-cursor', { ...(arrowPosition ? { y: arrowPosition, opacity: 1 } : { opacity : 0 }) });
 
-        $: if (browser && currentGroup)
-            setGroupPosition(currentGroup);
+    $: if (browser && currentGroup)
+        setGroupPosition(currentGroup);
 
-        /** @type {SVGEllipseElement | undefined} */
-        let internalOrbit;
+    /** @type {SVGEllipseElement | undefined} */
+    let internalOrbit;
 
-        /** @type {SVGEllipseElement | undefined} */
-        let externalOrbit;
+    /** @type {SVGEllipseElement | undefined} */
+    let externalOrbit;
 
-        /** @type {SVGEllipseElement | undefined} */
-        let middleOrbit;
+    /** @type {SVGEllipseElement | undefined} */
+    let middleOrbit;
 
-        /** @type {SVGElement | undefined} */
-        let galaxy;
+    /** @type {SVGElement | undefined} */
+    let galaxy;
 
-        /** @type {number | undefined} */
-        let arrowPosition;
+    /** @type {number | undefined} */
+    let arrowPosition;
 
-        let readyLine = false;
+    let readyLine = false;
 
-        /** @type {undefined | App.Metier} */
-        let currentGroup;
+    /** @type {undefined | App.Metier} */
+    let currentGroup;
 
-        const duration = 50;
-        
-        /** @type {App.Planet[]} */
-        const entites = [
-            { url : '/', id: 'pyrim',                  orbit: 'internal',  start: 0.176, groups: ['audit', 'gestion'] },
-            { url : '/', id: 'dynaren',                orbit: 'internal',  start: 0.46,  groups: ['assistance'] },
-            { url : '/', id: 'am',                     orbit: 'internal',  start: 0.86,  groups: ['audit','gestion'] },
-            { url : '/', id: 'immolab',                orbit: 'middle',    start: 0.01,  groups: ['audit'] },
-            { url : '/', id: 'geco',                   orbit: 'middle',    start: 0.215, groups: ['delegation'] },
-            { url : '/', id: 'electroren',             orbit: 'middle',    start: 0.355, groups: ['assistance'] },
-            { url : '/', id: 'manderley',              orbit: 'middle',    start: 0.533, groups: ['gestion'] },
-            { url : '/', id: 'polyexpert_construction',orbit: 'middle',    start: 0.659, groups: ['gestion'] },
-            { url : '/', id: 'polyexpert_entreprises', orbit: 'middle',    start: 0.79,  groups: ['gestion'] },
-            { url : '/', id: 'ekkoia',                 orbit: 'external',  start: 0.112, groups: ['audit'] },
-            { url : '/', id: 'claims_ai',              orbit: 'external',  start: 0.2665,groups: ['delegation'] },
-            { url : '/', id: 'batifive',               orbit: 'external',  start: 0.355, groups: ['assistance']  },
-            { url : '/', id: 'polyexpert',             orbit: 'external',  start: 0.5585,groups: ['gestion'] },    
-            { url : '/', id: 'ciblexperts',            orbit: 'external',  start: 0.7275,groups: ['gestion'] },
-            { url : '/', id: 'quantimme',              orbit: 'external',  start: 0.879, groups: ['audit'] },
-        ]
+    const duration = 50;
+    
+    /** @type {App.Planet[]} */
+    const entites = [
+        { url : '/', id: 'pyrim',                  orbit: 'internal',  start: 0.176, groups: ['audit', 'gestion'] },
+        { url : '/', id: 'dynaren',                orbit: 'internal',  start: 0.46,  groups: ['assistance'] },
+        { url : '/', id: 'am',                     orbit: 'internal',  start: 0.86,  groups: ['audit','gestion'] },
+        { url : '/', id: 'immolab',                orbit: 'middle',    start: 0.01,  groups: ['audit'] },
+        { url : '/', id: 'geco',                   orbit: 'middle',    start: 0.215, groups: ['delegation'] },
+        { url : '/', id: 'electroren',             orbit: 'middle',    start: 0.355, groups: ['assistance'] },
+        { url : '/', id: 'manderley',              orbit: 'middle',    start: 0.533, groups: ['gestion'] },
+        { url : '/', id: 'polyexpert_construction',orbit: 'middle',    start: 0.659, groups: ['gestion'] },
+        { url : '/', id: 'polyexpert_entreprises', orbit: 'middle',    start: 0.79,  groups: ['gestion'] },
+        { url : '/', id: 'ekkoia',                 orbit: 'external',  start: 0.112, groups: ['audit'] },
+        { url : '/', id: 'claims_ai',              orbit: 'external',  start: 0.2665,groups: ['delegation'] },
+        { url : '/', id: 'batifive',               orbit: 'external',  start: 0.355, groups: ['assistance']  },
+        { url : '/', id: 'polyexpert',             orbit: 'external',  start: 0.5585,groups: ['gestion'] },    
+        { url : '/', id: 'ciblexperts',            orbit: 'external',  start: 0.7275,groups: ['gestion'] },
+        { url : '/', id: 'quantimme',              orbit: 'external',  start: 0.879, groups: ['audit'] },
+    ]
 
-        /** @type {App.Orbits} */
-        const orbits = {
+    /** @type {App.Orbits} */
+    const orbits = {
 
-            internal: {
-                el: internalOrbit,
-                offsetGroup : {
-                    audit: 0.01, gestion: 0, assistance: 0.45, delegation: 0.7
-                },
-                minMaxSizes: [ 32.35, 51.55 ],
-                planets: entites.filter(e => e.orbit === 'internal')
+        internal: {
+            el: internalOrbit,
+            offsetGroup : {
+                audit: 0.01, gestion: 0, assistance: 0.45, delegation: 0.7
             },
+            minMaxSizes: [ 32.35, 51.55 ],
+            planets: entites.filter(e => e.orbit === 'internal')
+        },
 
-            middle: {
-                el: middleOrbit,
-                offsetGroup : { 
-                    audit: 0.01, gestion: 0.35, assistance: 0.85, delegation: 0.7
-                },
-                minMaxSizes: [ 25.48, 60.94 ],
-                planets: entites.filter(e => e.orbit === 'middle')
+        middle: {
+            el: middleOrbit,
+            offsetGroup : { 
+                audit: 0.01, gestion: 0.35, assistance: 0.85, delegation: 0.7
             },
+            minMaxSizes: [ 25.48, 60.94 ],
+            planets: entites.filter(e => e.orbit === 'middle')
+        },
 
-            external: {
-                el: externalOrbit,
-                offsetGroup : {
-                    audit: 0.01, gestion: 0.36, assistance: 0.45, delegation: 0.8
-                },
-                minMaxSizes: [ 21.49, 73.75 ],
-                planets:entites.filter(e => e.orbit === 'external')
-            }
+        external: {
+            el: externalOrbit,
+            offsetGroup : {
+                audit: 0.01, gestion: 0.36, assistance: 0.45, delegation: 0.8
+            },
+            minMaxSizes: [ 21.49, 73.75 ],
+            planets:entites.filter(e => e.orbit === 'external')
         }
+    }
+    
+
+    /** @param {App.Metier} metier*/
+    const setGroupPosition = (metier) => {
+        if (!metier) return;
+        entites.forEach(entite => {
+            const { tl } = entite;
+            if (!tl) return;
+            tl.pause()
+            gsap.to(tl, {progress: entite?.start + orbits[entite.orbit].offsetGroup[metier]})
+        })
+    }
+
+    if (browser)
+        gsap.registerPlugin(MotionPathPlugin, DrawSVGPlugin);
+
+    onMount(async() => {
         
+        readyLine = true;
+        MotionPathPlugin.convertToPath(internalOrbit);
+        MotionPathPlugin.convertToPath(externalOrbit);
+        MotionPathPlugin.convertToPath(middleOrbit);
 
-        const radiuses = {
-            internal: [ 51.55, 32.35 ],
-            middle: [ 60.94, 25.48 ],
-            external: [ 73.75, 21.49 ]
-        }
-
-        /** @param {App.Metier} metier*/
-        const setGroupPosition = (metier) => {
-            if (!metier) return;
-            entites.forEach(entite => {
-                const { tl } = entite;
-                if (!tl) return;
-                tl.pause()
-                gsap.to(tl, {progress: entite?.start + orbits[entite.orbit].offsetGroup[metier]})
+        arrowPosition = 89
+        gsap.timeline()
+        .to('#orbit-mask', {
+            duration: 1,
+            autoAlpha: 0,
+            // yPercent: 100,
+            // xPercent: 21.2,
+        })
+        .to('text > tspan', { opacity: 1, duration: .12, ease: "power2.inOut"}, 0)
+        
+        entites.forEach((entite, i) => {
+            entite.tl = gsap.timeline({ defaults: { ease: "none" }, repeat: -1 });
+            entite.tl.to(`.entite-${entite.id}`, {
+                duration,
+                motionPath: {
+                    path: `#${entite.orbit}`,
+                    align: `#${entite.orbit}`,
+                    alignOrigin: [0.5, 0.5],
+                    start: 0.24,
+                    end: 1.24,
+                }
             })
-        }
-
-        if (browser)
-            gsap.registerPlugin(MotionPathPlugin, DrawSVGPlugin);
-
-        onMount(async() => {
-            
-            readyLine = true;
-            MotionPathPlugin.convertToPath(internalOrbit);
-            MotionPathPlugin.convertToPath(externalOrbit);
-            MotionPathPlugin.convertToPath(middleOrbit);
-
-            radiuses.internal.push(getEllipseLength(internalOrbit)/50);
-            radiuses.middle.push(getEllipseLength(middleOrbit)/50);
-            radiuses.external.push(getEllipseLength(externalOrbit)/50);
-            
-            gsap.timeline()
-            .to('#orbit-mask', {
-                duration: 2,
-                autoAlpha: 0,
-                // yPercent: 100,
-                // xPercent: 21.2,
-            })
-            .to('text > tspan', { opacity: 1, stagger:.12, duration: .12, ease: "power2.inOut"}, 0)
-            
-            entites.forEach((entite, i) => {
-                entite.tl = gsap.timeline({ defaults: { ease: "none" }, repeat: -1 });
-                entite.tl.to(`.entite-${entite.id}`, {
-                    duration, //radiuses[entite.orbit][2] / 1,
-                    motionPath: {
-                        path: `#${entite.orbit}`,
-                        align: `#${entite.orbit}`,
-                        alignOrigin: [0.5, 0.5],
-                        start: 0.24,
-                        end: 1.24,
-                    }
-                })
-                .to(`.entite-${entite.id}`,{
-                        scale: 1 / ( orbits[entite.orbit].minMaxSizes[1] / orbits[entite.orbit].minMaxSizes[0] ),
-                        duration: duration / 2,//(radiuses[entite.orbit][2] / 1) / 2,
-                        repeat: 1,
-                        yoyo: true,
-                        ease: 'sine.inOut',
-                        //ease:  CustomEase.create("custom", "M0,0 C0,0 0.407,0.066 0.474,0.175 0.529,0.266 0.572,0.69 0.711,0.829 0.833,0.951 1,1 1,1 "),
-                    }, 0 )
-                .progress(entite.start)
-            });
-
-            await tick();
-
-            galaxy?.addEventListener("mouseenter", function() {
-                entites.forEach(({tl}) => tl?.timeScale?.(0.4));
-            });
-
-            galaxy?.addEventListener("mouseleave", function() {
-                entites.forEach(({tl}) => tl?.timeScale?.(1));
-            });
-
+            .to(`.entite-${entite.id}`,{
+                    scale: 1 / ( orbits[entite.orbit].minMaxSizes[1] / orbits[entite.orbit].minMaxSizes[0] ),
+                    duration: duration / 2,
+                    repeat: 1,
+                    yoyo: true,
+                    ease: 'sine.inOut',
+                }, 0 )
+            .progress(entite.start)
         });
+
+        await tick();
+
+        galaxy?.addEventListener("mouseenter", function() {
+            entites.forEach(({tl}) => tl?.timeScale?.(0.4));
+        });
+
+        galaxy?.addEventListener("mouseleave", function() {
+            entites.forEach(({tl}) => tl?.timeScale?.(1));
+        });
+
+    });
 </script>
 
 
 <section id="section-orbits" class="w-screen h-screen bg-amande">
-    <svg bind:this={galaxy} 
-        class="w-4/5 h-auto mx-auto overflow-visible" 
-        xmlns="http://www.w3.org/2000/svg" xml:space="preserve" id="Calque_1" x="0" y="0" version="1.1" viewBox="0 0 1360.5 988.92"
+<svg bind:this={galaxy} 
+    class="w-4/5 h-auto mx-auto overflow-visible" 
+    xmlns="http://www.w3.org/2000/svg" xml:space="preserve" id="Calque_1" x="0" y="0" version="1.1" viewBox="0 0 1360.5 988.92"
+>
+
+    <g id="arrow-cursor" x="0" y="0" transform="translate(-125 89)" opacity="0" >
+        <line fill="none" stroke="#6563CA" stroke-width="3" stroke-miterlimit="10" x1="0" y1="4.49" x2="11.66" y2="4.49"/>
+        <polygon fill="#6563CA" points="10.34,8.98 18.12,4.49 10.34,0"/>
+    </g>
+
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <text transform="translate(-100 100)" 
+
+        on:mouseover={(e) => {
+            if (!e.target?.dataset?.yArrow)
+                return;
+            arrowPosition = e.target?.dataset?.yArrow
+        }} 
+        on:mouseout={() => 
+            arrowPosition = undefined 
+        }
     >
+        <tspan on:click={()=>currentGroup="audit"} opacity="0" x="0" y="0" data-y-arrow="89" fill="#12473B" class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Audit, conseil et prévention</tspan>
+        <tspan on:click={()=>currentGroup="gestion"} opacity="0" x="0" y="31.5" data-y-arrow="121" fill="#12473B" class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Gestion des risques et expertise</tspan>
+        <tspan on:click={()=>currentGroup="assistance"} opacity="0" x="0" y="63" data-y-arrow="152" fill="#12473B" class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Assistance et réparation</tspan>
+        <tspan on:click={()=>currentGroup="delegation"} opacity="0" x="0" y="94.5" data-y-arrow="183" fill="#12473B" class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Délégation</tspan>
 
-        <g id="arrow-cursor" x="0" y="0" transform="translate(-125 89)" opacity="0" >
-            <line fill="none" stroke="#6563CA" stroke-width="3" stroke-miterlimit="10" x1="0" y1="4.49" x2="11.66" y2="4.49"/>
-            <polygon fill="#6563CA" points="10.34,8.98 18.12,4.49 10.34,0"/>
-        </g>
-
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <text transform="translate(-100 100)" 
-
-            on:mouseover={(e) => {
-                if (!e.target?.dataset?.yArrow)
-                    return;
-                arrowPosition = e.target?.dataset?.yArrow
-            }} 
-            on:mouseout={() => 
-                arrowPosition = undefined 
-            }
-        >
-            <tspan on:click={()=>currentGroup="audit"} opacity="0" x="0" y="0" data-y-arrow="89" fill="#12473B" class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Audit, conseil et prévention</tspan>
-            <tspan on:click={()=>currentGroup="gestion"} opacity="0" x="0" y="31.5" data-y-arrow="121" fill="#12473B" class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Gestion des risques et expertise</tspan>
-            <tspan on:click={()=>currentGroup="assistance"} opacity="0" x="0" y="63" data-y-arrow="152" fill="#12473B" class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Assistance et réparation</tspan>
-            <tspan on:click={()=>currentGroup="delegation"} opacity="0" x="0" y="94.5" data-y-arrow="183" fill="#12473B" class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Délégation</tspan>
-
-        </text>
+    </text>
 
 
-        <filter id="logo-alkera" x="0%" y="0%" width="100%" height="100%">
-            <feImage xlink:href="/orbits/alkera.svg"/>
+    <filter id="logo-alkera" x="0%" y="0%" width="100%" height="100%">
+        <feImage xlink:href="/orbits/alkera.svg"/>
+        <feComposite in2="SourceGraphic" operator="over" />
+    </filter>
+
+    
+    <ellipse bind:this={internalOrbit} id="internal" cx="659.02" cy="406.32" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="310.39" ry="147.85" transform="rotate(-16.342 659.08 406.403)"/>
+    <ellipse bind:this={middleOrbit} id="middle" cx="667.44" cy="435.04" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="493.5" ry="237.51" transform="rotate(-16.342 667.5 435.124)"/>
+    <ellipse bind:this={externalOrbit} id="external" cx="680.25" cy="478.73" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="701.55" ry="332.01" transform="rotate(-16.342 680.308 478.821)"/>
+
+    <g fill="#12473B">
+
+        {#each entites as entite, index(entite.id)}
+
+        <filter id={entite.id} x="0%" y="0%" width="100%" height="100%">
+            <feImage xlink:href="/orbits/{entite.id}.svg" />
             <feComposite in2="SourceGraphic" operator="over" />
         </filter>
 
-        
-        <ellipse bind:this={internalOrbit} id="internal" cx="659.02" cy="406.32" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="310.39" ry="147.85" transform="rotate(-16.342 659.08 406.403)"/>
-        <ellipse bind:this={middleOrbit} id="middle" cx="667.44" cy="435.04" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="493.5" ry="237.51" transform="rotate(-16.342 667.5 435.124)"/>
-        <ellipse bind:this={externalOrbit} id="external" cx="680.25" cy="478.73" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="701.55" ry="332.01" transform="rotate(-16.342 680.308 478.821)"/>
+        <circle
+            class="entite-{entite.id} entite-circle"
+            class:fill-pervenche={currentGroup && entite.groups.includes(currentGroup)}
+            filter="url(#{entite.id})"
+            data-orbit={entite.orbit}
+            cx="701.24" cy="548.44" r="{orbits[entite.orbit].minMaxSizes[1]}"
+        />
 
-        <g fill="#12473B">
-
-            {#each entites as entite, index(entite.id)}
-
-            <filter id={entite.id} x="0%" y="0%" width="100%" height="100%">
-                <feImage xlink:href="/orbits/{entite.id}.svg" />
-                <feComposite in2="SourceGraphic" operator="over" />
-            </filter>
-
-            <circle
-                class="entite-{entite.id} entite-circle"
-                class:fill-pervenche={currentGroup && entite.groups.includes(currentGroup)}
-                filter="url(#{entite.id})"
-                data-orbit={entite.orbit}
-                cx="701.24" cy="548.44" r="{orbits[entite.orbit].minMaxSizes[1]}"
-            />
-
-            {/each}
-        </g>
+        {/each}
+    </g>
 
 
 
-        <g id="orbit-mask" transform="skewX(16.35)">
-            <rect x="-60.28%" y="0"  width="100%" height="100%" class="fill-amande"/>
-        </g>
+    <g id="orbit-mask" transform="skewX(16.35)">
+        <rect x="-60.28%" y="0"  width="100%" height="100%" class="fill-amande"/>
+    </g>
 
-        <path id="orbit-dash-line" fill="none" stroke="#12473B" stroke-dasharray="8.1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width=".675" d="m540.57.34 289.74 988.25"/>
-
-
-        <circle filter="url(#logo-alkera)" cx="653.65" cy="393.04" r="90.81" fill="#12473B"/>
+    <path id="orbit-dash-line" fill="none" stroke="#12473B" stroke-dasharray="8.1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width=".675" d="m540.57.34 289.74 988.25"/>
 
 
-      </svg>      
+    <circle filter="url(#logo-alkera)" cx="653.65" cy="393.04" r="90.81" fill="#12473B"/>
+
+
+  </svg>      
 </section>
 
 <style lang="postcss">
 
-    .box {
-        overflow: visible;
-    }
+.box {
+    overflow: visible;
+}
 
-    .entite {
-        transition: all 2s;
-        transition: all 1300ms ease;
-        outline-offset: 0px;
-        outline: 2px dashed transparent;
-    }
+.entite {
+    transition: all 2s;
+    transition: all 1300ms ease;
+    outline-offset: 0px;
+    outline: 2px dashed transparent;
+}
 
-    .entite-circle:hover {
-        outline: 2px dashed theme('colors.feuille');
-        cursor: pointer;
-        border-radius:100%;
-        outline-offset: 8px;
-    }
+.entite-circle:hover {
+    outline: 2px dashed theme('colors.feuille');
+    cursor: pointer;
+    border-radius:100%;
+    outline-offset: 8px;
+}
 
-    /* #section-orbits {
-        background: url(orbits/maquette-full.svg) no-repeat;
-        background-size: 114%;
-        background-position: 43% -63%;
-    }
-    svg {
-        filter:grayscale(100%);
-        mix-blend-mode: difference;
-    } */
+/* #section-orbits {
+    background: url(orbits/maquette-full.svg) no-repeat;
+    background-size: 114%;
+    background-position: 43% -63%;
+}
+svg {
+    filter:grayscale(100%);
+    mix-blend-mode: difference;
+} */
 </style>

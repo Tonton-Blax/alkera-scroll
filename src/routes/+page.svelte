@@ -85,6 +85,12 @@
         }
         
 
+        const radiuses = {
+            internal: [ 51.55, 32.35 ],
+            middle: [ 60.94, 25.48 ],
+            external: [ 73.75, 21.49 ]
+        }
+
         /** @param {App.Metier} metier*/
         const setGroupPosition = (metier) => {
             if (!metier) return;
@@ -106,20 +112,23 @@
             MotionPathPlugin.convertToPath(externalOrbit);
             MotionPathPlugin.convertToPath(middleOrbit);
 
-            arrowPosition = 89
+            radiuses.internal.push(getEllipseLength(internalOrbit)/50);
+            radiuses.middle.push(getEllipseLength(middleOrbit)/50);
+            radiuses.external.push(getEllipseLength(externalOrbit)/50);
+            
             gsap.timeline()
             .to('#orbit-mask', {
-                duration: 1,
+                duration: 2,
                 autoAlpha: 0,
                 // yPercent: 100,
                 // xPercent: 21.2,
             })
-            .to('text > tspan', { opacity: 1, duration: .12, ease: "power2.inOut"}, 0)
+            .to('text > tspan', { opacity: 1, stagger:.12, duration: .12, ease: "power2.inOut"}, 0)
             
             entites.forEach((entite, i) => {
                 entite.tl = gsap.timeline({ defaults: { ease: "none" }, repeat: -1 });
                 entite.tl.to(`.entite-${entite.id}`, {
-                    duration,
+                    duration, //radiuses[entite.orbit][2] / 1,
                     motionPath: {
                         path: `#${entite.orbit}`,
                         align: `#${entite.orbit}`,
@@ -130,10 +139,11 @@
                 })
                 .to(`.entite-${entite.id}`,{
                         scale: 1 / ( orbits[entite.orbit].minMaxSizes[1] / orbits[entite.orbit].minMaxSizes[0] ),
-                        duration: duration / 2,
+                        duration: duration / 2,//(radiuses[entite.orbit][2] / 1) / 2,
                         repeat: 1,
                         yoyo: true,
                         ease: 'sine.inOut',
+                        //ease:  CustomEase.create("custom", "M0,0 C0,0 0.407,0.066 0.474,0.175 0.529,0.266 0.572,0.69 0.711,0.829 0.833,0.951 1,1 1,1 "),
                     }, 0 )
                 .progress(entite.start)
             });

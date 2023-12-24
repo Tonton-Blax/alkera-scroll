@@ -1,9 +1,22 @@
-/** @param {SVGEllipseElement | undefined} ellipse */
-export const getEllipseLength = (ellipse) => {
-    if (!ellipse) return 0;
-    let rx = parseInt(`${ellipse.getAttribute('rx')}`);
-    let ry = parseInt(`${ellipse.getAttribute('ry')}`);
-    let h = Math.pow((rx-ry), 2) / Math.pow((rx+ry), 2);
-    let totalLength = (Math.PI * ( rx + ry )) * (1 + ( (3 * h) / ( 10 + Math.sqrt( 4 - (3 * h) )) ));
-    return totalLength;
-};
+
+/**
+ * @param {number[]} pointsGroup1
+ * @param {number[]} pointsGroup2 
+ *@returns {{ direction: 1 | -1, progress: number }} 1 for CW / -1 for CCW
+ */
+export function getDirection(pointsGroup1, pointsGroup2) {
+    
+    let allPoints = [...new Set([...pointsGroup1, ...pointsGroup2])];
+
+    allPoints.sort((a, b) => a - b);
+
+    const average1 = pointsGroup1.reduce((acc, val) => acc + val, 0) / pointsGroup1.length;
+    const average2 = pointsGroup2.reduce((acc, val) => acc + val, 0) / pointsGroup2.length;
+
+    let difference = average2 - average1;
+    difference = ((difference % 1) + 1.5) % 1 - 0.5;
+
+    return difference > 0
+        ? {direction: 1, progress: difference} 
+        : {direction: -1, progress: 1 - Math.abs(difference)} 
+}

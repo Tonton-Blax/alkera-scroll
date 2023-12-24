@@ -3,21 +3,18 @@
 declare global {
 	namespace App {
 
-		type Metier = undefined | 'audit' | 'gestion' | 'assistance' | 'delegation';
+		type Metier = undefined | 'audit' | 'gestion' | 'assistance' | 'delegation' | 'initial';
 		type Planet = {
 			url: string;
 			id: string;
 			orbit: 'internal' | 'middle' | 'external';
-			start: number;
+			order: integer;
 			tl?: gsap.core.Timeline;
 			groups: Metier[];
 		};
 
 		type OffsetGroup = {
-			audit: number;
-			gestion: number;
-			assistance: number;
-			delegation: number;
+			[key in Metier]: number;
 		};
 
 		type Orbit = {
@@ -25,6 +22,9 @@ declare global {
 			offsetGroup: OffsetGroup;
 			minMaxSizes: [number, number];
 			planets: Planet[];
+			forward?: boolean;
+			progress?: number;
+			direction: { direction: 1 | -1, progress: number }
 		};
 
 		type Orbits = {

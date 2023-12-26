@@ -122,9 +122,9 @@
             if (!tl) return;
             const direction = orbits[entite.orbit].direction; 
             gsap.to(tl, {
-                progress: ( tl.labels.lastPosition || tl.progress()) + direction.progress, 
+                progress: tl.labels[metier] || ( tl.labels.lastPosition || tl.progress()) + direction.progress, 
                 duration: 1, ease: "power2.Out",
-                onComplete: () => tl.addLabel("lastPosition", tl.progress())
+                onComplete: () => tl.labels[metier] && tl.addLabel(metier, tl.progress())
             })
 
         })
@@ -134,18 +134,27 @@
         gsap.registerPlugin(MotionPathPlugin, DrawSVGPlugin);
 
     onMount(async() => {
-        
+    
         readyLine = true;
         [internalOrbit, externalOrbit, middleOrbit].forEach(orbit => MotionPathPlugin.convertToPath(orbit))
 
         arrowPosition = 89
         gsap.timeline()
-        .to('#orbit-mask', {
-            duration: 1,
-            autoAlpha: 0,
-            // yPercent: 100,
-            // xPercent: 21.2,
-        })
+        //.to('#orbit-dash-line', {drawSVG: '100% 100%', ease: "none", duration: 3, reversed: true },0)
+        .to('.ellipse', {drawSVG:'25% 25%', duration:2, ease:"none", reversed: true })
+        // .to("#orbit-dash-line-reveal", {
+        //     duration: 2,
+        //     drawSVG: '100% 100%',
+        //     reversed: true,
+        //     ease: "Power1.inOut",
+        //     yoyo: true,
+        // })
+        // .to('#orbit-mask', {
+        //     duration: 1,
+        //     autoAlpha: 0,
+        //     // yPercent: 100,
+        //     // xPercent: 21.2,
+        // })
         .to('text > tspan', { opacity: 1, duration: .12, ease: "power2.inOut"}, 0)
         
   
@@ -204,8 +213,10 @@
 </script>
 
 
-<section id="section-orbits" class="w-screen h-screen bg-amande">
-
+<section id="section-orbits" class="w-screen bg-amande max-h-screen relative">
+    
+    <!-- <div class="big-mask-orbits bg-amande w-3/5 h-full absolute z-[2]"></div> -->
+    
     <div class="planets" bind:this={planetsEl}>
         {#each entites as entite, index(entite.id)}
 
@@ -221,6 +232,8 @@
 
         {/each}
     </div>
+
+    <div class="big-mask" ></div>
 
 <svg bind:this={galaxy} 
     color-interpolation-filters="sRGB"
@@ -254,20 +267,14 @@
 
     </text>
     
-    <ellipse bind:this={internalOrbit} id="internal" cx="659.02" cy="406.32" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="310.39" ry="147.85" transform="rotate(-16.342 659.08 406.403)"/>
-    <ellipse bind:this={middleOrbit} id="middle" cx="667.44" cy="435.04" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="493.5" ry="237.51" transform="rotate(-16.342 667.5 435.124)"/>
-    <ellipse bind:this={externalOrbit} id="external" cx="680.25" cy="478.73" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="701.55" ry="332.01" transform="rotate(-16.342 680.308 478.821)"/>
+    <ellipse bind:this={internalOrbit} id="internal" class="ellipse" cx="659.02" cy="406.32" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="310.39" ry="147.85" transform="rotate(-16.342 659.08 406.403)"/>
+    <ellipse bind:this={middleOrbit} id="middle" class="ellipse" cx="667.44" cy="435.04" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="493.5" ry="237.51" transform="rotate(-16.342 667.5 435.124)"/>
+    <ellipse bind:this={externalOrbit} id="external" class="ellipse" cx="680.25" cy="478.73" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="701.55" ry="332.01" transform="rotate(-16.342 680.308 478.821)"/>
 
-    <!-- <g fill="#12473B">
-
-       
-    </g> -->
-
-    <g id="orbit-mask" transform="skewX(16.35)">
-        <rect x="-60.28%" y="0"  width="100%" height="100%" class="fill-amande"/>
-    </g>
-
-    <path id="orbit-dash-line" fill="none" stroke="#12473B" stroke-dasharray="8.1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width=".675" d="m540.57.34 289.74 988.25"/>
+    <mask id="theMask" maskUnits="userSpaceOnUse">
+        <path id="orbit-dash-line" fill="none" stroke="#12473B" stroke-dasharray="8.1" stroke-width="2" d="m540.57.34 289.74 988.25"/>
+    </mask>
+    <path id="orbit-dash-line-reveal" mask="url(#theMask)" fill="none" stroke="#12473B" stroke-dasharray="8.1" stroke-width="2" d="m540.57.34 289.74 988.25"/>
 
     <filter id="logo-alkera" x="0%" y="0%" width="100%" height="100%">
         <feImage xlink:href="/orbits/alkera.svg"/>
@@ -281,11 +288,10 @@
 </section>
 
 <style lang="postcss">
-.entite-circle, svg * {
-    shape-rendering: optimizeSpeed;
-    text-rendering: optimizeSpeed;
-    image-rendering: optimizeSpeed;
+.big-mask-orbits {
+    transform: skew(16.34deg, 0deg) translate(-138px, 0px)    
 }
+    
 .box {
     overflow: visible;
 }

@@ -4,10 +4,12 @@ declare global {
 	namespace App {
 
 		type Metier = undefined | 'audit' | 'gestion' | 'assistance' | 'delegation' | 'initial';
+		type OrbitName = 'internal' | 'middle' | 'external';
+
 		type Planet = {
 			url: string;
 			id: string;
-			orbit: 'internal' | 'middle' | 'external';
+			orbit: OrbitName;
 			order: integer;
 			tl?: gsap.core.Timeline;
 			groups: Metier[];
@@ -27,11 +29,7 @@ declare global {
 			direction: { direction: 1 | -1, progress: number }
 		};
 
-		type Orbits = {
-			internal: Orbit;
-			middle: Orbit;
-			external: Orbit;
-		};
+		type Orbits = Record<OrbitName, Orbit>;
 		// interface Error {}
 		// interface Locals {}
 		// interface PageData {}

@@ -4,13 +4,9 @@
     import MotionPathPlugin from 'gsap/dist/MotionPathPlugin.js';
     import { onMount, tick } from 'svelte';
     import DrawSVGPlugin from "$lib/gsap/DrawSVGPlugin";
-    import { getDirection } from '$lib/utils'
 
     $: if (browser && readyLine)
         gsap.to('#arrow-cursor', { ...(arrowPosition ? { y: arrowPosition, opacity: 1 } : { opacity : 0 }) });
-
-    $: if (browser && toGroup)
-        setGroupPosition(toGroup);
 
     /** @type {SVGEllipseElement | undefined} */
     let internalOrbit;
@@ -65,7 +61,7 @@
     /** @type {App.Orbits} */
     const orbits = {
 
-        internal: {
+        'internal': {
             el: internalOrbit,
             offsetGroup : {
                 audit: 0.843, gestion: 0.853, assistance: 0.285, delegation: 0.01, initial:0.00001,
@@ -75,7 +71,7 @@
             direction: { direction: 1, progress: 0 },
         },
 
-        middle: {
+        'middle': {
             el: middleOrbit,
             offsetGroup : { 
                 audit: 0.843, gestion: 0.175, assistance: 0.55, delegation: 0.73, initial:0.00001,
@@ -85,7 +81,7 @@
             direction: { direction: 1, progress: 0 },
         },
 
-        external: {
+        'external': {
             el: externalOrbit,
             offsetGroup : {
                 audit: 0.843, gestion: 0.205, assistance: 0.452, delegation: 0.632, initial:0.00001,
@@ -105,24 +101,14 @@
         planetsEl?.removeEventListener("mouseleave", fastTimeScale);
         slowTimeScale();
 
-        Object.keys(orbits).forEach(orbitName => {
-            const orbit = orbits[/** @type {keyof App.Orbits} */ (orbitName)];
-
-            const fromPoints = orbit.planets
-            .map(planet => Number(planet.tl?.labels.initialPosition) + orbit.offsetGroup[/** @type {keyof App.Metier} */ (fromGroup)]);
-
-            const toPoints = orbit.planets
-            .map(planet => (planet.tl?.labels.initialPosition || 0) + orbit.offsetGroup[metier]);
-            
-            orbit.direction = getDirection(fromPoints, toPoints);
-        });
-
         entites.forEach(entite => {
             const { tl } = entite;
             if (!tl) return;
-            const direction = orbits[entite.orbit].direction; 
+            const orbit = orbits[entite.orbit];
+            const direction = orbit.direction.direction; 
+            const nextProgress = tl?.labels.initialPosition + orbit.offsetGroup[metier];
             gsap.to(tl, {
-                progress: tl.labels[metier] || ( tl.labels.lastPosition || tl.progress()) + direction.progress, 
+                progress: `+=${gsap.utils.wrap(0, 1, nextProgress - tl.progress())}`, 
                 duration: 1, ease: "power2.Out",
                 onComplete: () => tl.labels[metier] && tl.addLabel(metier, tl.progress())
             })
@@ -140,21 +126,20 @@
 
         arrowPosition = 89
         gsap.timeline()
-        //.to('#orbit-dash-line', {drawSVG: '100% 100%', ease: "none", duration: 3, reversed: true },0)
-        .to('.ellipse', {drawSVG:'25% 25%', duration:2, ease:"none", reversed: true })
-        // .to("#orbit-dash-line-reveal", {
-        //     duration: 2,
-        //     drawSVG: '100% 100%',
-        //     reversed: true,
-        //     ease: "Power1.inOut",
-        //     yoyo: true,
-        // })
-        // .to('#orbit-mask', {
-        //     duration: 1,
-        //     autoAlpha: 0,
-        //     // yPercent: 100,
-        //     // xPercent: 21.2,
-        // })
+        .from('.ellipse', {drawSVG:'25% 25%', duration:1, ease:"none", reversed: false, stagger : { each: 0.25, from: 'random'} },0)
+        .to("#orbit-dash-line", {
+            duration: 1,
+            drawSVG: '100% 100%',
+            reversed: true,
+            ease: "Power1.inOut",
+        },0)
+        .from('.planets > div', {
+            duration: 0.5,
+            opacity: 0,
+            stagger:{ each: 0.05, from: 'random' },
+            // yPercent: 100,
+            // xPercent: 21.2,
+        },0.5)
         .to('text > tspan', { opacity: 1, duration: .12, ease: "power2.inOut"}, 0)
         
   
@@ -209,6 +194,7 @@
     function changeGroup (metier) {
         fromGroup = toGroup || 'initial';
         toGroup = metier;
+        setGroupPosition(toGroup);
     }
 </script>
 
@@ -221,12 +207,14 @@
         {#each entites as entite, index(entite.id)}
 
         <div
-            class="absolute entite-{entite.id} entite-circle bg-feuille rounded-full bg-center bg-cover aspect-square transition-[background-color]" 
+            class="
+                absolute entite-{entite.id} entite-circle bg-feuille rounded-full bg-center bg-cover aspect-square transition-[background-color]
+                {toGroup && entite.groups.includes(toGroup) ? 'activeGroup':'inactiveGroup'}
+                " 
             style="
                 width:{orbits[entite.orbit].minMaxSizes[1] * SCALE_FACTOR}%; 
                 background-image:url({`/orbits/${entite.id}.png`});
             "
-            class:activeGroup={toGroup && entite.groups.includes(toGroup)}
             data-orbit={entite.orbit}
         />
 
@@ -272,12 +260,12 @@
     <ellipse bind:this={externalOrbit} id="external" class="ellipse" cx="680.25" cy="478.73" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="701.55" ry="332.01" transform="rotate(-16.342 680.308 478.821)"/>
 
     <mask id="theMask" maskUnits="userSpaceOnUse">
-        <path id="orbit-dash-line" fill="none" stroke="#12473B" stroke-dasharray="8.1" stroke-width="2" d="m540.57.34 289.74 988.25"/>
+        <path id="orbit-dash-line" fill="none" stroke="white" d="m540.57.34 289.74 988.25"/>
     </mask>
-    <path id="orbit-dash-line-reveal" mask="url(#theMask)" fill="none" stroke="#12473B" stroke-dasharray="8.1" stroke-width="2" d="m540.57.34 289.74 988.25"/>
+    <path id="orbit-dash-line-reveal" mask="url(#theMask)" fill="none" stroke="#12473B" stroke-dasharray="8.1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width=".675" d="m540.57.34 289.74 988.25"/>
 
     <filter id="logo-alkera" x="0%" y="0%" width="100%" height="100%">
-        <feImage xlink:href="/orbits/alkera.svg"/>
+        <feImage xlink:href="/orbits/alkera.png"/>
         <feComposite in2="SourceGraphic" operator="over" />
     </filter>
 
@@ -311,27 +299,34 @@
     top:0%;
     left:0%;
     content:"";    
-    border-radius:100%;
-    outline-color:transparent;
     opacity: 0;
     transition: scale 0.5s var(--spring-easing);
     scale:0.5;
 }
-
 .entite-circle:hover:before {
     outline-offset: 8px;
-    outline: 1px dashed theme('colors.feuille');
+    /* outline: 1px dashed theme('colors.feuille'); */
+    background-size: 80% 80%;
+    background-position: center center;
+    background-repeat: no-repeat;
     animation: rotation 20s linear infinite;
-    scale:1;
+    scale:1.4;
     cursor: pointer;
     opacity: 1;
+}
+
+.entite-circle.activeGroup:hover:before {
+    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='100' ry='100' stroke='%236563CA' stroke-width='1' stroke-dasharray='6%2c 7' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+}
+.entite-circle.inactiveGroup:hover:before {
+    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='100' ry='100' stroke='%2312473B' stroke-width='1' stroke-dasharray='6%2c 7' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
 }
 
 .activeGroup {
     background-color: theme('colors.pervenche');
     transition:background-color 2s ease;
 }
-.activeGroup.entite-circle:hover:before {
+.entite-circle.activeGroup:hover:before {
     outline-color: theme('colors.pervenche');
 }
 

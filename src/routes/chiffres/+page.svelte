@@ -1,7 +1,6 @@
 <script>
     import { browser } from '$app/environment';
     import gsap from 'gsap';
-    import MotionPathPlugin from 'gsap/dist/MotionPathPlugin.js';
     import { onMount } from 'svelte';
     import DrawSVGPlugin from "$lib/gsap/DrawSVGPlugin";
     import ScrollTrigger from 'gsap/dist/ScrollTrigger.js';
@@ -10,9 +9,7 @@
 
 
     if (browser)
-        gsap.registerPlugin(MotionPathPlugin, DrawSVGPlugin,ScrollTrigger);
-
-
+        gsap.registerPlugin(DrawSVGPlugin,ScrollTrigger);
 
     onMount(async() => {
         gsap.timeline({ scrollTrigger: {
@@ -61,7 +58,7 @@
             stagger: { each: 0.025 },
         },1)
         .to(".deco-circle, .chiffre-circle", {
-            scale:2.4,
+            scale: (_, el) => window.innerWidth / window.innerHeight < 1.77  ? (window.innerHeight / el.clientHeight) / 2.15 : (window.innerWidth / el.clientWidth) / 2.15,
             duration: 0.2,
         })
     })
@@ -69,7 +66,7 @@
 </script>
 
 
-<section id="section-chiffres" class="w-screen bg-amande relative overflow-clip">
+<section id="section-chiffres" class="w-screen aspect-video bg-feuille relative overflow-hidden">
 
 
     <div class="grid grid-cols-6 absolute top-0 left-0 w-full h-full">
@@ -85,35 +82,35 @@
 
         <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
 
-        <div class="relative text-center leading-[2ch] text-amande w-full self-center">
-            <div class="chiffre-circle w-2/3 aspect-square rounded-full bg-white mx-auto mb-[0.75em]"/>
-            <div class="chiffres-wrapper absolute text-[1.5em]">
+        <div class="relative text-center leading-loose text-amande w-full self-center">
+            <div class="chiffre-circle w-2/3 aspect-square rounded-full bg-white mx-auto mb-5"/>
+            <div class="chiffres-wrapper absolute text-[1.2vw]">
                 <span class="chiffres-animes">2000</span>
-                <div class="text-[0.6em]">collaborateurs</div>
+                <div class="text-[0.7vw]">collaborateurs</div>
             </div>
         </div>
 
-        <div class="relative text-center leading-[2ch] text-amande w-full self-center">
-            <div class="chiffre-circle w-2/3 aspect-square rounded-full bg-white mx-auto mb-[0.75em]"/>
-            <div class="chiffres-wrapper absolute text-[1.5em]">
+        <div class="relative text-center leading-loose text-amande w-full self-center">
+            <div class="chiffre-circle w-2/3 aspect-square rounded-full bg-white mx-auto mb-5"/>
+            <div class="chiffres-wrapper absolute text-[1.2vw]">
                 <span class="chiffres-animes milliards">4</span><span>&nbsp;Milliards €</span>
-                <div class="text-[0.6em]">de dommages</div>
+                <div class="text-[0.7vw]">de dommages</div>
             </div>
         </div>
 
-        <div class="relative text-center leading-[2ch] text-amande w-full self-center">
-            <div class="chiffre-circle w-2/3 aspect-square rounded-full bg-white mx-auto mb-[0.75em]"/>
-            <div class="chiffres-wrapper absolute text-[1.5em]">
+        <div class="relative text-center leading-loose text-amande w-full self-center">
+            <div class="chiffre-circle w-2/3 aspect-square rounded-full bg-white mx-auto mb-5"/>
+            <div class="chiffres-wrapper absolute text-[1.2vw]">
                 <span class="chiffres-animes">520000</span>
-                <div class="text-[0.6em]">missions d’expertise</div>
+                <div class="text-[0.7vw]">missions d’expertise</div>
             </div>
         </div>
 
-        <div class="relative text-center leading-[2ch] text-amande w-full self-center">
-            <div class="chiffre-circle w-2/3 aspect-square rounded-full bg-white mx-auto mb-[0.75em]"/>
-            <div class="chiffres-wrapper absolute text-[1.5em]">
+        <div class="relative text-center leading-loose text-amande w-full self-center">
+            <div class="chiffre-circle w-2/3 aspect-square rounded-full bg-white mx-auto mb-5"/>
+            <div class="chiffres-wrapper absolute text-[1.2vw]">
                 <span class="chiffres-animes">210</span><span>&nbsp;Millions</span>
-                <div class="text-[0.6em]">de chiffre d’affaire</div>
+                <div class="text-[0.7vw]">de chiffre d’affaire</div>
             </div>
         </div>
 
@@ -129,15 +126,14 @@
        
     </div>
 
-    <svg bind:this={SVG} version="1.2" baseProfile="tiny" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1920 979.73" overflow="visible" xml:space="preserve">
-        <rect fill="#12473B" width="1920" height="979.73"/>
+    <svg class="w-full h-full overflow-visible" bind:this={SVG} version="1.2" baseProfile="tiny" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100%" height="100%" overflow="visible" xml:space="preserve">
         
         
         <mask id="mask-line" maskUnits="userSpaceOnUse">
-            <line id="chiffre-line-masked" fill="none" stroke="white" stroke-miterlimit="10" stroke-dasharray="9" x1="0" y1="489.67" x2="1920" y2="489.67"/>
+            <line id="chiffre-line-masked" fill="none" stroke="white" stroke-miterlimit="10" stroke-dasharray="9" x1="0" y1="50%" x2="100%" y2="50%"/>
         </mask>
 
-        <line mask="url(#mask-line)" id="chiffre-line" fill="none" stroke="#DBFF94" stroke-miterlimit="10" stroke-dasharray="9" x1="0" y1="489.67" x2="1920" y2="489.67"/>
+        <line mask="url(#mask-line)" id="chiffre-line" fill="none" stroke="#DBFF94" stroke-miterlimit="10" stroke-dasharray="9" x1="0" y1="50%" x2="100%" y2="50%"/>
         
         <!-- <circle fill="red" cx="481.68" cy="489.67" r="100.9"/>
         <circle fill="red" cx="800.56" cy="489.67" r="100.9"/>

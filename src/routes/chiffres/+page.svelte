@@ -19,11 +19,13 @@
             end: '+=300%',
             pin: true
         }})
+
         .from("#chiffre-line-masked", {
             duration: 0.5,
             drawSVG: '0',
             ease: "Power1.inOut",
         },0.01)
+
         .from(".chiffre-circle", {
             scale:0,
             duration: 0.25,
@@ -31,7 +33,14 @@
             stagger: { each: 0.05 },
             ease: "Power1.inOut",
         },0.25)
-        .from('.chiffres-wrapper',{ opacity:0, duration:0.2, stagger: { each: 0.05 }, reversed: true },0.25)
+
+        .from('.chiffres-wrapper',{ 
+            opacity:0, 
+            duration:0.2, 
+            stagger: { each: 0.05 }, 
+            reversed: true 
+        },0.25)
+
         .from('.chiffres-animes:not(.milliards)', {
             textContent: 1,
             duration: 0.2,
@@ -43,20 +52,23 @@
                     // @ts-ignore
                     const number = Math.ceil(this.targets()[0].textContent);
                     // @ts-ignore
-                    this.targets()[0].innerHTML = new Intl.NumberFormat("en-EN").format(number);
+                    this.targets()[0].innerHTML = new Intl.NumberFormat("fr-FR").format(number);
                 },
             }
             
         },0.25)
+
         .to(".chiffre-circle", {
             background:'#DBFF94',
             stagger: { each: 0.05 },
         },1)
+
         .from(".deco-circle", {
             scale:0,
             duration: 0.2,
             stagger: { each: 0.025 },
         },1)
+
         .to(".deco-circle, .chiffre-circle", {
             scale: (_, el) => window.innerWidth / window.innerHeight < 1.77  ? (window.innerHeight / el.clientHeight) / 2.15 : (window.innerWidth / el.clientWidth) / 2.15,
             duration: 0.2,
@@ -130,10 +142,10 @@
         
         
         <mask id="mask-line" maskUnits="userSpaceOnUse">
-            <line id="chiffre-line-masked" fill="none" stroke="white" stroke-miterlimit="10" stroke-dasharray="9" x1="0" y1="50%" x2="100%" y2="50%"/>
+            <line id="chiffre-line-masked" fill="none" stroke="white" stroke-miterlimit="10" stroke-dasharray="9" x1="0" y1="49.25%" x2="100%" y2="49.25%"/>
         </mask>
 
-        <line mask="url(#mask-line)" id="chiffre-line" fill="none" stroke="#DBFF94" stroke-miterlimit="10" stroke-dasharray="9" x1="0" y1="50%" x2="100%" y2="50%"/>
+        <line mask="url(#mask-line)" id="chiffre-line" fill="none" stroke="#DBFF94" stroke-miterlimit="10" stroke-dasharray="9" x1="0" y1="49.25%" x2="100%" y2="49.25%"/>
         
         <!-- <circle fill="red" cx="481.68" cy="489.67" r="100.9"/>
         <circle fill="red" cx="800.56" cy="489.67" r="100.9"/>

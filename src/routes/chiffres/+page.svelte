@@ -78,7 +78,7 @@
 </script>
 
 
-<section id="section-chiffres" class="w-screen aspect-video bg-feuille relative overflow-hidden">
+<section id="section-chiffres" class="w-screen h-screen bg-feuille relative overflow-visible">
 
 
     <div class="grid grid-cols-6 absolute top-0 left-0 w-full h-full">

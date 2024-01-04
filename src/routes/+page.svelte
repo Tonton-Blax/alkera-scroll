@@ -225,8 +225,6 @@
 
 <svg bind:this={galaxy} 
     color-interpolation-filters="sRGB"
-    shape-rendering="optimizeSpeed"
-    text-rendering="optimizeSpeed"
     class="w-4/5 h-auto mx-auto overflow-visible" 
     xmlns="http://www.w3.org/2000/svg" xml:space="preserve" id="Calque_1" x="0" y="0" version="1.1" viewBox="0 0 1360.5 988.92"
 >

@@ -16,9 +16,36 @@
     let hoveredGroup;
 
     const secteurs = [
-        { id: 'group1', secteurs : [ 'Audit', 'Gestion des risques', 'Expertise' ], indexes : [ 0, 1, 2 ], xy: [ [331.03, 338.55], [537.08, 338.55], [743.06, 338.55]] },
-        { id: 'group2', secteurs : [ 'Quatre', 'Cinq', 'Six' ], indexes : [ 3, 4, 5 ], xy: [ [331.09, 544.53], [537.08, 544.53], [743.06, 544.53]] },
-        { id: 'group3', secteurs : [ 'Sept', 'Huit', 'Neuf' ], indexes : [ 6, 7, 8 ], xy: [ [331.09, 750.52], [537.08, 750.52], [743.06, 750.52]] },
+        {   id: 'group1', 
+            secteurs : [ 'Audit', 'Conseil', 'Prévention' ], 
+            indexes : [ 0, 1, 2 ], 
+            xy: [ [331.03, 338.55], [537.08, 338.55], [743.06, 338.55]], 
+            imagePrefix: 'audit-conseil-gestion-' 
+        },
+        {   id: 'group2', 
+            secteurs : [ 'Gestion des risaues', 'Expertise' ], 
+            indexes : [ 3, 4 ], 
+            xy: [ [331.09, 544.53], [537.08, 544.53]], 
+            imagePrefix: 'gestion-risque-expertise-' 
+        },
+        {   id: 'group3', 
+            secteurs : [ 'Assistance', 'Reparation' ], 
+            indexes : [ 5,6 ], 
+            xy: [ [743.06, 544.53], [331.09, 750.52] ], 
+            imagePrefix: 'assistance-reparation-' 
+        },
+        {   id: 'group4', 
+            secteurs : [ 'Délégation' ], 
+            indexes : [ 7 ], 
+            xy: [ [537.08, 750.52] ], 
+            imagePrefix: 'delegation-'  
+        },
+        {   id: 'group5', 
+            secteurs : [ 'Implantation' ], 
+            indexes : [ 8 ], 
+            xy: [ [743.06, 750.52] ], 
+            imagePrefix: 'international-'  
+        },
     ]
 
     if (browser)
@@ -30,7 +57,7 @@
             defaults: { ease: 'none' },
             scrollTrigger: {
                 trigger: '#section-intro',
-                scrub: 4,
+                scrub: 5,
                 pin: '#section-intro',
                 start: 'top top',
                 end:()=> '+=400%'
@@ -48,7 +75,7 @@
         .to('#trace-interieur', { attr: {transform: "rotate(-360)"}, duration: baseDuration, ease:'none'},0)
         .to('#trace-exterieur', { attr: {transform: "rotate(360)"}, duration: baseDuration, ease:'none'},0)
         .to('#intro-part-2', { autoAlpha: 1 , duration: baseDuration * 0.2, ease:'none'},0.128)
-        .fromTo('.bloc-text-contenu', { yPercent: 55 }, { yPercent: 15, duration: baseDuration * 0.5 }, 0.128 )
+        .fromTo('.bloc-text-contenu', { yPercent: 100 }, { yPercent: 5, duration: baseDuration * 0.5 }, 0.128 )
         .from('.mask-content-2', {drawSVG: '0%', duration: baseDuration * 0.25 }, 0.128 )
         .from('.mask-content-1', {drawSVG: '100% 100%', duration: baseDuration * 0.25 }, '>' )
         .from('.secteur-circle', { attr: {transform: "scale(0)"}, duration: baseDuration * 0.50, stagger: { each: (baseDuration * 0.50 )/9, from: 0 }}, 0.12 )
@@ -194,7 +221,8 @@
                 Le Groupe Alkera accompagne assureurs, courtiers et entreprises dans la gestion globale des risques et des sinistres.
             </p>
         </div>
-        <svg 
+        <svg
+            color-interpolation-filters="sRGB"
             class="w-[2vw] h-auto mx-auto mt-[2vw]" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
             id="scroll-down" x="0" y="0" version="1.1" viewBox="0 0 54 79.4"
         >
@@ -208,9 +236,13 @@
 
     <div id="intro-part-2" class="z-[10] absolute w-full h-full opacity-0 flex">
 
-        <div id="bloc-text" class="absolute flex">
-            <span class="bloc-text-contenu overflow-scroll h-fit max-h-fit min-h-fit">
+        <div id="bloc-text" class="absolute max-h-fit h-fit self-center my-auto overflow-hidden font-light right-[10%] text-[1.5vw] flex w-[35%] leading-[3vw]">
+            <span class="bloc-text-contenu self-center">
+                <br>&nbsp;
+                <br>
                 Depuis plus de 25 ans, le Groupe Alkera développe une expertise complète et reconnue sur l’ensemble de la chaîne du sinistre en France et l’international. Du diagnostic technique jusqu’à la réparation en passant par l’expertise de sinistres, nous proposons une offre complète avant, pendant et après sinistre.
+                <br>&nbsp;
+                <br>&nbsp;
             </span>
         </div>
     
@@ -231,6 +263,7 @@
             <path class="path-part part-1" mask="url(#mask-part-1)" fill="none" stroke="#12473B" stroke-linecap="round" stroke-miterlimit="10" stroke-dasharray="9" d="M335.7,343.15h452.29 c55.61,0,100.69,45.08,100.69,100.69v0c0,55.61-45.08,100.69-100.69,100.69H288.21"/>
             <path class="path-part part-2" mask="url(#mask-part-2)" fill="none" stroke="#12473B" stroke-linecap="round" stroke-miterlimit="10" stroke-dasharray="9" d="M732.25,745.91H288.21 c-55.61,0-100.69-45.08-100.69-100.69v0c0-55.61,45.08-100.69,100.69-100.69"/>
     
+            
             {#each secteurs as secteur, i}
             {#each secteur.indexes as index, j}
                 <circle 
@@ -242,11 +275,20 @@
                     cy="{secteur.xy[j][1]}" 
                     r="60"
                 />
+                
+                <filter id="secteur-image-{index}{j}" x="0%" y="0%" width="100%" height="100%">
+                    <feImage xlink:href="intro/{secteur.imagePrefix}0{j+1}.png"/>
+                    <feComposite in2="SourceGraphic" operator="over" />
+                </filter>
+                assistance-reparation-01.png
+
                 <circle 
                     data-secteur={secteur.id}
-                    class="secteur-circle" fill="#12473B"
+                    class="secteur-circle"
                     cx="{secteur.xy[j][0]}" cy="{secteur.xy[j][1]}"
                     r="65.53"
+                    fill="#12473B"
+                    filter="url(#secteur-image-{index}{j})"
                     transform="scale(1)"
                     transform-origin="{secteur.xy[j][0]} {secteur.xy[j][1]}"
                 />
@@ -306,17 +348,7 @@
         cursor: pointer;
     }
 
-    #bloc-text {
-        width:35%;
-        height:55%;
-        right:10%;
-        font-size:1.7vw;
-        overflow:hidden;
-        top:22.5%;
-        font-weight:300;
-        line-height:2;
-        /* mask-image: linear-gradient(to bottom, black 50%, transparent 100%); */
-    }
+  
     /* #bloc-text:before {
         content: '';
         position: absolute;
@@ -335,6 +367,7 @@
         bottom: 0;
         left: 0;
         right: 0;
+        height: 100%;
         background-image: linear-gradient( #DBFF9400 80%, #DBFF94FF 100% );
     }
 

@@ -8,8 +8,6 @@
     import ScrollTrigger from 'gsap/dist/ScrollTrigger.js';
     import { RoughEase } from "gsap/EasePack";
 
-    import { base } from '$app/paths';
-
     let SVG;
     let baseDuration = 0.1;
     /** @type {string | undefined} */
@@ -315,9 +313,9 @@
 </section>
 
 <style lang="postcss">
-    #scroll-down {
+    /* #scroll-down {
         animation: bounce 2s infinite;
-    }
+    } */
      @keyframes bounce {
         0%, 20%, 50%, 80%, 100% {
             transform: translateY(0);

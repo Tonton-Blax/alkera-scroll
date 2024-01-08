@@ -250,8 +250,6 @@
     
         <svg bind:this={SVG} 
             color-interpolation-filters="sRGB"
-            shape-rendering="optimizeSpeed"
-            text-rendering="optimizeSpeed"
             class="w-full h-auto mx-auto overflow-visible" 
             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1920 1050"
         >
@@ -313,6 +311,9 @@
 
 
 <style lang="postcss">
+    svg, circle, line {
+        will-change: transform;
+    }
     #scroll-down {
         animation: bounce 2s infinite;
     }

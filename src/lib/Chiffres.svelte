@@ -5,31 +5,39 @@
     import DrawSVGPlugin from "$lib/gsap/DrawSVGPlugin";
     import ScrollTrigger from 'gsap/dist/ScrollTrigger.js';
 
-    let SVG;
+    export let order = 2;
 
+    let SVG;
+    /** @type {HTMLElement} */
+    let chiffresEl;
 
     if (browser)
         gsap.registerPlugin(DrawSVGPlugin,ScrollTrigger);
 
     onMount(async() => {
-        gsap.timeline({ scrollTrigger: {
+        const tl =gsap.timeline({ scrollTrigger: {
+            // @ts-ignore
+            refreshPriority: order,
             trigger: '#section-chiffres',
             scrub: 1,
-            start: 'top top',
+            start:()=> `top-=${(window.innerHeight - chiffresEl?.offsetHeight) / 2}px top`,
             end: '+=300%',
-            pin: true
+            pin: '#sections-wrapper',
         }})
-
-        .to(".deco-circle", {
+        tl.to(".deco-circle", {
             scale:0,
             duration: 0.2,
             stagger: { each: 0.025 },
         },0)
 
         .from(".chiffre-circle", {
-            background:'#DBFF94',
+            backgroundColor:'#DBFF94',
+            backgroundImage: 'unset',
             stagger: { each: 0.05 },
         },0)
+        .to("#chiffres-el", {
+            '--secteur-opacite': 1, duration: 0.25,
+        },0.02)
 
 
         .from("#chiffre-line-masked", {
@@ -62,37 +70,28 @@
             
         },0.25)
 
-       
-
-       
-
-        // .to(".deco-circle, .chiffre-circle", {
-        //     scale: (_, el) => window.innerWidth / window.innerHeight < 1.77  ? (window.innerHeight / el.clientHeight) / 2.15 : (window.innerWidth / el.clientWidth) / 2.15,
-        //     duration: 0.2,
-        // })
     })
 
 </script>
 
-
-<section id="section-chiffres" class="w-screen h-screen bg-feuille relative overflow-visible">
-
-
-    <div class="grid grid-cols-6 absolute top-0 left-0 w-full h-full">
-
-        <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
-        <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
-        <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
-        <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
-        <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
-        <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
+<section id="section-chiffres" class="w-screen aspect-video bg-feuille relative">
 
 
+    <div 
+        style="--secteur-opacite: 0;"
+        id="chiffres-el"
+        class="grid grid-cols-6 absolute top-0 left-0 w-full aspect-video" 
+        bind:this={chiffresEl}
+    >
+
+        {#each {length:6} as _}
+        <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
+        {/each}
 
         <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
-            <div class="chiffre-circle w-2/3 aspect-square rounded-full bg-white mx-auto mb-5"/>
+            <div class="chiffre-circle circle-1 w-2/3 aspect-square rounded-full bg-white mx-auto mb-5"/>
             <div class="chiffres-wrapper absolute text-[1.2vw]">
                 <span class="chiffres-animes">2000</span>
                 <div class="text-[0.7vw]">collaborateurs</div>
@@ -100,7 +99,7 @@
         </div>
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
-            <div class="chiffre-circle w-2/3 aspect-square rounded-full bg-white mx-auto mb-5"/>
+            <div class="chiffre-circle circle-2 w-2/3 aspect-square rounded-full bg-white mx-auto mb-5"/>
             <div class="chiffres-wrapper absolute text-[1.2vw]">
                 <span class="chiffres-animes milliards">4</span><span>&nbsp;Milliards €</span>
                 <div class="text-[0.7vw]">de dommages</div>
@@ -108,7 +107,7 @@
         </div>
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
-            <div class="chiffre-circle w-2/3 aspect-square rounded-full bg-white mx-auto mb-5"/>
+            <div class="chiffre-circle circle-3 w-2/3 aspect-square rounded-full bg-white mx-auto mb-5"/>
             <div class="chiffres-wrapper absolute text-[1.2vw]">
                 <span class="chiffres-animes">520000</span>
                 <div class="text-[0.7vw]">missions d’expertise</div>
@@ -116,7 +115,7 @@
         </div>
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
-            <div class="chiffre-circle w-2/3 aspect-square rounded-full bg-white mx-auto mb-5"/>
+            <div class="chiffre-circle circle-4 w-2/3 aspect-square rounded-full bg-white mx-auto mb-5"/>
             <div class="chiffres-wrapper absolute text-[1.2vw]">
                 <span class="chiffres-animes">210</span><span>&nbsp;Millions</span>
                 <div class="text-[0.7vw]">de chiffre d’affaire</div>
@@ -125,12 +124,9 @@
 
         <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
 
-        <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
-        <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
-        <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
-        <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
-        <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
-        <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
+        {#each {length:6} as _}
+            <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
+        {/each}
 
        
     </div>
@@ -144,11 +140,8 @@
 
         <line mask="url(#mask-line)" id="chiffre-line" fill="none" stroke="#DBFF94" stroke-miterlimit="10" stroke-dasharray="9" x1="0" y1="49.25%" x2="100%" y2="49.25%"/>
         
-        <!-- <circle fill="red" cx="481.68" cy="489.67" r="100.9"/>
-        <circle fill="red" cx="800.56" cy="489.67" r="100.9"/>
-        <circle fill="red" cx="1119.44" cy="489.67" r="100.9"/>
-        <circle fill="red" cx="1438.32" cy="489.67" r="100.9"/> -->
     </svg>
+    
 </section>
 
 <style lang="postcss">
@@ -159,6 +152,30 @@
     
     circle {
         cursor: pointer;
+    }
+
+    .circle-1:after, .circle-2:after, .circle-3:after, .circle-4:after {
+        opacity: var(--secteur-opacite);
+        content: '';
+        position: absolute;
+        left:16%;
+        width: inherit;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+
+    .circle-4:after {
+        background-image: url('/chiffres-cles/expertises.png');
+    }
+    .circle-3:after {
+        background-image: url('/chiffres-cles/missions.png');
+    }
+    .circle-2:after {
+        background-image: url('/chiffres-cles/bureaux.png');
+    }
+    .circle-1:after {
+        background-image: url('/chiffres-cles/collaborateurs.png');
     }
 
     /* .chiffres-cles {

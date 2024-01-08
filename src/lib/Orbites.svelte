@@ -224,8 +224,8 @@
 
 <section id="section-orbits" class="w-screen bg-amande aspect-video overflow-hidden" bind:this={orbitsEl}>
     
-    <div id="big-mask-orbits" class="bg-amande w-full aspect-video absolute z-[2] flex items-center leading-loose text-xl">
-        <div class="w-2/6 ml-auto mr-[8.5vw] font-light skew-x-[-16.34deg]">
+    <div id="big-mask-orbits" class="bg-amande w-full aspect-video absolute z-[2] flex items-center leading-loose text-[1vw]">
+        <div class="w-2/6 ml-auto mr-[10.7vw] font-light skew-x-[-16.34deg]">
             En tant acteur multi-spécialiste de la gestion des risques, notre mission est d’apporter des solutions d’indemnisation sur l’ensemble de la chaîne de sinistres. Grâce à nos 17 entités de spécialité, nous construisons pour nos clients des solutions sur-mesure en fonction de leur stratégie et de leurs besoins.
         </div>
     </div>

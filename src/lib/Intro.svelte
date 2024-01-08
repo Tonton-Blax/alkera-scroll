@@ -311,9 +311,7 @@
 
 
 <style lang="postcss">
-    svg, circle, line {
-        will-change: transform;
-    }
+    
     #scroll-down {
         animation: bounce 2s infinite;
     }

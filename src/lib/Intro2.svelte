@@ -149,7 +149,7 @@
 
 
 
-    <div id="intro-part-2" class="z-[2] absolute w-full h-full opacity-0 flex">
+    <div id="intro-part-2" class="z-[12] absolute w-full h-full opacity-0 flex">
 
         <div id="bloc-text" class="absolute max-h-fit h-fit self-center my-auto overflow-hidden font-light right-[10%] text-[1.5vw] flex w-[35%] leading-[3vw]">
             <span class="bloc-text-contenu self-center">
@@ -225,12 +225,9 @@
 
 <style lang="postcss">
     
-    /* #transition-intro {
-        shape-rendering: optimizeSpeed;
-        text-rendering: optimizeSpeed;
-        color-rendering: optimizeSpeed;
+    #la-ligne-1, #la-ligne-2, #le-cercle-1, #le-cercle-2  {
         will-change:transform;
-    } */
+    }
 
     #scroll-down {
         animation: bounce 2s infinite;

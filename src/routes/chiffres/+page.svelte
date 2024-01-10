@@ -27,7 +27,7 @@
         },0)
 
         .from(".chiffre-circle", {
-            background:'#DBFF94',
+            background:'#D6FC8A',
             stagger: { each: 0.05 },
         },0)
 
@@ -142,7 +142,7 @@
             <line id="chiffre-line-masked" fill="none" stroke="white" stroke-miterlimit="10" stroke-dasharray="9" x1="0" y1="49.25%" x2="100%" y2="49.25%"/>
         </mask>
 
-        <line mask="url(#mask-line)" id="chiffre-line" fill="none" stroke="#DBFF94" stroke-miterlimit="10" stroke-dasharray="9" x1="0" y1="49.25%" x2="100%" y2="49.25%"/>
+        <line mask="url(#mask-line)" id="chiffre-line" fill="none" stroke="#D6FC8A" stroke-miterlimit="10" stroke-dasharray="9" x1="0" y1="49.25%" x2="100%" y2="49.25%"/>
         
         <!-- <circle fill="red" cx="481.68" cy="489.67" r="100.9"/>
         <circle fill="red" cx="800.56" cy="489.67" r="100.9"/>

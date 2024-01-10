@@ -183,7 +183,7 @@
                 r="87"
                 transform="rotate(0)"
                 stroke-dasharray="0.5"
-                fill="none" stroke="#DBFF94" 
+                fill="none" stroke="#D6FC8A" 
                 stroke-width="0.1" 
                 stroke-miterlimit="10"
                 transform-origin="150px 150px"
@@ -203,14 +203,14 @@
                 transform-origin="150px 150px"
                 transform="rotate(0)scale(0)"
                 id="intro-line2"
-                fill="none" stroke="#DBFF94" stroke-width="0.1" stroke-miterlimit="10" stroke-dasharray="0.8385" x1="219.26" y1="171.34" x2="74.68" y2="126.77"
+                fill="none" stroke="#D6FC8A" stroke-width="0.1" stroke-miterlimit="10" stroke-dasharray="0.8385" x1="219.26" y1="171.34" x2="74.68" y2="126.77"
             />
 
             <circle 
                 transform-origin="150px 150px"
                 transform="scale(0.145)"
                 id="le-point"
-                filter="url(#logo-alkera-intro)" cx="150" cy="150" r="50" fill="#DBFF94"
+                filter="url(#logo-alkera-intro)" cx="150" cy="150" r="50" fill="#D6FC8A"
             />
         </g>
 
@@ -228,8 +228,8 @@
             class="w-[2vw] h-auto mx-auto mt-[2vw]" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
             id="scroll-down" x="0" y="0" version="1.1" viewBox="0 0 54 79.4"
         >
-            <path stroke-width=1 stroke-miterlimit=10 fill="none" stroke="#dbff94" d="M27 78.9C12.4 78.9.5 67 .5 52.4V27C.5 12.4 12.4.5 27 .5S53.5 12.3 53.5 27v25.4C53.5 67 41.6 78.9 27 78.9zM27 20v27.2"/>
-            <path d="M18.6 44.7 27 59.2l8.4-14.5z" fill="#dbff94"/>
+            <path stroke-width=1 stroke-miterlimit=10 fill="none" stroke="#D6FC8A" d="M27 78.9C12.4 78.9.5 67 .5 52.4V27C.5 12.4 12.4.5 27 .5S53.5 12.3 53.5 27v25.4C53.5 67 41.6 78.9 27 78.9zM27 20v27.2"/>
+            <path d="M18.6 44.7 27 59.2l8.4-14.5z" fill="#D6FC8A"/>
         </svg>
     </div>
     <div class="w-1/3 h-full"/>
@@ -358,7 +358,7 @@
         left: 0;
         right: 0;
         z-index: 1;
-        background-image: linear-gradient( #DBFF94FF 0%, #DBFF9400 20% );
+        background-image: linear-gradient( #D6FC8AFF 0%, #D6FC8A00 20% );
     } */
     
     #bloc-text:after {
@@ -369,7 +369,7 @@
         left: 0;
         right: 0;
         height: 100%;
-        background-image: linear-gradient( #DBFF9400 80%, #DBFF94FF 100% );
+        background-image: linear-gradient( #D6FC8A00 80%, #D6FC8AFF 100% );
     }
 
     .bloc-text-contenu::-webkit-scrollbar {

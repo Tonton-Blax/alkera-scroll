@@ -153,7 +153,7 @@
         left: 0;
         right: 0;
         z-index: 1;
-        background-image: linear-gradient( #DBFF94FF 0%, #DBFF9400 20% );
+        background-image: linear-gradient( #D6FC8AFF 0%, #D6FC8A00 20% );
     }
     
     #bloc-text:after {
@@ -163,7 +163,7 @@
         bottom: 0;
         left: 0;
         right: 0;
-        background-image: linear-gradient( #DBFF9400 80%, #DBFF94FF 100% );
+        background-image: linear-gradient( #D6FC8A00 80%, #D6FC8AFF 100% );
     }
     
 

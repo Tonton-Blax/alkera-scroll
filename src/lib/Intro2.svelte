@@ -124,8 +124,8 @@
                 <div id="le-point" class="rounded-full absolute w-[1.7vw] h-[1.7vw] bg-amande z-[2]" />
                 <div id="le-cercle-1" class="cercle-intro rounded-full absolute w-[10vw] h-[10vw] border-white border-dashed border-[0.65px]" />
                 <div id="le-cercle-2" class="cercle-intro rounded-full absolute w-[17vw] h-[17vw] border-amande border-dashed border-[0.65px]" />
-                <div id="la-ligne-1" class="rounded-full absolute w-[17vw] h-[1px] border-amande border-dashed border-[0.5px]" />
-                <div id="la-ligne-2" class="rounded-full absolute h-[20vw] w-[1px] border-white border-dashed border-[0.5px]" />
+                <div id="la-ligne-1" class="rounded-full absolute h-[16.9vw] w-[1px] border-amande border-dotted border-[0.25px]" />
+                <div id="la-ligne-2" class="rounded-full absolute h-[20vw] w-[1px] border-white border-dashed border-[0.25px]" />
         </div>
             
 
@@ -141,8 +141,8 @@
             class="w-[2vw] h-auto mx-auto mt-[2vw]" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
             id="scroll-down" x="0" y="0" version="1.1" viewBox="0 0 54 79.4"
         >
-            <path stroke-width=1 stroke-miterlimit=10 fill="none" stroke="#dbff94" d="M27 78.9C12.4 78.9.5 67 .5 52.4V27C.5 12.4 12.4.5 27 .5S53.5 12.3 53.5 27v25.4C53.5 67 41.6 78.9 27 78.9zM27 20v27.2"/>
-            <path d="M18.6 44.7 27 59.2l8.4-14.5z" fill="#dbff94"/>
+            <path stroke-width=1 stroke-miterlimit=10 fill="none" stroke="#D6FC8A" d="M27 78.9C12.4 78.9.5 67 .5 52.4V27C.5 12.4 12.4.5 27 .5S53.5 12.3 53.5 27v25.4C53.5 67 41.6 78.9 27 78.9zM27 20v27.2"/>
+            <path d="M18.6 44.7 27 59.2l8.4-14.5z" fill="#D6FC8A"/>
         </svg>
     </div>
     <div class="w-1/3 h-full"/>
@@ -274,7 +274,7 @@
         left: 0;
         right: 0;
         z-index: 1;
-        background-image: linear-gradient( #DBFF94FF 0%, #DBFF9400 20% );
+        background-image: linear-gradient( #D6FC8AFF 0%, #D6FC8A00 20% );
     } */
     
     #bloc-text:after {
@@ -285,7 +285,7 @@
         left: 0;
         right: 0;
         height: 100%;
-        background-image: linear-gradient( #DBFF9400 80%, #DBFF94FF 100% );
+        background-image: linear-gradient( #D6FC8A00 80%, #D6FC8AFF 100% );
     }
 
     .bloc-text-contenu::-webkit-scrollbar {

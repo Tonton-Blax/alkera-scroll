@@ -69,9 +69,9 @@
         .to('#transition-intro', {scale:60, duration:baseDuration * 1.5, ease:'circ.in'},0)
         .from('#le-cercle-1, #le-cercle-2, #la-ligne-1, #la-ligne-2', { scale:0, duration: baseDuration, ease:'none', stagger: {each: 0.01 }},0)
         .to('#le-point', { scale:2, duration: baseDuration * 2 },0)
-        .to('#la-ligne-1', { rotate: -360, duration: baseDuration * 1.5, ease:'steps(25)'},0)
-        .to('#la-ligne-2', { rotate: 720, duration: baseDuration * 1.5, ease:'none'},0)
-        .to('#le-cercle-1', { rotate:-360, duration: baseDuration, ease:'none'},0)
+        //.to('#la-ligne-1', { rotate: -360, duration: baseDuration * 1.5, ease:'steps(25)'},0)
+        //.to('#la-ligne-2', { rotate: 720, duration: baseDuration * 1.5, ease:'none'},0)
+        //.to('#le-cercle-1', { rotate:-360, duration: baseDuration, ease:'none'},0)
         .to('#le-cercle-2', { rotate:360, duration: baseDuration, ease:'none'},0)
         .to('#intro-part-2', { autoAlpha: 1 , duration: baseDuration * 0.2, ease:'none'},0.128)
         .fromTo('.bloc-text-contenu', { yPercent: 100 }, { yPercent: 5, duration: baseDuration * 0.5 }, 0.128 )
@@ -123,9 +123,9 @@
         <div id="transition-intro" class="absolute translate-x-[32.5vw] -translate-y-[5.9vw] border-[1px] flex justify-center items-center w-fit h-fit">
                 <div id="le-point" class="rounded-full absolute w-[1.7vw] h-[1.7vw] bg-amande z-[2]" />
                 <div id="le-cercle-1" class="cercle-intro rounded-full absolute w-[10vw] h-[10vw] border-white border-dashed border-[0.65px]" />
-                <div id="le-cercle-2" class="cercle-intro rounded-full absolute w-[17vw] h-[17vw] border-amande border-dashed border-[0.65px]" />
-                <div id="la-ligne-1" class="rounded-full absolute h-[16.9vw] w-[1px] border-amande border-dotted border-l-[0.25px]" />
-                <div id="la-ligne-2" class="rounded-full absolute h-[20vw] w-[1px] border-white border-dashed border-l-[0.25px]" />
+                <!-- <div id="le-cercle-2" class="cercle-intro rounded-full absolute w-[17vw] h-[17vw] border-amande border-dashed border-[0.65px]" /> -->
+                <!-- <div id="la-ligne-1" class="rounded-full absolute h-[16.9vw] w-[1px] border-amande border-dotted border-l-[0.25px]" />
+                <div id="la-ligne-2" class="rounded-full absolute h-[20vw] w-[1px] border-white border-dashed border-l-[0.25px]" /> -->
         </div>
             
 
@@ -224,11 +224,12 @@
 
 
 <style lang="postcss">
-/*    
+ 
     #la-ligne-1, #la-ligne-2, #le-cercle-1, #le-cercle-2  {
-        will-change:transform;
+        shape-rendering: optimizeSpeed;
+        color-rendering: optimizeSpeed;
     }
-*/
+    
     #scroll-down {
         animation: bounce 2s infinite;
     }

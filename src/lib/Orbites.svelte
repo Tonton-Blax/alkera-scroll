@@ -222,7 +222,7 @@
 </script>
 
 
-<section id="section-orbits" class="w-screen bg-amande aspect-video overflow-hidden" bind:this={orbitsEl}>
+<section id="section-orbits" class="flex w-screen bg-amande aspect-video overflow-hidden" bind:this={orbitsEl}>
     
     <div id="big-mask-orbits" class="bg-amande w-full aspect-video absolute z-[2] flex items-center leading-loose text-[1vw]">
         <div class="w-2/6 ml-auto mr-[10.7vw] font-light skew-x-[-16.34deg]">
@@ -254,7 +254,7 @@
 
 <svg bind:this={galaxy} 
     color-interpolation-filters="sRGB"
-    class="w-4/5 h-auto mx-auto overflow-visible" 
+    class="w-9/12 h-auto mx-auto overflow-visible" 
     xmlns="http://www.w3.org/2000/svg" xml:space="preserve" id="Calque_1" x="0" y="0" version="1.1" viewBox="0 0 1360.5 988.92"
 >
 

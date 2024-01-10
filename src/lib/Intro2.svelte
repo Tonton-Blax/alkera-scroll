@@ -67,12 +67,13 @@
         })
         .to('#scroll-down', { opacity: 0, duration: baseDuration * 0.5 },0)
         .to('#transition-intro', {scale:60, duration:baseDuration * 1.5, ease:'circ.in'},0)
-        .from('#le-cercle-1, #le-cercle-2, #la-ligne-1, #la-ligne-2', { scale:0, duration: baseDuration, ease:'none', stagger: {each: 0.01 }},0)
+        // .from('#le-cercle-1, #le-cercle-2, #la-ligne-1, #la-ligne-2', { scale:0, duration: baseDuration, ease:'none', stagger: {each: 0.01 }},0)
+        .from('#le-cercle-1', { scale:0, duration: baseDuration, ease:'none', stagger: {each: 0.01 }},0)
         .to('#le-point', { scale:2, duration: baseDuration * 2 },0)
         //.to('#la-ligne-1', { rotate: -360, duration: baseDuration * 1.5, ease:'steps(25)'},0)
         //.to('#la-ligne-2', { rotate: 720, duration: baseDuration * 1.5, ease:'none'},0)
-        //.to('#le-cercle-1', { rotate:-360, duration: baseDuration, ease:'none'},0)
-        .to('#le-cercle-2', { rotate:360, duration: baseDuration, ease:'none'},0)
+        .to('#le-cercle-1', { rotate:-360, duration: baseDuration, ease:'none'},0)
+        // .to('#le-cercle-2', { rotate:360, duration: baseDuration, ease:'none'},0)
         .to('#intro-part-2', { autoAlpha: 1 , duration: baseDuration * 0.2, ease:'none'},0.128)
         .fromTo('.bloc-text-contenu', { yPercent: 100 }, { yPercent: 5, duration: baseDuration * 0.5 }, 0.128 )
         .from('.mask-outline-secteur-2', {drawSVG: '0%', duration: baseDuration * 0.25 }, 0.128 )
@@ -122,7 +123,7 @@
 
         <div id="transition-intro" class="absolute translate-x-[32.5vw] -translate-y-[5.9vw] border-[1px] flex justify-center items-center w-fit h-fit">
                 <div id="le-point" class="rounded-full absolute w-[1.7vw] h-[1.7vw] bg-amande z-[2]" />
-                <div id="le-cercle-1" class="cercle-intro rounded-full absolute w-[10vw] h-[10vw] border-white border-dashed border-[0.65px]" />
+                <div id="le-cercle-1" class="cercle-intro rounded-full absolute w-[10vw] h-[10vw] border-white border-dashed border-[0.005px]" />
                 <!-- <div id="le-cercle-2" class="cercle-intro rounded-full absolute w-[17vw] h-[17vw] border-amande border-dashed border-[0.65px]" /> -->
                 <!-- <div id="la-ligne-1" class="rounded-full absolute h-[16.9vw] w-[1px] border-amande border-dotted border-l-[0.25px]" />
                 <div id="la-ligne-2" class="rounded-full absolute h-[20vw] w-[1px] border-white border-dashed border-l-[0.25px]" /> -->
@@ -152,7 +153,7 @@
     <div id="intro-part-2" class="z-[12] absolute w-full h-full opacity-0 flex">
 
         <div id="bloc-text" class="absolute max-h-fit h-fit self-center my-auto overflow-hidden font-light right-[10%] text-[1.5vw] flex w-[35%] leading-[3vw]">
-            <span class="bloc-text-contenu self-center">
+            <span class="bloc-text-contenu self-center text-feuille">
                 <br>&nbsp;
                 <br>
                 Depuis plus de 25 ans, le Groupe Alkera développe une expertise complète et reconnue sur l’ensemble de la chaîne du sinistre en France et l’international. Du diagnostic technique jusqu’à la réparation en passant par l’expertise de sinistres, nous proposons une offre complète avant, pendant et après sinistre.
@@ -229,7 +230,7 @@
         shape-rendering: optimizeSpeed;
         color-rendering: optimizeSpeed;
     }
-    
+
     #scroll-down {
         animation: bounce 2s infinite;
     }

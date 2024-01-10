@@ -124,8 +124,8 @@
                 <div id="le-point" class="rounded-full absolute w-[1.7vw] h-[1.7vw] bg-amande z-[2]" />
                 <div id="le-cercle-1" class="cercle-intro rounded-full absolute w-[10vw] h-[10vw] border-white border-dashed border-[0.65px]" />
                 <div id="le-cercle-2" class="cercle-intro rounded-full absolute w-[17vw] h-[17vw] border-amande border-dashed border-[0.65px]" />
-                <div id="la-ligne-1" class="rounded-full absolute h-[16.9vw] w-[1px] border-amande border-dotted border-[0.25px]" />
-                <div id="la-ligne-2" class="rounded-full absolute h-[20vw] w-[1px] border-white border-dashed border-[0.25px]" />
+                <div id="la-ligne-1" class="rounded-full absolute h-[16.9vw] w-[1px] border-amande border-dotted border-l-[0.25px]" />
+                <div id="la-ligne-2" class="rounded-full absolute h-[20vw] w-[1px] border-white border-dashed border-l-[0.25px]" />
         </div>
             
 
@@ -224,11 +224,11 @@
 
 
 <style lang="postcss">
-    
+/*    
     #la-ligne-1, #la-ligne-2, #le-cercle-1, #le-cercle-2  {
         will-change:transform;
     }
-
+*/
     #scroll-down {
         animation: bounce 2s infinite;
     }

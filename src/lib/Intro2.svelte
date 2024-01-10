@@ -66,20 +66,17 @@
             }
         })
         .to('#scroll-down', { opacity: 0, duration: baseDuration * 0.5 },0)
-        .to('#transition-intro', {scale:20, duration:baseDuration * 1.5, ease:'circ.in'},0)
-        .from('#intro-line1-masked', { drawSVG: '0%', duration: baseDuration * 0.67 },0)
-        .to('#intro-line2-masked', { attr: {transform: "scale(1)"}, duration: baseDuration },0)
-        .from('#trace-interieur-masked', { drawSVG: '0%', duration: baseDuration },0)
-        .from('#trace-exterieur-masked', { drawSVG: '0%', duration: baseDuration },0.01)
-        .to('#le-point', { attr: {transform: "scale(1)"}, duration: baseDuration * 2 },0)
-        .to('#intro-line1', { attr: {transform: "rotate(-360)"}, duration: baseDuration * 1.5, ease:'steps(25)'},0)
-        .to('#intro-line2', { attr: {transform: "rotate(-720)"}, duration: baseDuration * 1.5, ease:'none'},0)
-        .to('#trace-interieur', { attr: {transform: "rotate(-360)"}, duration: baseDuration, ease:'none'},0)
-        .to('#trace-exterieur', { attr: {transform: "rotate(360)"}, duration: baseDuration, ease:'none'},0)
+        .to('#transition-intro', {scale:60, duration:baseDuration * 1.5, ease:'circ.in'},0)
+        .from('#le-cercle-1, #le-cercle-2, #la-ligne-1, #la-ligne-2', { scale:0, duration: baseDuration, ease:'none', stagger: {each: 0.01 }},0)
+        .to('#le-point', { scale:2, duration: baseDuration * 2 },0)
+        .to('#la-ligne-1', { rotate: -360, duration: baseDuration * 1.5, ease:'steps(25)'},0)
+        .to('#la-ligne-2', { rotate: 720, duration: baseDuration * 1.5, ease:'none'},0)
+        .to('#le-cercle-1', { rotate:-360, duration: baseDuration, ease:'none'},0)
+        .to('#le-cercle-2', { rotate:360, duration: baseDuration, ease:'none'},0)
         .to('#intro-part-2', { autoAlpha: 1 , duration: baseDuration * 0.2, ease:'none'},0.128)
         .fromTo('.bloc-text-contenu', { yPercent: 100 }, { yPercent: 5, duration: baseDuration * 0.5 }, 0.128 )
-        .from('.mask-content-2', {drawSVG: '0%', duration: baseDuration * 0.25 }, 0.128 )
-        .from('.mask-content-1', {drawSVG: '100% 100%', duration: baseDuration * 0.25 }, '>' )
+        .from('.mask-outline-secteur-2', {drawSVG: '0%', duration: baseDuration * 0.25 }, 0.128 )
+        .from('.mask-outline-secteur-1', {drawSVG: '100% 100%', duration: baseDuration * 0.25 }, '>' )
         .from('.secteur-circle', { attr: {transform: "scale(0)"}, duration: baseDuration * 0.50, stagger: { each: (baseDuration * 0.50 )/9, from: 0 }}, 0.12 )
         .from('.secteur-circle', {opacity: 1, duration: baseDuration * 1.5 }, '>' )
         //await tick();
@@ -106,14 +103,13 @@
 </script>
 
 
-<section id="section-intro" class="w-screen h-screen bg-feuille relative overflow-clip flex z-[0]">
+<section id="section-intro" class="w-screen h-screen bg-feuille relative overflow-clip flex">
 
     <div class="w-1/3 h-full"/>
     <div class="w-1/3 h-full flex flex-col justify-center">
         <svg bind:this={SVG} 
-            color-interpolation-filters="sRGB"
-            id="transition-intro-wrapper"
-            class="w-full h-auto overflow-visible z-[1]" 
+            id="logo-alkera-et-texte"
+            class="w-full h-auto overflow-visible" 
             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="300px" y="300px" viewBox="0 10 300 300"
         >
         
@@ -122,99 +118,17 @@
             <path d="M166.2 186.9c-8.8 0-16-7.6-16-16.9 0-9.3 7.1-16.9 16-16.9 2.4 0 4.8.6 6.9 1.7l-14.2 16.8c-1.8 2.2-1.6 5.5.6 7.3 2.2 1.8 5.5 1.6 7.3-.6l21.1-24.9c-5-6.4-13.1-10.9-21.8-10.9-15.1 0-27.5 12.3-27.4 27.5 0 15.1 12.3 27.5 27.5 27.4 11.4 0 21.7-7.1 25.7-17.8h-12.6c-2.9 4.4-7.7 7.3-13.1 7.3m58.6-39.1c0-2.9-2.4-5.3-5.3-5.3-12.4 0-23.3 9.1-23.3 21.5v27.8c0 3.1 2.5 5.5 5.5 5.5h5.5v-32.8c0-6.3 5.9-11.5 12.2-11.5 3 .1 5.4-2.3 5.4-5.2" class="st1"/>
         </g>
 
-        <g id="transition-intro" transform="translate(142.5,40)" transform-origin="118 87">
-
-            <mask id="mask-line-intro" maskUnits="userSpaceOnUse">
-                <line 
-                    id="intro-line1-masked"
-                    transform-origin="150px 150px"
-                    transform="rotate(0)"
-                    fill="none" stroke="white" stroke-width="10" x1="230.98" y1="125" x2="38.98" y2="184.18"
-                />
-            </mask>
-
-            <line 
-                mask="url(#mask-line-intro)"
-                transform-origin="150px 150px"
-                transform="rotate(0)"
-                id="intro-line1"
-                fill="none" stroke="#FFFFFF" stroke-miterlimit="10" stroke-dasharray="0.6" stroke-width="0.1" x1="230.98" y1="125" x2="38.98" y2="184.18"
-            />
-            
-            <mask id="mask-trace-interieur" maskUnits="userSpaceOnUse">
-                <circle id="trace-interieur-masked"
-                cx="150px"
-                cy="150px"
-                r="65"
-                fill="none" stroke="white" 
-                stroke-width="10" 
-                transform-origin="150px 150px"
-            />
-            </mask>
-
-            <circle id="trace-interieur"
-                mask="url(#mask-trace-interieur)"
-                cx="150px"
-                cy="150px"
-                r="65"
-                transform="rotate(0)scale(0)"
-                stroke-dasharray="2"
-                fill="none" stroke="white" 
-                stroke-width="0.1" 
-                stroke-miterlimit="10"
-                transform-origin="150px 150px"
-            />
-
-            <mask id="mask-trace-exterieur" maskUnits="userSpaceOnUse">
-                <circle id="trace-exterieur-masked"
-                    cx="150px"
-                    cy="150px"
-                    r="87"
-                    fill="none" stroke="white"
-                    stroke-width="10"
-                    transform-origin="150px 150px"
-                />
-            </mask>
-
-            <circle id="trace-exterieur"
-                mask="url(#mask-trace-exterieur)"
-                cx="150px"
-                cy="150px"
-                r="87"
-                transform="rotate(0)"
-                stroke-dasharray="0.5"
-                fill="none" stroke="#DBFF94" 
-                stroke-width="0.1" 
-                stroke-miterlimit="10"
-                transform-origin="150px 150px"
-            />
-            <!-- stroke-dasharray="0.6003,0.6003" -->
-                
-            <mask id="mask-line2-intro" maskUnits="userSpaceOnUse">
-                <line
-                    transform-origin="150px 150px"
-                    transform="rotate(0)"
-                    id="intro-line2-masked"
-                    fill="none" stroke="white" x1="219.26" y1="171.34" x2="74.68" y2="126.77"
-                />
-            </mask>
-            <line
-                mask="url(#mask-line2-intro)"
-                transform-origin="150px 150px"
-                transform="rotate(0)scale(0)"
-                id="intro-line2"
-                fill="none" stroke="#DBFF94" stroke-width="0.1" stroke-miterlimit="10" stroke-dasharray="0.8385" x1="219.26" y1="171.34" x2="74.68" y2="126.77"
-            />
-
-            <circle 
-                transform-origin="150px 150px"
-                transform="scale(0.145)"
-                id="le-point"
-                filter="url(#logo-alkera-intro)" cx="150" cy="150" r="50" fill="#DBFF94"
-            />
-        </g>
-
         </svg>
+
+        <div id="transition-intro" class="absolute translate-x-[32.5vw] -translate-y-[5.9vw] border-[1px] flex justify-center items-center w-fit h-fit">
+                <div id="le-point" class="rounded-full absolute w-[1.7vw] h-[1.7vw] bg-amande z-[2]" />
+                <div id="le-cercle-1" class="cercle-intro rounded-full absolute w-[10vw] h-[10vw] border-white border-dashed border-[0.65px]" />
+                <div id="le-cercle-2" class="cercle-intro rounded-full absolute w-[17vw] h-[17vw] border-amande border-dashed border-[0.65px]" />
+                <div id="la-ligne-1" class="rounded-full absolute w-[17vw] h-[1px] border-amande border-dashed border-[0.5px]" />
+                <div id="la-ligne-2" class="rounded-full absolute h-[20vw] w-[1px] border-white border-dashed border-[0.5px]" />
+        </div>
+            
+
         <div class="text-amande z-[0] text-center overflow-visible relative -top-[10vw] w-[150%] self-center">
             <p class="text-[4vw] font-thin whitespace-nowrap">
                 L'imprévu s'arrête là
@@ -224,7 +138,6 @@
             </p>
         </div>
         <svg
-            color-interpolation-filters="sRGB"
             class="w-[2vw] h-auto mx-auto mt-[2vw]" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
             id="scroll-down" x="0" y="0" version="1.1" viewBox="0 0 54 79.4"
         >
@@ -236,7 +149,7 @@
 
 
 
-    <div id="intro-part-2" class="z-[10] absolute w-full h-full opacity-0 flex">
+    <div id="intro-part-2" class="z-[2] absolute w-full h-full opacity-0 flex">
 
         <div id="bloc-text" class="absolute max-h-fit h-fit self-center my-auto overflow-hidden font-light right-[10%] text-[1.5vw] flex w-[35%] leading-[3vw]">
             <span class="bloc-text-contenu self-center">
@@ -255,10 +168,10 @@
         >
     
         <mask id="mask-part-1" class="mask-part" maskUnits="userSpaceOnUse">
-            <path class="mask-content-2" fill="none" stroke="white" d="M335.7,343.15h452.29 c55.61,0,100.69,45.08,100.69,100.69v0c0,55.61-45.08,100.69-100.69,100.69H288.21"/>        
+            <path class="mask-outline-secteur-2" fill="none" stroke="white" d="M335.7,343.15h452.29 c55.61,0,100.69,45.08,100.69,100.69v0c0,55.61-45.08,100.69-100.69,100.69H288.21"/>        
         </mask>
         <mask id="mask-part-2" class="mask-part" maskUnits="userSpaceOnUse">
-            <path class="mask-content-1" fill="none" stroke="white" d="M732.25,745.91H288.21 c-55.61,0-100.69-45.08-100.69-100.69v0c0-55.61,45.08-100.69,100.69-100.69"/>
+            <path class="mask-outline-secteur-1" fill="none" stroke="white" d="M732.25,745.91H288.21 c-55.61,0-100.69-45.08-100.69-100.69v0c0-55.61,45.08-100.69,100.69-100.69"/>
         </mask>
             <path class="path-part part-1" mask="url(#mask-part-1)" fill="none" stroke="#12473B" stroke-linecap="round" stroke-miterlimit="10" stroke-dasharray="9" d="M335.7,343.15h452.29 c55.61,0,100.69,45.08,100.69,100.69v0c0,55.61-45.08,100.69-100.69,100.69H288.21"/>
             <path class="path-part part-2" mask="url(#mask-part-2)" fill="none" stroke="#12473B" stroke-linecap="round" stroke-miterlimit="10" stroke-dasharray="9" d="M732.25,745.91H288.21 c-55.61,0-100.69-45.08-100.69-100.69v0c0-55.61,45.08-100.69,100.69-100.69"/>
@@ -293,7 +206,7 @@
                     transform-origin="{secteur.xy[j][0]} {secteur.xy[j][1]}"
                 />
                 {#if hoveredGroup && hoveredGroup === secteur.id}
-                <text in:fly={{duration: 650, y: "10%", delay: j*120}}
+                <text in:fly={{duration: 650, y: "1vw", delay: j*120}}
                     text-anchor="middle" class="fill-feuille"
                     x="{secteur.xy[j][0]}" y="{secteur.xy[j][1]+100}"
                 >
@@ -312,9 +225,12 @@
 
 <style lang="postcss">
     
-    #transition-intro, circle, #transition-intro line {
+    /* #transition-intro {
         shape-rendering: optimizeSpeed;
-    }
+        text-rendering: optimizeSpeed;
+        color-rendering: optimizeSpeed;
+        will-change:transform;
+    } */
 
     #scroll-down {
         animation: bounce 2s infinite;
@@ -335,7 +251,7 @@
         opacity: 0;
         transform-origin: 50% 50%;
         transform-box: content-box;
-        animation: rotating 7s linear infinite;
+        animation: rotating 16s linear infinite;
     }
     @keyframes rotating {
         from {

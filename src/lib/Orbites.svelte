@@ -136,7 +136,6 @@
             scrollTrigger:  {
                 // @ts-ignore
                 refreshPriority: order,
-                markers: true,
                 anticipatePin: 1,
                 onScrubComplete: () => {
                     if (!intervalIdle)

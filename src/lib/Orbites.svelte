@@ -33,16 +33,22 @@
 
     let readyLine = false;
 
-    const SCALE_FACTOR = 0.115;
+    const SCALE_FACTOR = 0.105;
 
     /** @type {undefined | App.Metier} */
     let toGroup;
 
     /** @type {App.Metier} */
-    let fromGroup = 'initial'
+    let fromGroup = 'initial';
+
+    /** @type {number} */
+    let intervalIdle;
 
     const duration = 80;
-    
+
+    const resizeOrbit = 50;
+    const initialHeight = 988.92;
+        
     /** @type {App.Planet[]} */
     const entites = [
         { url : '/', id: 'pyrim',                  orbit: 'internal',  order: 1,    groups: ['audit', 'gestion'] },
@@ -110,7 +116,7 @@
             const { tl } = entite;
             if (!tl) return;
             const orbit = orbits[entite.orbit];
-            const direction = orbit.direction.direction; 
+            const direction = orbit.direction.direction;
             const nextProgress = tl?.labels.initialPosition + orbit.offsetGroup[metier];
             gsap.to(tl, {
                 progress: `+=${gsap.utils.wrap(0, 1, nextProgress - tl.progress())}`, 
@@ -125,10 +131,17 @@
         gsap.registerPlugin(MotionPathPlugin, DrawSVGPlugin, ScrollTrigger);
 
     onMount(async() => {
-        gsap.timeline({
+
+        const tl = gsap.timeline({
             scrollTrigger:  {
                 // @ts-ignore
                 refreshPriority: order,
+                markers: true,
+                anticipatePin: 1,
+                onScrubComplete: () => {
+                    if (!intervalIdle)
+                    intervalIdle = setInterval(() => changeGroup('audit'), 3000)
+                },
                 trigger: '#section-orbits',
                 scrub: 1,
                 start: (/** @type {{ previous: () => any; }} */ self) => {
@@ -215,6 +228,9 @@
 
     /** @param {App.Metier} metier*/
     function changeGroup (metier) {
+        clearInterval(intervalIdle);
+        // @ts-ignore
+        arrowPosition = document.querySelector(`#groupe-${metier}`).dataset.yArrow || 89;
         fromGroup = toGroup || 'initial';
         toGroup = metier;
         setGroupPosition(toGroup);
@@ -222,7 +238,7 @@
 </script>
 
 
-<section id="section-orbits" class="flex w-screen bg-amande aspect-video overflow-hidden" bind:this={orbitsEl}>
+<section id="section-orbits" class="w-screen bg-amande aspect-video overflow-hidden" bind:this={orbitsEl}>
     
     <div id="big-mask-orbits" class="bg-amande w-full aspect-video absolute z-[2] flex items-center leading-loose text-[1vw]">
         <div class="w-2/6 ml-auto mr-[10.7vw] font-light skew-x-[-16.34deg]">
@@ -230,7 +246,7 @@
         </div>
     </div>
 
-    <div id="noyau" class="absolute z-[3] translate-x-[43.2vw] rounded-full translate-y-[17.9vw] h-[10.5vw] w-[10.5vw] bg-feuille bg-[url('/orbits/alkera.png')] bg-contain"></div>
+    <div id="noyau" class="absolute z-[3] translate-x-[43.3vw] rounded-full translate-y-[17.9vw] h-[10vw] w-[10vw] bg-feuille bg-[url('/orbits/alkera.png')] bg-contain"></div>
     
     <div class="planets" bind:this={planetsEl}>
         {#each entites as entite, index(entite.id)}
@@ -254,8 +270,8 @@
 
 <svg bind:this={galaxy} 
     color-interpolation-filters="sRGB"
-    class="w-9/12 h-auto mx-auto overflow-visible" 
-    xmlns="http://www.w3.org/2000/svg" xml:space="preserve" id="Calque_1" x="0" y="0" version="1.1" viewBox="0 0 1360.5 988.92"
+    class="h-full w-auto mx-auto overflow-visible" 
+    xmlns="http://www.w3.org/2000/svg" xml:space="preserve" id="Calque_1" x="0" y="0" version="1.1" viewBox="0 0 1360.5 {initialHeight+(resizeOrbit * 2)}"
 >
 
     <g id="arrow-cursor" x="0" y="0" transform="translate(-125 89)" opacity="0" >
@@ -267,29 +283,26 @@
     <text transform="translate(-100 100)" 
 
         on:mouseover={(e) => {
-            if (!e.target?.dataset?.yArrow)
+            if (!e.target?.dataset?.yArrow || !!toGroup)
                 return;
             arrowPosition = e.target?.dataset?.yArrow
         }} 
-        on:mouseout={() => 
-            arrowPosition = undefined 
-        }
+        
     >
-        <tspan on:click={()=>changeGroup("audit")} opacity="0" x="0" y="0" data-y-arrow="89" fill="#12473B" class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Audit, conseil et prévention</tspan>
-        <tspan on:click={()=>changeGroup("gestion")} opacity="0" x="0" y="31.5" data-y-arrow="121" fill="#12473B" class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Gestion des risques et expertise</tspan>
-        <tspan on:click={()=>changeGroup("assistance")} opacity="0" x="0" y="63" data-y-arrow="152" fill="#12473B" class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Assistance et réparation</tspan>
-        <tspan on:click={()=>changeGroup("delegation")} opacity="0" x="0" y="94.5" data-y-arrow="183" fill="#12473B" class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Délégation</tspan>
+        <tspan on:click={()=>changeGroup("audit")} opacity="0" x="0" y="0" id="groupe-audit" data-y-arrow="89" fill="#12473B" class:fill-pervenche={toGroup === 'audit'} class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Audit, conseil et prévention</tspan>
+        <tspan on:click={()=>changeGroup("gestion")} opacity="0" x="0" y="31.5" id="groupe-gestion" data-y-arrow="121" fill="#12473B" class:fill-pervenche={toGroup === 'gestion'} class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Gestion des risques et expertise</tspan>
+        <tspan on:click={()=>changeGroup("assistance")} opacity="0" x="0" y="63" id="groupe-assistance" data-y-arrow="152" fill="#12473B" class:fill-pervenche={toGroup === 'assistance'} class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Assistance et réparation</tspan>
+        <tspan on:click={()=>changeGroup("delegation")} opacity="0" x="0" y="94.5" id="groupe-delegation" data-y-arrow="183" fill="#12473B" class:fill-pervenche={toGroup === 'delegation'} class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Délégation</tspan>
 
     </text>
     
-    <ellipse bind:this={internalOrbit} id="internal" class="ellipse" cx="659.02" cy="406.32" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="310.39" ry="147.85" transform="rotate(-16.342 659.08 406.403)"/>
-    <ellipse bind:this={middleOrbit} id="middle" class="ellipse" cx="667.44" cy="435.04" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="493.5" ry="237.51" transform="rotate(-16.342 667.5 435.124)"/>
-    <ellipse bind:this={externalOrbit} id="external" class="ellipse" cx="680.25" cy="478.73" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="701.55" ry="332.01" transform="rotate(-16.342 680.308 478.821)"/>
+    <ellipse bind:this={internalOrbit} id="internal" class="ellipse" cx="659.02" cy="{406.32 + resizeOrbit}" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="310.39" ry="147.85" transform="rotate(-16.342 659.08 406.403)"/>
+    <ellipse bind:this={middleOrbit} id="middle" class="ellipse" cx="667.44" cy="{435.04 + resizeOrbit}" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="493.5" ry="237.51" transform="rotate(-16.342 667.5 435.124)"/>
+    <ellipse bind:this={externalOrbit} id="external" class="ellipse" cx="680.25" cy="{478.73 + resizeOrbit}" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="701.55" ry="332.01" transform="rotate(-16.342 680.308 478.821)"/>
 
-    <mask id="theMask" maskUnits="userSpaceOnUse">
-        <path id="orbit-dash-line" fill="none" stroke="white" d="m540.57.34 289.74 988.25"/>
-    </mask>
-    <path id="orbit-dash-line-reveal" mask="url(#theMask)" fill="none" stroke="#12473B" stroke-dasharray="8.1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width=".675" d="m540.57.34 289.74 988.25"/>
+    <path id="orbit-dash-line-reveal" fill="none" stroke="#12473B" stroke-dasharray="8.1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width=".675" 
+        d="m521.57.34 318.71 1086.08"
+    />
 
   </svg>      
 </section>
@@ -317,26 +330,23 @@
     left:0%;
     content:"";    
     opacity: 0;
+    border-radius:100%;
     transition: scale 0.5s var(--spring-easing);
     scale:0.5;
 }
 .entite-circle:hover:before {
-    outline-offset: 8px;
-    /* outline: 1px dashed theme('colors.feuille'); */
-    background-size: 80% 80%;
-    background-position: center center;
-    background-repeat: no-repeat;
+    outline-offset: 0.4vw;
     animation: rotation 20s linear infinite;
-    scale:1.4;
+    scale:1;
     cursor: pointer;
     opacity: 1;
 }
 
 .entite-circle.activeGroup:hover:before {
-    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='100' ry='100' stroke='%236563CA' stroke-width='1' stroke-dasharray='6%2c 7' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+    outline: 1px dashed theme('colors.pervenche');
 }
 .entite-circle.inactiveGroup:hover:before {
-    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='100' ry='100' stroke='%2312473B' stroke-width='1' stroke-dasharray='6%2c 7' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+    outline: 1px dashed theme('colors.feuille');
 }
 
 .activeGroup {

@@ -15,7 +15,7 @@
         gsap.registerPlugin(DrawSVGPlugin,ScrollTrigger);
 
     onMount(async() => {
-        const tl =gsap.timeline({ scrollTrigger: {
+        const tl =gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: {
             // @ts-ignore
             refreshPriority: order,
             trigger: '#section-chiffres',
@@ -25,37 +25,47 @@
             pin: '#sections-wrapper',
         }})
         tl.to(".deco-circle", {
-            scale:0,
-            duration: 0.2,
-            stagger: { each: 0.025 },
+            scale:0.1,
+            duration: 0.4,
+            stagger: { 
+                amount: 0.12, 
+                grid: [3,6], 
+                axis: 'x', 
+                from: 'center'
+             },
         },0)
 
-        .from(".chiffre-circle", {
-            backgroundColor:'#D6FC8A',
-            backgroundImage: 'unset',
-            stagger: { each: 0.05 },
-        },0)
-        .to("#chiffres-el", {
-            '--secteur-opacite': 1, duration: 0.25,
-        },0.02)
+        tl.to(".chiffre-circle", {
+            scale:1,
+            duration: 1,
+            backgroundColor: '#FFFFFF',
+            stagger: { each: 1 / 4 },
+        },'>')
 
 
         .from("#chiffre-line-masked", {
-            duration: 0.5,
+            duration: 2,
             drawSVG: '0',
             ease: "Power1.inOut",
-        },0.01)
+        },'<')
+
+
+        .to("#chiffres-el", {
+            '--secteur-opacite': 1, 
+            duration: 0.5,
+        },'<')
+
 
         .from('.chiffres-wrapper',{ 
             opacity:0, 
-            duration:0.2, 
+            duration: 1, 
             stagger: { each: 0.05 }, 
             reversed: true 
-        },0.25)
+        },'<')
 
         .from('.chiffres-animes:not(.milliards)', {
             textContent: 1,
-            duration: 0.12,
+            duration: 0.25,
             ease: "none",
             snap: { textContent: 1 },
             stagger: {
@@ -68,7 +78,7 @@
                 },
             }
             
-        },0.25)
+        },'<')
 
     })
 
@@ -85,47 +95,47 @@
     >
 
         {#each {length:6} as _}
-        <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
+        <div class="deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
         {/each}
 
-        <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
+        <div class="deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
-            <div class="chiffre-circle circle-1 w-2/3 aspect-square rounded-full bg-white mx-auto mb-5"/>
-            <div class="chiffres-wrapper absolute text-[1.2vw]">
+            <div class="deco-circle chiffre-circle circle-1 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-5"/>
+            <div class="chiffres-wrapper absolute text-[1.5vw] w-max">
                 <span class="chiffres-animes">2000</span>
-                <div class="text-[0.7vw]">collaborateurs</div>
+                <div class="text-[0.9vw]">collaborateurs</div>
             </div>
         </div>
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
-            <div class="chiffre-circle circle-2 w-2/3 aspect-square rounded-full bg-white mx-auto mb-5"/>
-            <div class="chiffres-wrapper absolute text-[1.2vw]">
+            <div class="deco-circle chiffre-circle circle-2 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-5"/>
+            <div class="chiffres-wrapper absolute text-[1.5vw] w-max">
                 <span class="chiffres-animes milliards">4</span><span>&nbsp;Milliards €</span>
-                <div class="text-[0.7vw]">de dommages</div>
+                <div class="text-[0.9vw]">de dommages</div>
             </div>
         </div>
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
-            <div class="chiffre-circle circle-3 w-2/3 aspect-square rounded-full bg-white mx-auto mb-5"/>
-            <div class="chiffres-wrapper absolute text-[1.2vw]">
+            <div class="deco-circle chiffre-circle circle-3 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-5"/>
+            <div class="chiffres-wrapper absolute text-[1.5vw] w-max">
                 <span class="chiffres-animes">520000</span>
-                <div class="text-[0.7vw]">missions d’expertise</div>
+                <div class="text-[0.9vw]">missions d’expertise</div>
             </div>
         </div>
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
-            <div class="chiffre-circle circle-4 w-2/3 aspect-square rounded-full bg-white mx-auto mb-5"/>
-            <div class="chiffres-wrapper absolute text-[1.2vw]">
+            <div class="deco-circle chiffre-circle circle-4 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-5"/>
+            <div class="chiffres-wrapper absolute text-[1.5vw] w-max">
                 <span class="chiffres-animes">210</span><span>&nbsp;Millions</span>
-                <div class="text-[0.7vw]">de chiffre d’affaire</div>
+                <div class="text-[0.9vw]">de chiffre d’affaire</div>
             </div>
         </div>
 
-        <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
+        <div class="deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
 
         {#each {length:6} as _}
-            <div class="deco-circle self-center w-2/3 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
+            <div class="deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
         {/each}
 
        
@@ -158,9 +168,10 @@
         opacity: var(--secteur-opacite);
         content: '';
         position: absolute;
-        left:16%;
-        width: inherit;
+        left:0%;
+        width: 100%;
         height: 100%;
+        background-radius: 100%;
         background-repeat: no-repeat;
         background-size: contain;
     }

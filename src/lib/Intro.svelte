@@ -52,7 +52,9 @@
         gsap.registerPlugin(MotionPathPlugin, DrawSVGPlugin,ScrollTrigger, RoughEase);
 
     onMount(async() => {
+
         const el = document.querySelector('#section-intro');
+
         gsap.timeline({
             defaults: { ease: 'none' },
             scrollTrigger: {
@@ -110,6 +112,7 @@
 
     <div class="w-1/3 h-full"/>
     <div class="w-1/3 h-full flex flex-col justify-center">
+        
         <svg bind:this={SVG} 
             color-interpolation-filters="sRGB"
             id="transition-intro-wrapper"
@@ -232,9 +235,8 @@
             <path d="M18.6 44.7 27 59.2l8.4-14.5z" fill="#D6FC8A"/>
         </svg>
     </div>
+
     <div class="w-1/3 h-full"/>
-
-
 
     <div id="intro-part-2" class="z-[10] absolute w-full h-full opacity-0 flex">
 

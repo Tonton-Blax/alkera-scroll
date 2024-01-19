@@ -5,7 +5,7 @@
     import { onMount, tick } from 'svelte';
     import ScrollTrigger from 'gsap/dist/ScrollTrigger.js';
     import DrawSVGPlugin from "$lib/gsap/DrawSVGPlugin";
-    export let order = 1;
+    export let order = 2;
 
     $: if (browser && readyLine)
         gsap.to('#arrow-cursor', { ...(arrowPosition ? { y: arrowPosition, opacity: 1 } : { opacity : 0 }) });
@@ -27,6 +27,12 @@
 
     /** @type {HTMLElement} */
     let orbitsEl;
+
+    /** @type {gsap.core.Timeline} */
+    let tlOrbits;
+
+    const tspanSpacing = 31.5;
+    const initialArrowPosition = 89 + tspanSpacing;
 
     /** @type {number | undefined} */
     let arrowPosition;
@@ -65,8 +71,9 @@
         { url : '/', id: 'batifive',               orbit: 'external',  order: 3.65, groups: ['assistance']  },
         { url : '/', id: 'polytel',                orbit: 'external',  order: 4.65, groups: ['gestion']  },
         { url : '/', id: 'polyexpert',             orbit: 'external',  order: 5.65, groups: ['gestion'] },    
-        { url : '/', id: 'ciblexperts',            orbit: 'external',  order: 6.65, groups: ['gestion'] },
-        { url : '/', id: 'quantimme',              orbit: 'external',  order: 7.65, groups: ['initial','audit'] },
+        { url : '/', id: 'mcLaren',                orbit: 'external',  order: 6.65, groups: ['gestion'] },
+        { url : '/', id: 'ciblexperts',            orbit: 'external',  order: 7.65, groups: ['gestion'] },
+        { url : '/', id: 'quantimme',              orbit: 'external',  order: 8.65, groups: ['initial','audit'] }
     ]
 
     /** @type {App.Orbits} */
@@ -75,7 +82,7 @@
         'internal': {
             el: internalOrbit,
             offsetGroup : {
-                audit: 0.843, gestion: 0.853, assistance: 0.285, delegation: 0.01, initial:0.00001,
+                audit: 0.843, gestion: 0.87, assistance: 0.285, delegation: 0.01, initial:0.00001,
             },
             minMaxSizes: [ 32.35, 51.55 ],
             planets: entites.filter(e => e.orbit === 'internal'),
@@ -85,7 +92,7 @@
         'middle': {
             el: middleOrbit,
             offsetGroup : { 
-                audit: 0.843, gestion: 0.175, assistance: 0.55, delegation: 0.73, initial:0.00001,
+                audit: 0.843, gestion: 0.17, assistance: 0.55, delegation: 0.73, initial:0.00001,
             },
             minMaxSizes: [ 25.48, 60.94 ],
             planets: entites.filter(e => e.orbit === 'middle'),
@@ -95,7 +102,7 @@
         'external': {
             el: externalOrbit,
             offsetGroup : {
-                audit: 0.843, gestion: 0.205, assistance: 0.452, delegation: 0.632, initial:0.00001,
+                audit: 0.843, gestion: 0.245, assistance: 0.5, delegation: 0.65, initial:0.00001,
             },
             minMaxSizes: [ 21.49, 73.75 ],
             planets:entites.filter(e => e.orbit === 'external'),
@@ -132,11 +139,10 @@
 
     onMount(async() => {
 
-        const tl = gsap.timeline({
+        tlOrbits = gsap.timeline({
             scrollTrigger:  {
                 // @ts-ignore
                 refreshPriority: order,
-                anticipatePin: 1,
                 onScrubComplete: () => {
                     if (!intervalIdle)
                     intervalIdle = setInterval(() => changeGroup('audit'), 3000)
@@ -144,14 +150,15 @@
                 trigger: '#section-orbits',
                 scrub: 1,
                 start: (/** @type {{ previous: () => any; }} */ self) => {
-                    return self.previous().end + (orbitsEl?.offsetHeight);
+                    return self.previous() ? self.previous().end + (orbitsEl?.offsetHeight) : 'top bottom';
                 },
-                end: '+=300%',
+                end: '+=200%',
                 pin: '#sections-wrapper',
             }
         })
-        .fromTo('#big-mask-orbits', { skewX: "16.34deg", x: "-50vw" }, { x: "-100vw", delay: 0.2 })
-        .to('#big-mask-orbits', { autoAlpha: 0, duration:0.2 }, '>')
+        .fromTo('#big-mask-orbits', { skewX: "16.34deg", x: "-50vw" }, { x: "-120vw", duration: 1 }, 0.5)
+        .to('#big-mask-orbits', { autoAlpha: 0, duration: 0.5 }, 0.85)
+        .add(function(){}, ">+=1");
        
         
         
@@ -159,7 +166,7 @@
         [internalOrbit, externalOrbit, middleOrbit].forEach(orbit => MotionPathPlugin.convertToPath(orbit))
 
 
-        arrowPosition = 89
+        arrowPosition = 89 + 31.5
         gsap.timeline()
         .from('.ellipse', {drawSVG:'25% 25%', duration:1, ease:"none", reversed: false, stagger : { each: 0.25, from: 'random'} },0)
         .to("#orbit-dash-line", {
@@ -175,7 +182,7 @@
             // yPercent: 100,
             // xPercent: 21.2,
         },0.5)
-        .to('text > tspan', { opacity: 1, duration: .12, ease: "power2.inOut"}, 0)
+        .to('text > tspan.orbit-menu-entries', { opacity: 1, duration: .12, ease: "power2.inOut"}, 0)
         
   
         let resizeObserver = new ResizeObserver(() => { 
@@ -229,7 +236,7 @@
     function changeGroup (metier) {
         clearInterval(intervalIdle);
         // @ts-ignore
-        arrowPosition = document.querySelector(`#groupe-${metier}`).dataset.yArrow || 89;
+        arrowPosition = document.querySelector(`#groupe-${metier}`).dataset.yArrow || initialArrowPosition;
         fromGroup = toGroup || 'initial';
         toGroup = metier;
         setGroupPosition(toGroup);
@@ -239,13 +246,16 @@
 
 <section id="section-orbits" class="w-screen bg-amande aspect-video overflow-hidden" bind:this={orbitsEl}>
     
-    <div id="big-mask-orbits" class="bg-amande w-full aspect-video absolute z-[2] flex items-center leading-loose text-[1vw]">
-        <div class="w-2/6 ml-auto mr-[10.7vw] font-light skew-x-[-16.34deg]">
+    <div id="big-mask-orbits" class="bg-white w-full aspect-video absolute z-[2] flex items-center leading-loose text-[1vw]">
+        <div class="w-2/6 text-feuille ml-auto mr-[10.7vw] font-light skew-x-[-16.34deg]">
             En tant acteur multi-spécialiste de la gestion des risques, notre mission est d’apporter des solutions d’indemnisation sur l’ensemble de la chaîne de sinistres. Grâce à nos 17 entités de spécialité, nous construisons pour nos clients des solutions sur-mesure en fonction de leur stratégie et de leurs besoins.
         </div>
     </div>
 
-    <div id="noyau" class="absolute z-[3] translate-x-[43.3vw] rounded-full translate-y-[17.9vw] h-[10vw] w-[10vw] bg-feuille bg-[url('/orbits/alkera.png')] bg-contain"></div>
+    <button id="noyau" 
+        on:click={()=> tlOrbits.progress() < .95 && tlOrbits.play() } 
+        class="absolute z-[3] translate-x-[43.6vw] rounded-full translate-y-[17.9vw] h-[9.5vw] w-[9.5vw] bg-feuille bg-[url('/orbits/alkera.png')] bg-contain">
+    </button>
     
     <div class="planets" bind:this={planetsEl}>
         {#each entites as entite, index(entite.id)}
@@ -257,7 +267,7 @@
                 " 
             style="
                 width:{orbits[entite.orbit].minMaxSizes[1] * SCALE_FACTOR}%; 
-                background-image:url({`/orbits/${entite.id}.png`});
+                background-image:url({`/orbits/${entite.id.toLowerCase()}.png`});
             "
             data-orbit={entite.orbit}
         />
@@ -279,8 +289,7 @@
     </g>
 
     <!-- svelte-ignore a11y-click-events-have-key-events svelte-ignore a11y-mouse-events-have-key-events svelte-ignore a11y-no-static-element-interactions -->
-    <text transform="translate(-100 100)" 
-
+    <text transform="translate(-100 100)" font-family="field-gothic-wide" font-size="21px"
         on:mouseover={(e) => {
             if (!e.target?.dataset?.yArrow || !!toGroup)
                 return;
@@ -288,10 +297,39 @@
         }} 
         
     >
-        <tspan on:click={()=>changeGroup("audit")} opacity="0" x="0" y="0" id="groupe-audit" data-y-arrow="89" fill="#12473B" class:fill-pervenche={toGroup === 'audit'} class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Audit, conseil et prévention</tspan>
-        <tspan on:click={()=>changeGroup("gestion")} opacity="0" x="0" y="31.5" id="groupe-gestion" data-y-arrow="121" fill="#12473B" class:fill-pervenche={toGroup === 'gestion'} class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Gestion des risques et expertise</tspan>
-        <tspan on:click={()=>changeGroup("assistance")} opacity="0" x="0" y="63" id="groupe-assistance" data-y-arrow="152" fill="#12473B" class:fill-pervenche={toGroup === 'assistance'} class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Assistance et réparation</tspan>
-        <tspan on:click={()=>changeGroup("delegation")} opacity="0" x="0" y="94.5" id="groupe-delegation" data-y-arrow="183" fill="#12473B" class:fill-pervenche={toGroup === 'delegation'} class="hover:fill-pervenche hover:cursor-pointer transition-all" font-family="field-gothic-wide" font-size="21px">Délégation</tspan>
+        <tspan class="orbit-menu-entries fill-feuille font-bold" 
+            opacity="0" x="0" y="-5" id="groupe-audit"
+        >
+            Nos secteurs d’activité
+        </tspan>
+        <tspan on:click={()=>changeGroup("audit")} 
+            opacity="0" x="0" y="{tspanSpacing * 1}" id="groupe-audit" data-y-arrow="{initialArrowPosition}" 
+            class:fill-pervenche={toGroup === 'audit'} 
+            class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
+        >
+            Audit, conseil et prévention
+        </tspan>
+        <tspan on:click={()=>changeGroup("gestion")} 
+            opacity="0" x="0" y="{tspanSpacing * 2}" id="groupe-gestion" data-y-arrow="{initialArrowPosition + tspanSpacing}" 
+            class:fill-pervenche={toGroup === 'gestion'} 
+            class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
+        >
+            Expertise
+        </tspan>
+        <tspan on:click={()=>changeGroup("assistance")} 
+            opacity="0" x="0" y="{tspanSpacing * 3}" id="groupe-assistance" data-y-arrow="{(initialArrowPosition + tspanSpacing * 2)}" 
+            class:fill-pervenche={toGroup === 'assistance'} 
+            class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
+        >
+            Assistance et réparation
+        </tspan>
+        <tspan on:click={()=>changeGroup("delegation")} 
+            opacity="0" x="0" y="{tspanSpacing * 4}" id="groupe-delegation" data-y-arrow="{initialArrowPosition + (tspanSpacing * 3)}" 
+            class:fill-pervenche={toGroup === 'delegation'} 
+            class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
+        >
+            Délégation
+        </tspan>
 
     </text>
     

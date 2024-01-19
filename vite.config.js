@@ -8,5 +8,10 @@ export default defineConfig({
 			'gsap',
 			'@gsap/shockingly',
 		],
+	},
+	build: {
+		rollupOptions: {
+			external: ['html-entities'],
+		},
 	}
 });

@@ -5,7 +5,7 @@
     import DrawSVGPlugin from "$lib/gsap/DrawSVGPlugin";
     import ScrollTrigger from 'gsap/dist/ScrollTrigger.js';
 
-    export let order = 2;
+    export let order = 3;
 
     let SVG;
     /** @type {HTMLElement} */
@@ -21,7 +21,7 @@
             trigger: '#section-chiffres',
             scrub: 1,
             start:()=> `top-=${(window.innerHeight - chiffresEl?.offsetHeight) / 2}px top`,
-            end: '+=300%',
+            end: '+=200%',
             pin: '#sections-wrapper',
         }})
         tl.to(".deco-circle", {
@@ -58,18 +58,17 @@
 
         .from('.chiffres-wrapper',{ 
             opacity:0, 
-            duration: 1, 
-            stagger: { each: 0.05 }, 
+            duration: 0.5, 
+            stagger: { each: 0.02 }, 
             reversed: true 
         },'<')
 
-        .from('.chiffres-animes:not(.milliards)', {
+        .from('.chiffres-animes', {
             textContent: 1,
-            duration: 0.25,
+            duration: 0.5,
             ease: "none",
             snap: { textContent: 1 },
             stagger: {
-                each:-0.05,
                 onUpdate: function() {
                     // @ts-ignore
                     const number = Math.ceil(this.targets()[0].textContent);
@@ -103,7 +102,7 @@
         <div class="relative text-center leading-loose text-amande w-full self-center">
             <div class="deco-circle chiffre-circle circle-1 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-5"/>
             <div class="chiffres-wrapper absolute text-[1.5vw] w-max">
-                <span class="chiffres-animes">2000</span>
+                <span class="chiffres-animes">2200</span>
                 <div class="text-[0.9vw]">collaborateurs</div>
             </div>
         </div>
@@ -111,15 +110,17 @@
         <div class="relative text-center leading-loose text-amande w-full self-center">
             <div class="deco-circle chiffre-circle circle-2 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-5"/>
             <div class="chiffres-wrapper absolute text-[1.5vw] w-max">
-                <span class="chiffres-animes milliards">4</span><span>&nbsp;Milliards €</span>
-                <div class="text-[0.9vw]">de dommages</div>
+                <span class="chiffres-animes milliards">93</span><span>&nbsp;Milliards €</span>
+                <div class="text-[0.9vw]">Bureaux en France<br>
+                    <span>(Métro. et DROM-COM)</span>
+                </div>
             </div>
         </div>
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
             <div class="deco-circle chiffre-circle circle-3 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-5"/>
             <div class="chiffres-wrapper absolute text-[1.5vw] w-max">
-                <span class="chiffres-animes">520000</span>
+                <span class="chiffres-animes">450000</span>
                 <div class="text-[0.9vw]">missions d’expertise</div>
             </div>
         </div>
@@ -127,8 +128,8 @@
         <div class="relative text-center leading-loose text-amande w-full self-center">
             <div class="deco-circle chiffre-circle circle-4 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-5"/>
             <div class="chiffres-wrapper absolute text-[1.5vw] w-max">
-                <span class="chiffres-animes">210</span><span>&nbsp;Millions</span>
-                <div class="text-[0.9vw]">de chiffre d’affaire</div>
+                <span>+</span><span class="chiffres-animes">4</span><span>&nbsp;Millards €</span>
+                <div class="text-[0.9vw]">de dommages expertisés</div>
             </div>
         </div>
 
@@ -141,11 +142,11 @@
        
     </div>
 
-    <svg class="w-full h-full overflow-visible" bind:this={SVG} version="1.2" baseProfile="tiny" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100%" height="100%" overflow="visible" xml:space="preserve">
+    <svg class="absolute w-full h-[2px] -top-[15px] my-auto mx-0 bottom-0 overflow-visible" bind:this={SVG} version="1.2" baseProfile="tiny" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" overflow="visible" xml:space="preserve" viewBox="0 0 1920 2">
         
         
         <mask id="mask-line" maskUnits="userSpaceOnUse">
-            <line id="chiffre-line-masked" fill="none" stroke="white" stroke-miterlimit="10" stroke-dasharray="9" x1="0" y1="49.25%" x2="100%" y2="49.25%"/>
+            <line id="chiffre-line-masked" fill="none" stroke="white" x1="0" y1="49.25%" x2="1920" y2="49.25%"/>
         </mask>
 
         <line mask="url(#mask-line)" id="chiffre-line" fill="none" stroke="#D6FC8A" stroke-miterlimit="10" stroke-dasharray="9" x1="0" y1="49.25%" x2="100%" y2="49.25%"/>
@@ -157,7 +158,7 @@
 <style lang="postcss">
     
     .chiffres-wrapper {
-        @apply top-[120%] left-1/2 -translate-y-1/2 -translate-x-1/2;
+        @apply top-[120%] left-1/2 -translate-y-1/2 -translate-x-1/2 h-[5vw];
     }
     
     circle {

@@ -8,7 +8,7 @@
     import ScrollTrigger from 'gsap/dist/ScrollTrigger.js';
     import { RoughEase } from "gsap/EasePack";
 
-    export let order = 3;
+    export let order = 4;
 
     let SVG;
     let baseDuration = 0.1;
@@ -18,8 +18,6 @@
     /** @type {gsap.core.Timeline} */
     let tl;
 
-    let dejaVu = false;
-
     const secteurs = [
         {   id: 'group1', 
             secteurs : [ 'Audit', 'Conseil', 'Prévention' ], 
@@ -28,7 +26,7 @@
             imagePrefix: 'audit-conseil-gestion-' 
         },
         {   id: 'group2', 
-            secteurs : [ 'Gestion des risaues', 'Expertise' ], 
+            secteurs : [ 'Gestion des risques', 'Expertise' ], 
             indexes : [ 3, 4 ], 
             xy: [ [331.09, 544.53], [537.08, 544.53]], 
             imagePrefix: 'gestion-risque-expertise-' 
@@ -46,19 +44,48 @@
             imagePrefix: 'delegation-'  
         },
         {   id: 'group5', 
-            secteurs : [ 'Implantation' ], 
+            secteurs : [ 'Implantations' ], 
             indexes : [ 8 ], 
             xy: [ [743.06, 750.52] ], 
             imagePrefix: 'international-'  
         },
     ]
 
+
+    /*
+     onLeave: self => {
+      let scroll = self.scroll() - (self.end - self.start);
+      self.kill();
+      self.scroll(scroll);
+      tl.progress(1);
+      Scrolltrigger.refresh()
+    },
+    anticipatePin: true 
+    */
     if (browser)
         gsap.registerPlugin(MotionPathPlugin, DrawSVGPlugin,ScrollTrigger, RoughEase);
 
     onMount(async() => {
         const el = document.querySelector('#section-intro');
-        gsap.set('#le-point, #le-cercle-1', { transformOrigin:'50% 50%' })
+        gsap.set('#le-point, #le-cercle-1, .secteur-hover', { transformOrigin:'50% 50%' })
+        gsap.to('.secteur-hover', { rotateZ: 360, repeat: -1, duration: 7, ease:'none' })
+
+        const secteurIn =  gsap.to(`.secteur-hover[data-secteur='${el.dataset.secteur}']`,{
+            opacity: 1,
+            r:75,
+            ease: "Bounce.easeOut",
+            rotate: 360,
+        })
+        
+        /** @type {gsap.core.Animation} */
+        let secteurHover;
+
+        /** @type {gsap.core.Time} */
+        let secteurHoverInitial = gsap.timeline({paused:true})
+        .to(`.secteur-hover[data-secteur='group1']`,{ opacity: 1, r:75, ease: "Elastic.easeOut", stagger: 0.2 })
+        .to(`.secteur-hover[data-secteur='group1']`,{ opacity: 0, r:60, ease: "Elastic.easeIn", delay: 0.2, stagger: 0.2 }, '>');
+
+
         tl = gsap.timeline({
             defaults: { ease: 'none' },
             scrollTrigger: {
@@ -68,7 +95,7 @@
                 scrub: 5,
                 pin: '#section-intro',
                 start: 'center center',
-                end: '+=300%',
+                end: '+=400%',
             }
         })
         .to('#scroll-down', { opacity: 0, duration: baseDuration * 0.5 })        
@@ -77,41 +104,33 @@
         .to('#intro-part-2', { autoAlpha: 1 , duration: baseDuration * 0.2, ease:'none'},">-=0.03")
         .to('#intro-part-1', { autoAlpha: 0 , duration: baseDuration * 0.1, ease:'none'},'<')
         .addLabel('apparition-secteur', '<')
-        .fromTo('.bloc-text-contenu', { yPercent: 100 }, { yPercent: 0, duration: baseDuration }, 'apparition-secteur' )
-        .from('.mask-outline-secteur-2', {drawSVG: '0%', duration: baseDuration * 2.5 }, 'apparition-secteur' )
-        .from('.mask-outline-secteur-1', {drawSVG: '100% 100%', duration: baseDuration * 2, onComplete: () => hoveredGroup = 'group1' }, '>' )
-        .to(`.secteur-hover[data-secteur='group1']`,{
-            opacity: 1,
-            r:75,
-            duration: baseDuration * 0.5,
-        },'>')
-        .from('.secteur-circle', { scale: 0, transformOrigin: '50% 50%', duration: baseDuration * 2, stagger: { each: 0.5 / 9  }}, 'apparition-secteur' )
-        .from('.secteur-circle', {opacity: 1, duration: baseDuration * 1.5 }, '>' )
+        .fromTo('.bloc-text-contenu', { yPercent: 100 }, { yPercent: 0, duration: baseDuration * 2, ease:'Power1.inOut' }, 'apparition-secteur' )
+        .from('.mask-outline-secteur-2', {drawSVG: '0%', duration: baseDuration * 2 }, 'apparition-secteur' )
+        .from('.mask-outline-secteur-1', {drawSVG: '100% 100%', duration: baseDuration * 1.5, onStart: async () => {
+            secteurHoverInitial.play();
+        } }, '>' )
+        .from('#tites-secteurs', { yPercent: 40, opacity: 0, duration: baseDuration * 2, stagger: { each: 0.3 / 9  } }, 'apparition-secteur' )
+        .from('.secteur-circle', { scale: 0, transformOrigin: '50% 50%', duration: baseDuration * 2, stagger: { each: 0.3 / 9  }}, 'apparition-secteur' )
+        .from('.secteur-circle', {opacity: 1, duration: baseDuration * 2 }, '>' )
+        .add(function(){}, `>+=${baseDuration*2}`);
         //await tick();
         document.querySelectorAll('.secteur-circle')?.forEach(el => {
+            secteurHoverInitial?.kill();
             el.addEventListener('mouseenter', (evt) => {
                 hoveredGroup = el.dataset.secteur;
-
-                if (!dejaVu) {
-                    tl.getTweensOf(`.secteur-hover[data-secteur='group1']`).forEach(t => t.invalidate().kill());
-                    gsap.to(`.secteur-hover[data-secteur='group1']`, {
-                        opacity: 0,
-                        r:60,
-                        ease: "Bounce.easeOut",
-                    })
-                }
-               
-                dejaVu = true;
-                gsap.to(`.secteur-hover[data-secteur='${el.dataset.secteur}']`,{
+                secteurHover?.progress?.(1)?.kill();
+                secteurHover =  gsap.to(`.secteur-hover[data-secteur='${el.dataset.secteur}']`,{
                     opacity: 1,
                     r:75,
                     ease: "Bounce.easeOut",
+                    rotate: 360,
                 })
             })
             el.addEventListener('mouseleave', (evt) => {
                 hoveredGroup = undefined;
                 // @ts-ignore
-                gsap.to(`.secteur-hover[data-secteur='${el.dataset.secteur}']`,{
+                secteurHover?.progress?.(1)?.kill();
+                secteurHover = gsap.to(`.secteur-hover[data-secteur='${el.dataset.secteur}']`,{
                     opacity: 0,
                     r:60,
                     stagger: { each: 0.1 },
@@ -132,7 +151,7 @@
             <span class="bloc-text-contenu self-center text-feuille">
                 <br>&nbsp;
                 <br>
-                Depuis plus de 25 ans, le Groupe Alkera développe une expertise complète et reconnue sur l’ensemble de la chaîne du sinistre en France et l’international. Du diagnostic technique jusqu’à la réparation en passant par l’expertise de sinistres, nous proposons une offre complète avant, pendant et après sinistre.
+                Depuis plus de 25 ans, le Groupe Alkera développe une expertise complète et reconnue sur l’ensemble de la chaîne du sinistre en France et l’international. De l’audit jusqu’à la réparation en passant par l’expertise de sinistres, nous proposons une offre complète avant, pendant et après sinistre.
                 <br>&nbsp;
                 <br>&nbsp;
             </span>
@@ -181,14 +200,12 @@
                     transform="scale(1)"
                     transform-origin="{secteur.xy[j][0]} {secteur.xy[j][1]}"
                 />
-                {#if hoveredGroup && hoveredGroup === secteur.id}
-                <text in:fly={{duration: 650, y: "1vw", delay: j*120}}
+                <text id="tites-secteurs"
                     text-anchor="middle" class="fill-feuille"
                     x="{secteur.xy[j][0]}" y="{secteur.xy[j][1]+100}"
                 >
                     {secteur.secteurs[j]}
                 </text>
-                {/if}
             {/each}
             {/each}
         
@@ -202,7 +219,9 @@
         <div class="w-1/3 h-full flex flex-col justify-center">
             <svg bind:this={SVG} 
                 id="logo-alkera-et-texte"
-                class="w-full h-auto overflow-visible" 
+                class="w-full h-auto overflow-visible"
+                color-interpolation-filters="sRGB"
+                shape-rendering="geometricPrecision"
                 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="300px" y="300px" viewBox="0 10 300 300"
             >
             
@@ -228,16 +247,16 @@
 
             </svg>
 
-            <div class="text-amande z-[0] text-center overflow-visible relative -top-[10vw] w-[150%] self-center">
-                <p class="text-[4vw] font-thin whitespace-nowrap">
-                    L'imprévu s'arrête là
+            <div class="text-amande z-[0] text-center overflow-visible relative -top-[12vw] w-[150%] self-center">
+                <p class="text-[3.24vw] font-thin whitespace-nowrap">
+                    L'imprévu s'arrête là.
                 </p>
                 <p class="text-[1.3vw] font-light px-[20%] mt-[2vw]">
                     Le Groupe Alkera accompagne assureurs, courtiers et entreprises dans la gestion globale des risques et des sinistres.
                 </p>
             </div>
             <svg
-                class="w-[2vw] h-auto mx-auto mt-[2vw]" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
+                class="absolute bottom-[2vw] w-[2vw] h-auto left-0 right-0 mx-auto my-0" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
                 id="scroll-down" x="0" y="0" version="1.1" viewBox="0 0 54 79.4"
             >
                 <path stroke-width=1 stroke-miterlimit=10 fill="none" stroke="#D6FC8A" d="M27 78.9C12.4 78.9.5 67 .5 52.4V27C.5 12.4 12.4.5 27 .5S53.5 12.3 53.5 27v25.4C53.5 67 41.6 78.9 27 78.9zM27 20v27.2"/>
@@ -274,12 +293,6 @@
         }
     }
        
-    .secteur-hover {
-        opacity: 0;
-        transform-origin: 50% 50%;
-        transform-box: content-box;
-        animation: rotating 16s linear infinite;
-    }
     @keyframes rotating {
         from {
             rotate: rotate(0deg);
@@ -290,6 +303,10 @@
     }
     circle {
         cursor: pointer;
+    }
+
+    .secteur-hover {
+        opacity: 0;
     }
 
   

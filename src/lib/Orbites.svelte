@@ -161,8 +161,6 @@
         .fromTo('#big-mask-orbits', { skewX: "16.34deg", x: "-50vw" }, { x: "-120vw", duration: 1 }, 0.5)
         .to('#big-mask-orbits', { autoAlpha: 0, duration: 0.5 }, 0.85)
         .add(function(){}, ">+=1");
-       
-        
         
         readyLine = true;
         [internalOrbit, externalOrbit, middleOrbit].forEach(orbit => MotionPathPlugin.convertToPath(orbit))
@@ -249,7 +247,7 @@
 <section id="section-orbits" class="w-screen bg-amande aspect-video overflow-hidden" bind:this={orbitsEl}>
     
     <div id="big-mask-orbits" class="bg-white w-full aspect-video absolute z-[2] flex items-center leading-loose text-[1vw]">
-        <div class="w-2/6 text-feuille ml-auto mr-[10.7vw] font-light skew-x-[-16.34deg]">
+        <div class="w-[30%] text-feuille ml-auto mr-[11.5vw] font-light skew-x-[-16.34deg] text-[1.35vw]">
             En tant acteur multi-spécialiste de la gestion des risques, notre mission est d’apporter des solutions d’indemnisation sur l’ensemble de la chaîne de sinistres. Grâce à nos 17 entités de spécialité, nous construisons pour nos clients des solutions sur-mesure en fonction de leur stratégie et de leurs besoins.
         </div>
     </div>

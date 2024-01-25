@@ -154,6 +154,8 @@
                 },
                 end: '+=200%',
                 pin: '#sections-wrapper',
+                preventOverlaps: true,
+                anticipatePin: 1,
             }
         })
         .fromTo('#big-mask-orbits', { skewX: "16.34deg", x: "-50vw" }, { x: "-120vw", duration: 1 }, 0.5)

@@ -96,6 +96,8 @@
                 pin: '#section-intro',
                 start: 'center center',
                 end: '+=400%',
+                preventOverlaps: true,
+                anticipatePin: 1,
             }
         })
         .to('#scroll-down', { opacity: 0, duration: baseDuration * 0.5 })        
@@ -104,7 +106,7 @@
         .to('#intro-part-2', { autoAlpha: 1 , duration: baseDuration * 0.2, ease:'none'},">-=0.03")
         .to('#intro-part-1', { autoAlpha: 0 , duration: baseDuration * 0.1, ease:'none'},'<')
         .addLabel('apparition-secteur', '<')
-        .fromTo('.bloc-text-contenu', { yPercent: 100 }, { yPercent: 0, duration: baseDuration * 2, ease:'Power1.inOut' }, 'apparition-secteur' )
+        .fromTo('.bloc-text-contenu', { yPercent: 100 }, { yPercent: 0, duration: baseDuration * 4  }, 'apparition-secteur' )
         .from('.mask-outline-secteur-2', {drawSVG: '0%', duration: baseDuration * 2 }, 'apparition-secteur' )
         .from('.mask-outline-secteur-1', {drawSVG: '100% 100%', duration: baseDuration * 1.5, onStart: async () => {
             secteurHoverInitial.play();
@@ -147,11 +149,13 @@
 
     <div id="intro-part-2" class="z-[12] absolute w-full h-full opacity-0 flex">
 
-        <div id="bloc-text" class="absolute max-h-fit h-fit self-center my-auto overflow-hidden font-light right-[10%] text-[1.5vw] flex w-[35%] leading-[3vw]">
+        <div id="bloc-text" class="absolute max-h-fit h-fit self-center my-auto overflow-hidden font-light right-[12.5%] text-[1.35vw] flex w-[30%] leading-[3vw]">
             <span class="bloc-text-contenu self-center text-feuille">
                 <br>&nbsp;
                 <br>
-                Depuis plus de 25 ans, le Groupe Alkera développe une expertise complète et reconnue sur l’ensemble de la chaîne du sinistre en France et l’international. De l’audit jusqu’à la réparation en passant par l’expertise de sinistres, nous proposons une offre complète avant, pendant et après sinistre.
+                Depuis plus de 25 ans, le Groupe Alkera développe une expertise complète et reconnue sur l’ensemble de la chaîne du sinistre en France et l’international.
+                <br>
+                De l’audit jusqu’à la réparation en passant par l’expertise de sinistres, nous proposons une offre complète avant, pendant et après sinistre.
                 <br>&nbsp;
                 <br>&nbsp;
             </span>
@@ -159,7 +163,7 @@
     
         <svg bind:this={SVG} 
             color-interpolation-filters="sRGB"
-            class="w-full h-auto mx-auto overflow-visible" 
+            class="w-full h-auto mx-auto overflow-visible -mt-[4%]" 
             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1920 1050"
         >
     

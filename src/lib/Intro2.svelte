@@ -260,7 +260,7 @@
                 </p>
             </div>
             <svg
-                class="absolute bottom-[2vw] w-[2vw] h-auto left-0 right-0 mx-auto my-0" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
+                class="absolute bottom-[5vw] w-[2vw] h-auto left-0 right-0 mx-auto my-0" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
                 id="scroll-down" x="0" y="0" version="1.1" viewBox="0 0 54 79.4"
             >
                 <path stroke-width=1 stroke-miterlimit=10 fill="none" stroke="#D6FC8A" d="M27 78.9C12.4 78.9.5 67 .5 52.4V27C.5 12.4 12.4.5 27 .5S53.5 12.3 53.5 27v25.4C53.5 67 41.6 78.9 27 78.9zM27 20v27.2"/>

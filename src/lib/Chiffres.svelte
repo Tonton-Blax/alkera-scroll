@@ -105,7 +105,7 @@
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
             <div class="deco-circle chiffre-circle circle-1 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-5"/>
-            <div class="chiffres-wrapper absolute text-[1.5vw] font-semibold w-max">
+            <div class="chiffres-wrapper flex flex-col absolute text-[1.5vw] font-semibold w-max">
                 <span class="chiffres-animes">2200</span>
                 <div class="text-[0.9vw] font-light">collaborateurs</div>
             </div>
@@ -113,26 +113,33 @@
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
             <div class="deco-circle chiffre-circle circle-2 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-5"/>
-            <div class="chiffres-wrapper absolute text-[1.5vw] font-semibold w-max">
-                <span class="chiffres-animes milliards">93</span><span>&nbsp;Milliards €</span>
-                <div class="text-[0.9vw] font-light leading-[1.2vw]">Bureaux en France<br>
-                    <span>(Métro. et DROM-COM)</span>
+            <div class="chiffres-wrapper flex flex-col absolute text-[1.5vw] font-semibold w-max">
+                <span class="chiffres-animes milliards">93
+                    <span>&nbsp;Milliards €</span>
+                </span>
+                <div class="text-[0.9vw] font-light">Bureaux en France<br>
+                    <span class="relative -top-[0.5vw]">(Métro. et DROM-COM)</span>
                 </div>
             </div>
         </div>
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
             <div class="deco-circle chiffre-circle circle-3 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-5"/>
-            <div class="chiffres-wrapper absolute text-[1.5vw] font-semibold w-max">
-                <span class="chiffres-animes">450000</span>
+            <div class="chiffres-wrapper flex flex-col absolute text-[1.5vw] font-semibold w-max">
+                <span class="chiffres-animes">
+                    450000
+                </span>
                 <div class="text-[0.9vw] font-light">missions d’expertise</div>
             </div>
         </div>
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
             <div class="deco-circle chiffre-circle circle-4 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-5"/>
-            <div class="chiffres-wrapper absolute text-[1.5vw] font-semibold w-max">
-                <span>+</span><span class="chiffres-animes">4</span><span>&nbsp;Millards €</span>
+            <div class="chiffres-wrapper flex flex-col absolute text-[1.5vw] font-semibold w-max">
+                <span>+
+                    <span class="chiffres-animes">4</span>
+                    <span>&nbsp;Millards €</span>
+                </span>
                 <div class="text-[0.9vw] font-light">de dommages expertisés</div>
             </div>
         </div>

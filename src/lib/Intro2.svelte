@@ -113,8 +113,7 @@
         } }, '>' )
         .from('#tites-secteurs', { yPercent: 40, opacity: 0, duration: baseDuration * 2, stagger: { each: 0.3 / 9  } }, 'apparition-secteur' )
         .from('.secteur-circle', { scale: 0, transformOrigin: '50% 50%', duration: baseDuration * 2, stagger: { each: 0.3 / 9  }}, 'apparition-secteur' )
-        .from('.secteur-circle', {opacity: 1, duration: baseDuration * 2 }, '>' )
-        .add(function(){}, `>+=${baseDuration*2}`);
+        .to({}, { duration: baseDuration * 5 }, '>' )
         //await tick();
         document.querySelectorAll('.secteur-circle')?.forEach(el => {
             secteurHoverInitial?.kill();

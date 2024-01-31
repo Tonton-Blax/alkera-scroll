@@ -152,7 +152,7 @@
                 start: (/** @type {{ previous: () => any; }} */ self) => {
                     return self.previous() ? self.previous().end + (orbitsEl?.offsetHeight) : 'top bottom';
                 },
-                end: '+=200%',
+                end: '+=250%',
                 pin: '#sections-wrapper',
                 preventOverlaps: true,
                 anticipatePin: 1,
@@ -169,12 +169,6 @@
         arrowPosition = 89 + 31.5
         gsap.timeline()
         .from('.ellipse', {drawSVG:'25% 25%', duration:1, ease:"none", reversed: false, stagger : { each: 0.25, from: 'random'} },0)
-        .to("#orbit-dash-line", {
-            duration: 1,
-            drawSVG: '100% 100%',
-            reversed: true,
-            ease: "Power1.inOut",
-        },0)
         .from('.planets > div', {
             duration: 0.5,
             opacity: 0,
@@ -183,6 +177,7 @@
             // xPercent: 21.2,
         },0.5)
         .to('text > tspan.orbit-menu-entries', { opacity: 1, duration: .12, ease: "power2.inOut"}, 0)
+        .to({}, { duration: .45 }, .85)
         
   
         let resizeObserver = new ResizeObserver(() => { 

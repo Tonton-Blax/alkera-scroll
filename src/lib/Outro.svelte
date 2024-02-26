@@ -76,7 +76,7 @@
 
 </script>
 <section 
-    id="section-outro" class="flex min-w-screen aspect-video bg-white"
+    id="section-outro" class="flex min-w-screen aspect-[9/16] md:aspect-video bg-white"
     bind:this={outroEl}
 >
 	<div class="w-full h-3/4 self-center flex">

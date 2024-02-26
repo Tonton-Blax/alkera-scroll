@@ -4,9 +4,10 @@
     import { onMount } from 'svelte';
     import DrawSVGPlugin from "$lib/gsap/DrawSVGPlugin";
     import ScrollTrigger from 'gsap/dist/ScrollTrigger.js';
-
+    import { md } from './utils';
+    
     export let order = 3;
-
+    
     let SVG;
     /** @type {HTMLElement} */
     let chiffresEl;
@@ -28,7 +29,9 @@
             preventOverlaps: true,
             anticipatePin: 1,
         }})
-        tl.to(".deco-circle", {
+
+        tl
+        .to(".deco-circle", {
             scale:0,
             duration: 0.4,
             stagger: { 
@@ -38,14 +41,16 @@
                 from: 'center'
              },
         },0)
-
-        tl.to(".chiffre-circle", {
-            scale:1,
+        .addLabel('chiffresAnim')
+        .to(".chiffre-circle", {
+            scale: $md ? 1 : 0.8,
             duration: 1,
             backgroundColor: '#FFFFFF',
             stagger: { each: 1 / 4 },
         },'>')
 
+        .to('.circle-1, .circle-2', { yPercent:()=> $md ? 0 : -25 }, 'chiffresAnim')
+        .to('.circle-3, .circle-4', { yPercent:()=> $md ? 0 : 25 }, 'chiffresAnim')
 
         .from("#chiffre-line-masked", {
             duration: 2,
@@ -89,66 +94,69 @@
 
 </script>
 
-<section id="section-chiffres" class="w-screen aspect-video bg-feuille relative">
+<section id="section-chiffres" class="w-screen h-screen md:h-[unset] md:aspect-video bg-feuille relative z-[3]">
 
 
     <div 
         style="--secteur-opacite: 0;"
         id="chiffres-el"
-        class="grid grid-cols-6 absolute top-0 left-0 w-full aspect-video" 
+        class="
+            grid absolute top-0 left-0 w-full h-screen md:h-[unset] md:aspect-video
+            grid-cols-2 grid-rows-5 md:grid-rows-[unset] md:grid-cols-6
+        " 
         bind:this={chiffresEl}
     >
 
-        {#each {length:6} as _}
+        {#each { length: $md ? 6 : 3 } as _}
         <div class="deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
         {/each}
 
         <div class="deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
-            <div class="deco-circle chiffre-circle circle-1 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-5"/>
-            <div class="chiffres-wrapper flex flex-col absolute text-[1.5vw] font-semibold w-max">
+            <div class="deco-circle chiffre-circle circle-1 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-2 md:mb-5"/>
+            <div class="chiffres-wrapper top-[75%] md:top-[120%]  flex flex-col absolute text-[4vw] md:text-[1.5vw] font-semibold w-max">
                 <span class="chiffres-animes">2200</span>
-                <div class="text-[0.9vw] font-light">collaborateurs</div>
+                <div class="text-[2vw] md:text-[0.9vw] font-light">collaborateurs</div>
             </div>
         </div>
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
-            <div class="deco-circle chiffre-circle circle-2 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-5"/>
-            <div class="chiffres-wrapper flex flex-col absolute text-[1.5vw] font-semibold w-max">
+            <div class="deco-circle chiffre-circle circle-2 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-2 md:mb-5"/>
+            <div class="chiffres-wrapper top-[75%] md:top-[120%]  flex flex-col absolute text-[4vw] md:text-[1.5vw] font-semibold w-max">
                 <span class="chiffres-animes milliards">93
                     <span>&nbsp;Milliards €</span>
                 </span>
-                <div class="text-[0.9vw] font-light">Bureaux en France<br>
+                <div class="text-[2vw] md:text-[0.9vw] font-light">Bureaux en France<br>
                     <span class="relative -top-[0.5vw]">(Métro. et DROM-COM)</span>
                 </div>
             </div>
         </div>
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
-            <div class="deco-circle chiffre-circle circle-3 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-5"/>
-            <div class="chiffres-wrapper flex flex-col absolute text-[1.5vw] font-semibold w-max">
+            <div class="deco-circle chiffre-circle circle-3 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-2 md:mb-5"/>
+            <div class="chiffres-wrapper top-[120%]  flex flex-col absolute text-[4vw] md:text-[1.5vw] font-semibold w-max">
                 <span class="chiffres-animes">
                     450000
                 </span>
-                <div class="text-[0.9vw] font-light">missions d’expertise</div>
+                <div class="text-[2vw] md:text-[0.9vw] font-light">missions d’expertise</div>
             </div>
         </div>
 
         <div class="relative text-center leading-loose text-amande w-full self-center">
-            <div class="deco-circle chiffre-circle circle-4 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-5"/>
-            <div class="chiffres-wrapper flex flex-col absolute text-[1.5vw] font-semibold w-max">
+            <div class="deco-circle chiffre-circle circle-4 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-2 md:mb-5"/>
+            <div class="chiffres-wrapper top-[120%]  flex flex-col absolute text-[4vw] md:text-[1.5vw] font-semibold w-max">
                 <span>+
                     <span class="chiffres-animes">4</span>
                     <span>&nbsp;Millards €</span>
                 </span>
-                <div class="text-[0.9vw] font-light">de dommages expertisés</div>
+                <div class="text-[2vw] md:text-[0.9vw] font-light">de dommages expertisés</div>
             </div>
         </div>
 
         <div class="deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
 
-        {#each {length:6} as _}
+        {#each { length: $md ? 6 : 3 } as _}
             <div class="deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
         {/each}
 
@@ -171,7 +179,7 @@
 <style lang="postcss">
     
     .chiffres-wrapper {
-        @apply top-[120%] left-1/2 -translate-y-1/2 -translate-x-1/2 h-[5vw];
+        @apply left-1/2 -translate-y-1/2 -translate-x-1/2 h-[5vw];
     }
     
     circle {

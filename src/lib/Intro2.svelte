@@ -146,9 +146,13 @@
 
 
 
-    <div id="intro-part-2" class="z-[12] absolute w-full h-full opacity-0 flex">
+    <div id="intro-part-2" class="z-[12] absolute w-full h-full opacity-0 flex flex-row">
 
-        <div id="bloc-text" class="absolute max-h-fit h-fit self-center my-auto overflow-hidden font-light right-[12.5%] text-[1.35vw] flex w-[30%] leading-[3vw]">
+        <div id="bloc-text" 
+            class="absolute 
+                w-[65vw] text-[4vw] leading-[6vw] right-[17vw] h-1/2 top-0
+                md:w-[30%] md:text-[1.35vw] md:leading-[3vw] md:right-[12.5%] md:h-fit md:top-auto
+                max-h-fit self-center my-auto overflow-hidden font-light flex">
             <span class="bloc-text-contenu self-center text-feuille">
                 <br>&nbsp;
                 <br>
@@ -162,16 +166,20 @@
     
         <svg bind:this={SVG} 
             color-interpolation-filters="sRGB"
-            class="w-full h-auto mx-auto overflow-visible -mt-[4%]" 
+            class="w-full h-fit md:h-auto mx-auto overflow-visible
+            absolute scale-[2.2] origin-[10%_30vh] bottom-0 
+            md:-mt-[4%]  md:relative md:bottom-auto md:scale-100  md:origin-center" 
             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1920 1050"
         >
     
-        <mask id="mask-part-1" class="mask-part" maskUnits="userSpaceOnUse">
-            <path class="mask-outline-secteur-2" fill="none" stroke="white" d="M335.7,343.15h452.29 c55.61,0,100.69,45.08,100.69,100.69v0c0,55.61-45.08,100.69-100.69,100.69H288.21"/>        
-        </mask>
-        <mask id="mask-part-2" class="mask-part" maskUnits="userSpaceOnUse">
-            <path class="mask-outline-secteur-1" fill="none" stroke="white" d="M732.25,745.91H288.21 c-55.61,0-100.69-45.08-100.69-100.69v0c0-55.61,45.08-100.69,100.69-100.69"/>
-        </mask>
+            <mask id="mask-part-1" class="mask-part" maskUnits="userSpaceOnUse">
+                <path class="mask-outline-secteur-2" fill="none" stroke="white" d="M335.7,343.15h452.29 c55.61,0,100.69,45.08,100.69,100.69v0c0,55.61-45.08,100.69-100.69,100.69H288.21"/>        
+            </mask>
+
+            <mask id="mask-part-2" class="mask-part" maskUnits="userSpaceOnUse">
+                <path class="mask-outline-secteur-1" fill="none" stroke="white" d="M732.25,745.91H288.21 c-55.61,0-100.69-45.08-100.69-100.69v0c0-55.61,45.08-100.69,100.69-100.69"/>
+            </mask>
+
             <path class="path-part part-1" mask="url(#mask-part-1)" fill="none" stroke="#12473B" stroke-linecap="round" stroke-miterlimit="10" stroke-dasharray="9" d="M335.7,343.15h452.29 c55.61,0,100.69,45.08,100.69,100.69v0c0,55.61-45.08,100.69-100.69,100.69H288.21"/>
             <path class="path-part part-2" mask="url(#mask-part-2)" fill="none" stroke="#12473B" stroke-linecap="round" stroke-miterlimit="10" stroke-dasharray="9" d="M732.25,745.91H288.21 c-55.61,0-100.69-45.08-100.69-100.69v0c0-55.61,45.08-100.69,100.69-100.69"/>
     
@@ -218,8 +226,8 @@
 
     
     <div id="intro-part-1" class="w-screen h-screen bg-feuille overflow-clip flex z-[0]">
-        <div class="w-1/3 h-full"/>
-        <div class="w-1/3 h-full flex flex-col justify-center">
+        <div class="w-2/12 md:w-1/3 h-full"/>
+        <div class="w-10/12 md:w-1/3 h-full flex flex-col justify-center">
             <svg bind:this={SVG} 
                 id="logo-alkera-et-texte"
                 class="w-full h-auto overflow-visible"
@@ -250,23 +258,23 @@
 
             </svg>
 
-            <div class="text-amande z-[0] text-center overflow-visible relative -top-[12vw] w-[150%] self-center">
-                <p class="text-[3.24vw] font-thin whitespace-nowrap">
+            <div class="text-amande z-[0] text-center overflow-visible relative -top-[24vw] md:-top-[12vw] w-[150%] self-center">
+                <p class="text-[7vw] md:text-[3.24vw] font-thin whitespace-nowrap">
                     L'imprévu s'arrête là.
                 </p>
-                <p class="text-[1.3vw] font-light px-[20%] mt-[2vw]">
+                <p class="text-[3vw] md:text-[1.3vw] font-light px-[20%] mt-[2vw]">
                     Le Groupe Alkera accompagne assureurs, courtiers et entreprises dans la gestion globale des risques et des sinistres.
                 </p>
             </div>
             <svg
-                class="absolute bottom-[5vw] w-[2vw] h-auto left-0 right-0 mx-auto my-0" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
+                class="absolute bottom-[5vw] w-[5vw] md:w-[2vw] h-auto left-0 right-0 mx-auto my-0" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
                 id="scroll-down" x="0" y="0" version="1.1" viewBox="0 0 54 79.4"
             >
                 <path stroke-width=1 stroke-miterlimit=10 fill="none" stroke="#D6FC8A" d="M27 78.9C12.4 78.9.5 67 .5 52.4V27C.5 12.4 12.4.5 27 .5S53.5 12.3 53.5 27v25.4C53.5 67 41.6 78.9 27 78.9zM27 20v27.2"/>
                 <path d="M18.6 44.7 27 59.2l8.4-14.5z" fill="#D6FC8A"/>
             </svg>
         </div>
-        <div class="w-1/3 h-full"/>
+        <div class="w-2/12 md:w-1/3 h-full"/>
     </div>
 
 

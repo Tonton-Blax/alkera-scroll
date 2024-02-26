@@ -5,6 +5,7 @@
     import { onMount, tick } from 'svelte';
     import ScrollTrigger from 'gsap/dist/ScrollTrigger.js';
     import DrawSVGPlugin from "$lib/gsap/DrawSVGPlugin";
+    import { md } from './utils';
     export let order = 2;
 
     $: if (browser && readyLine)
@@ -54,6 +55,7 @@
 
     const resizeOrbit = 50;
     const initialHeight = 988.92;
+    const initialWidth = 1360.5;
         
     /** @type {App.Planet[]} */
     const entites = [
@@ -159,6 +161,7 @@
             }
         })
         .fromTo('#big-mask-orbits', { skewX: "16.34deg", x: "-50vw" }, { x: "-120vw", duration: 1 }, 0.5)
+        .to('#orbits-menu', { opacity:1, duration: 1 }, 0.5)
         .to('#big-mask-orbits', { autoAlpha: 0, duration: 0.5 }, 0.85)
         .add(function(){}, ">+=1");
         
@@ -239,17 +242,21 @@
 </script>
 
 
-<section id="section-orbits" class="w-screen bg-amande aspect-video overflow-hidden" bind:this={orbitsEl}>
+<section id="section-orbits" class="w-screen bg-amande aspect-[unset] md:aspect-video h-screen md:h-auto overflow-hidden" bind:this={orbitsEl}>
     
-    <div id="big-mask-orbits" class="bg-white w-full aspect-video absolute z-[2] flex items-center leading-loose text-[1vw]">
-        <div class="w-[30%] text-feuille ml-auto mr-[11.5vw] font-light skew-x-[-16.34deg] text-[1.35vw]">
-            En tant acteur multi-spécialiste de la gestion des risques, notre mission est d’apporter des solutions d’indemnisation sur l’ensemble de la chaîne de sinistres. Grâce à nos 17 entités de spécialité, nous construisons pour nos clients des solutions sur-mesure en fonction de leur stratégie et de leurs besoins.
+    <div id="big-mask-orbits" class="bg-white w-[100vw] h-full md:h-[unset] md:aspect-video absolute z-[2] flex items-center leading-loose">
+        <div class="w-[30%] text-feuille ml-auto mr-[11.5vw] font-light skew-x-[-16.34deg] text-[2.5vw] md:text-[1.35vw]">
+            En tant qu'acteur<br class="visible md:hidden"> multi-spécialiste de la gestion des risques, notre mission est d’apporter des solutions d’indemnisation sur l’ensemble de la chaîne de sinistres. Grâce à nos 17 entités de spécialité, nous construisons pour nos clients des solutions sur-mesure en fonction de leur stratégie et de leurs besoins.
         </div>
     </div>
 
     <button id="noyau" 
         on:click={()=> tlOrbits.progress() < .95 && tlOrbits.play() } 
-        class="absolute z-[3] translate-x-[43.6vw] rounded-full translate-y-[17.9vw] h-[9.5vw] w-[9.5vw] bg-feuille bg-[url('/orbits/alkera.png')] bg-contain">
+        class="
+            absolute z-[3] rounded-full bg-feuille bg-[url('/orbits/alkera.png')] bg-contain
+            -translate-x-[7px] -translate-y-[25px]
+            md:translate-x-[43.6vw] md:translate-y-[17.9vw] h-[9.5vw] w-[9.5vw]
+        ">
     </button>
     
     <div class="planets" bind:this={planetsEl}>
@@ -272,71 +279,77 @@
 
     <div class="big-mask" ></div>
 
-<svg bind:this={galaxy} 
-    color-interpolation-filters="sRGB"
-    class="h-full w-auto mx-auto overflow-visible" 
-    xmlns="http://www.w3.org/2000/svg" xml:space="preserve" id="Calque_1" x="0" y="0" version="1.1" viewBox="0 0 1360.5 {initialHeight+(resizeOrbit * 2)}"
->
-
-    <g id="arrow-cursor" x="0" y="0" transform="translate(-125 89)" opacity="0" >
-        <line fill="none" stroke="#6563CA" stroke-width="3" stroke-miterlimit="10" x1="0" y1="4.49" x2="11.66" y2="4.49"/>
-        <polygon fill="#6563CA" points="10.34,8.98 18.12,4.49 10.34,0"/>
-    </g>
-
-    <!-- svelte-ignore a11y-click-events-have-key-events svelte-ignore a11y-mouse-events-have-key-events svelte-ignore a11y-no-static-element-interactions -->
-    <text transform="translate(-100 100)" font-family="field-gothic-wide" font-size="21px"
-        on:mouseover={(e) => {
-            if (!e.target?.dataset?.yArrow || !!toGroup)
-                return;
-            arrowPosition = e.target?.dataset?.yArrow
-        }} 
-        
+    <svg bind:this={galaxy} 
+        color-interpolation-filters="sRGB"
+        id="orbites"
+        class="absolute md:relative top-auto md:translate-y-0 h-full max-h-screen w-auto px-8 md:px-0 mx-auto overflow-visible" 
+        xmlns="http://www.w3.org/2000/svg" xml:space="preserve" x="0" y="0" version="1.1" viewBox="0 0 {initialWidth} {initialHeight+(resizeOrbit * 2)}"
     >
-        <tspan class="orbit-menu-entries fill-feuille font-bold" 
-            opacity="0" x="0" y="-5" id="groupe-audit"
-        >
-            Nos secteurs d’activité
-        </tspan>
-        <tspan on:click={()=>changeGroup("audit")} 
-            opacity="0" x="0" y="{tspanSpacing * 1}" id="groupe-audit" data-y-arrow="{initialArrowPosition}" 
-            class:fill-pervenche={toGroup === 'audit'} 
-            class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
-        >
-            Audit, conseil et prévention
-        </tspan>
-        <tspan on:click={()=>changeGroup("gestion")} 
-            opacity="0" x="0" y="{tspanSpacing * 2}" id="groupe-gestion" data-y-arrow="{initialArrowPosition + tspanSpacing}" 
-            class:fill-pervenche={toGroup === 'gestion'} 
-            class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
-        >
-            Expertise
-        </tspan>
-        <tspan on:click={()=>changeGroup("assistance")} 
-            opacity="0" x="0" y="{tspanSpacing * 3}" id="groupe-assistance" data-y-arrow="{(initialArrowPosition + tspanSpacing * 2)}" 
-            class:fill-pervenche={toGroup === 'assistance'} 
-            class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
-        >
-            Assistance et réparation
-        </tspan>
-        <tspan on:click={()=>changeGroup("delegation")} 
-            opacity="0" x="0" y="{tspanSpacing * 4}" id="groupe-delegation" data-y-arrow="{initialArrowPosition + (tspanSpacing * 3)}" 
-            class:fill-pervenche={toGroup === 'delegation'} 
-            class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
-        >
-            Délégation
-        </tspan>
 
-    </text>
-    
-    <ellipse bind:this={internalOrbit} id="internal" class="ellipse" cx="659.02" cy="{406.32 + resizeOrbit}" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="310.39" ry="147.85" transform="rotate(-16.342 659.08 406.403)"/>
-    <ellipse bind:this={middleOrbit} id="middle" class="ellipse" cx="667.44" cy="{435.04 + resizeOrbit}" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="493.5" ry="237.51" transform="rotate(-16.342 667.5 435.124)"/>
-    <ellipse bind:this={externalOrbit} id="external" class="ellipse" cx="680.25" cy="{478.73 + resizeOrbit}" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="701.55" ry="332.01" transform="rotate(-16.342 680.308 478.821)"/>
+        <g id="arrow-cursor" x="0" y="0" transform="translate(-125 89)" opacity="0" >
+            <line fill="none" stroke="#6563CA" stroke-width="3" stroke-miterlimit="10" x1="0" y1="4.49" x2="11.66" y2="4.49"/>
+            <polygon fill="#6563CA" points="10.34,8.98 18.12,4.49 10.34,0"/>
+        </g>
 
-    <path id="orbit-dash-line-reveal" fill="none" stroke="#12473B" stroke-dasharray="8.1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width=".675" 
-        d="m521.57.34 318.71 1086.08"
-    />
+        <!-- svelte-ignore a11y-click-events-have-key-events svelte-ignore a11y-mouse-events-have-key-events svelte-ignore a11y-no-static-element-interactions -->
+        <text
+            id="orbits-menu"
+            class="opacity-0"
+            font-family="field-gothic-wide" font-size="21px"
+            transform="{$md ? 'translate(-100 100)' : `translate(${initialWidth/2} -${initialHeight/2})scale(2.5)`}"
+            text-anchor="{$md ? 'start':'middle'}"
+            on:mouseover={(e) => {
+                if (!e.target?.dataset?.yArrow || !!toGroup)
+                    return;
+                arrowPosition = e.target?.dataset?.yArrow
+            }} 
+            
+        >
+            <tspan class="orbit-menu-entries fill-feuille font-bold" 
+                opacity="0" x="0" y="-5" id="groupe-audit"
+            >
+                Nos secteurs d’activité
+            </tspan>
+            <tspan on:click={()=>changeGroup("audit")} 
+                opacity="0" x="0" y="{tspanSpacing * 1}" id="groupe-audit" data-y-arrow="{initialArrowPosition}" 
+                class:fill-pervenche={toGroup === 'audit'} 
+                class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
+            >
+                Audit, conseil et prévention
+            </tspan>
+            <tspan on:click={()=>changeGroup("gestion")} 
+                opacity="0" x="0" y="{tspanSpacing * 2}" id="groupe-gestion" data-y-arrow="{initialArrowPosition + tspanSpacing}" 
+                class:fill-pervenche={toGroup === 'gestion'} 
+                class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
+            >
+                Expertise
+            </tspan>
+            <tspan on:click={()=>changeGroup("assistance")} 
+                opacity="0" x="0" y="{tspanSpacing * 3}" id="groupe-assistance" data-y-arrow="{(initialArrowPosition + tspanSpacing * 2)}" 
+                class:fill-pervenche={toGroup === 'assistance'} 
+                class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
+            >
+                Assistance et réparation
+            </tspan>
+            <tspan on:click={()=>changeGroup("delegation")} 
+                opacity="0" x="0" y="{tspanSpacing * 4}" id="groupe-delegation" data-y-arrow="{initialArrowPosition + (tspanSpacing * 3)}" 
+                class:fill-pervenche={toGroup === 'delegation'} 
+                class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
+            >
+                Délégation
+            </tspan>
 
-  </svg>      
+        </text>
+        
+        <ellipse bind:this={internalOrbit} id="internal" class="ellipse" cx="659.02" cy="{406.32 + resizeOrbit}" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="310.39" ry="147.85" transform="rotate(-16.342 659.08 406.403)"/>
+        <ellipse bind:this={middleOrbit} id="middle" class="ellipse" cx="667.44" cy="{435.04 + resizeOrbit}" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="493.5" ry="237.51" transform="rotate(-16.342 667.5 435.124)"/>
+        <ellipse bind:this={externalOrbit} id="external" class="ellipse" cx="680.25" cy="{478.73 + resizeOrbit}" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="701.55" ry="332.01" transform="rotate(-16.342 680.308 478.821)"/>
+
+        <path id="orbit-dash-line-reveal" fill="none" stroke="#12473B" stroke-dasharray="8.1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width=".675" 
+            d="m521.57.34 318.71 1086.08"
+        />
+
+    </svg>      
 </section>
 
 
@@ -393,6 +406,25 @@
     from { transform: rotate(0deg); }
     to { transform: rotate(359.9deg); }
 }
+@media screen and (max-width: 768px) {
+    #orbit-dash-line-reveal {
+        scale: 2.7;
+        transform-origin: 51% 55%;
+        stroke-width: 0.5px;
+    }
+    #section-orbits {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #orbites {
+        display: grid;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+    }
+}
+
 
 /* #section-orbits {
     background: url(orbits/maquette-full.svg) no-repeat;

@@ -11,6 +11,8 @@
     $: if (browser && readyLine)
         gsap.to('#arrow-cursor', { ...(arrowPosition ? { y: arrowPosition, opacity: 1 } : { opacity : 0 }) });
 
+    const orbitesTextIntro = `En tant qu'acteur multi-spécialiste de la gestion des risques, notre mission est d’apporter des solutions d’indemnisation sur l’ensemble de la chaîne de sinistres. Grâce à nos 17 entités de spécialité, nous construisons pour nos clients des solutions sur-mesure en fonction de leur stratégie et de leurs besoins.`;
+
     /** @type {SVGEllipseElement | undefined} */
     let internalOrbit;
 
@@ -19,9 +21,6 @@
 
     /** @type {SVGEllipseElement | undefined} */
     let middleOrbit;
-
-    /** @type {SVGElement | undefined} */
-    let galaxy;
 
     /** @type {HTMLElement | undefined} */
     let planetsEl;
@@ -136,9 +135,10 @@
         })
     }
 
-    if (browser)
-        gsap.registerPlugin(MotionPathPlugin, DrawSVGPlugin, ScrollTrigger);
-
+    if (browser) {
+        gsap.registerPlugin(DrawSVGPlugin,ScrollTrigger);
+        ScrollTrigger.normalizeScroll(true);
+    }
     onMount(async() => {
 
         tlOrbits = gsap.timeline({
@@ -160,10 +160,11 @@
                 anticipatePin: 1,
             }
         })
-        .fromTo('#big-mask-orbits', { skewX: "16.34deg", x: "-50vw" }, { x: "-120vw", duration: 1 }, 0.5)
-        .to('#orbits-menu', { opacity:1, duration: 1 }, 0.5)
         .to('#big-mask-orbits', { autoAlpha: 0, duration: 0.5 }, 0.85)
         .add(function(){}, ">+=1");
+        
+        $md && tlOrbits.fromTo('#big-mask-orbits', { skewX: "16.34deg", x: "-50vw" }, { x: "-120vw", duration: 1 }, 0.5);
+
         
         readyLine = true;
         [internalOrbit, externalOrbit, middleOrbit].forEach(orbit => MotionPathPlugin.convertToPath(orbit))
@@ -243,10 +244,9 @@
 
 
 <section id="section-orbits" class="w-screen bg-amande aspect-[unset] md:aspect-video h-screen md:h-auto overflow-hidden" bind:this={orbitsEl}>
-    
-    <div id="big-mask-orbits" class="bg-white w-[100vw] h-full md:h-[unset] md:aspect-video absolute z-[2] flex items-center leading-loose">
-        <div class="w-[30%] text-feuille ml-auto mr-[11.5vw] font-light skew-x-[-16.34deg] text-[2.5vw] md:text-[1.35vw]">
-            En tant qu'acteur<br class="visible md:hidden"> multi-spécialiste de la gestion des risques, notre mission est d’apporter des solutions d’indemnisation sur l’ensemble de la chaîne de sinistres. Grâce à nos 17 entités de spécialité, nous construisons pour nos clients des solutions sur-mesure en fonction de leur stratégie et de leurs besoins.
+    <div id="big-mask-orbits" class="hidden md:flex bg-white w-[100vw] aspect-video absolute z-[2]  items-center leading-loose">
+        <div class="w-[30%] text-feuille ml-auto mr-[11.5vw] font-light skew-x-[-16.34deg] text-[1.35vw]">
+            {orbitesTextIntro}
         </div>
     </div>
 
@@ -279,10 +279,10 @@
 
     <div class="big-mask" ></div>
 
-    <svg bind:this={galaxy} 
+    <svg
         color-interpolation-filters="sRGB"
         id="orbites"
-        class="absolute md:relative top-auto md:translate-y-0 h-full max-h-screen w-auto px-8 md:px-0 mx-auto overflow-visible" 
+        class="relative top-auto md:translate-y-0 h-full max-h-screen w-auto mx-auto overflow-visible" 
         xmlns="http://www.w3.org/2000/svg" xml:space="preserve" x="0" y="0" version="1.1" viewBox="0 0 {initialWidth} {initialHeight+(resizeOrbit * 2)}"
     >
 
@@ -294,7 +294,6 @@
         <!-- svelte-ignore a11y-click-events-have-key-events svelte-ignore a11y-mouse-events-have-key-events svelte-ignore a11y-no-static-element-interactions -->
         <text
             id="orbits-menu"
-            class="opacity-0"
             font-family="field-gothic-wide" font-size="21px"
             transform="{$md ? 'translate(-100 100)' : `translate(${initialWidth/2} -${initialHeight/2})scale(2.5)`}"
             text-anchor="{$md ? 'start':'middle'}"
@@ -349,7 +348,7 @@
             d="m521.57.34 318.71 1086.08"
         />
 
-    </svg>      
+    </svg>
 </section>
 
 
@@ -408,9 +407,7 @@
 }
 @media screen and (max-width: 768px) {
     #orbit-dash-line-reveal {
-        scale: 2.7;
-        transform-origin: 51% 55%;
-        stroke-width: 0.5px;
+        display: none;
     }
     #section-orbits {
         display: flex;

@@ -12,8 +12,10 @@
     /** @type {HTMLElement} */
     let chiffresEl;
 
-    if (browser)
+    if (browser) {
         gsap.registerPlugin(DrawSVGPlugin,ScrollTrigger);
+        ScrollTrigger.normalizeScroll(true);
+    }
 
     onMount(async() => {
 
@@ -43,14 +45,13 @@
         },0)
         .addLabel('chiffresAnim')
         .to(".chiffre-circle", {
-            scale: $md ? 1 : 0.8,
+            scale: $md ? 1 : 1.25,
             duration: 1,
             backgroundColor: '#FFFFFF',
             stagger: { each: 1 / 4 },
         },'>')
-
-        .to('.circle-1, .circle-2', { yPercent:()=> $md ? 0 : -25 }, 'chiffresAnim')
-        .to('.circle-3, .circle-4', { yPercent:()=> $md ? 0 : 25 }, 'chiffresAnim')
+        // .to('.circle-1, .circle-2', { yPercent:()=> $md ? 0 : -25 }, 'chiffresAnim')
+        // .to('.circle-3, .circle-4', { yPercent:()=> $md ? 0 : 25 }, 'chiffresAnim')
 
         .from("#chiffre-line-masked", {
             duration: 2,
@@ -87,7 +88,7 @@
             }
             
         },'<')
-
+        !$md && tl.to('.chiffres-circle-wrapper', { xPercent: 6.5, yPercent:(i)=> [ -60, -30, 0, 30 ][i]}, 'chiffresAnim' )
         .to({},{duration:2},'>')
 
     })
@@ -101,76 +102,106 @@
         style="--secteur-opacite: 0;"
         id="chiffres-el"
         class="
-            grid absolute top-0 left-0 w-full h-screen md:h-[unset] md:aspect-video
-            grid-cols-2 grid-rows-5 md:grid-rows-[unset] md:grid-cols-6
+            grid absolute top-0 left-0 w-full h-screen md:h-[unset] md:aspect-video px-10
+            grid-rows-6 grid-cols-3 md:grid-rows-[unset] md:grid-cols-6 md:px-0
         " 
         bind:this={chiffresEl}
     >
 
-        {#each { length: $md ? 6 : 3 } as _}
-        <div class="deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
+        {#each { length: 6 } as _}
+        <div class="hidden md:block deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
         {/each}
 
         <div class="deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
 
-        <div class="relative text-center leading-loose text-amande w-full self-center">
+        {#each { length: 2 } as _}
+        <div class="block md:hidden deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
+        {/each}
+
+        <div class="chiffres-circle-wrapper relative text-center leading-loose text-amande w-full self-center">
             <div class="deco-circle chiffre-circle circle-1 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-2 md:mb-5"/>
-            <div class="chiffres-wrapper top-[75%] md:top-[120%]  flex flex-col absolute text-[4vw] md:text-[1.5vw] font-semibold w-max">
-                <span class="chiffres-animes">2200</span>
-                <div class="text-[2vw] md:text-[0.9vw] font-light">collaborateurs</div>
+            <div class="chiffres-wrapper flex flex-col absolute text-[1.75ch] md:text-[1.5vw] font-semibold w-max">
+                <span class="chiffres-animes leading-tight md:leading-auto">2200</span>
+                <div class="text-[0.6ch] md:text-[0.9vw] font-light">collaborateurs</div>
             </div>
         </div>
 
-        <div class="relative text-center leading-loose text-amande w-full self-center">
+        {#each { length: 2 } as _}
+        <div class="block md:hidden deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
+        {/each}
+
+        <div class="chiffres-circle-wrapper relative text-center leading-loose text-amande w-full self-center">
             <div class="deco-circle chiffre-circle circle-2 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-2 md:mb-5"/>
-            <div class="chiffres-wrapper top-[75%] md:top-[120%]  flex flex-col absolute text-[4vw] md:text-[1.5vw] font-semibold w-max">
-                <span class="chiffres-animes milliards">93
+            <div class="chiffres-wrapper text-left md:text-center top-[120%]  flex flex-col absolute text-[1.75ch] md:text-[1.5vw] font-semibold w-max">
+                <span class="chiffres-animes leading-tight md:leading-auto milliards">93
                     <span>&nbsp;Milliards €</span>
                 </span>
-                <div class="text-[2vw] md:text-[0.9vw] font-light">Bureaux en France<br>
+                <div class="text-[0.6ch] md:text-[0.9vw] font-light">Bureaux en France<br>
                     <span class="relative -top-[0.5vw]">(Métro. et DROM-COM)</span>
                 </div>
             </div>
         </div>
 
-        <div class="relative text-center leading-loose text-amande w-full self-center">
+        {#each { length: 2 } as _}
+        <div class="block md:hidden deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
+        {/each}
+
+
+        <div class="chiffres-circle-wrapper relative text-center leading-loose text-amande w-full self-center">
             <div class="deco-circle chiffre-circle circle-3 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-2 md:mb-5"/>
-            <div class="chiffres-wrapper top-[120%]  flex flex-col absolute text-[4vw] md:text-[1.5vw] font-semibold w-max">
-                <span class="chiffres-animes">
+            <div class="chiffres-wrapper flex flex-col absolute text-[1.75ch] md:text-[1.5vw] font-semibold w-max">
+                <span class="chiffres-animes leading-tight md:leading-auto">
                     450000
                 </span>
-                <div class="text-[2vw] md:text-[0.9vw] font-light">missions d’expertise</div>
+                <div class="text-[0.6ch] md:text-[0.9vw] font-light">missions d’expertise</div>
             </div>
         </div>
 
-        <div class="relative text-center leading-loose text-amande w-full self-center">
+        {#each { length: 2 } as _}
+        <div class="block md:hidden deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
+        {/each}
+
+
+        <div class="chiffres-circle-wrapper relative text-center leading-loose text-amande w-full self-center">
             <div class="deco-circle chiffre-circle circle-4 w-7/12 aspect-square rounded-full bg-amande mx-auto mb-2 md:mb-5"/>
-            <div class="chiffres-wrapper top-[120%]  flex flex-col absolute text-[4vw] md:text-[1.5vw] font-semibold w-max">
-                <span>+
+            <div class="chiffres-wrapper flex flex-col absolute text-[1.75ch] md:text-[1.5vw] font-semibold w-max">
+                <span class="leading-tight md:leading-auto">+
                     <span class="chiffres-animes">4</span>
                     <span>&nbsp;Millards €</span>
                 </span>
-                <div class="text-[2vw] md:text-[0.9vw] font-light">de dommages expertisés</div>
+                <div class="text-[0.6ch] md:text-[0.9vw] font-light">de dommages expertisés</div>
             </div>
         </div>
 
+        {#each { length: 2 } as _}
+        <div class="block md:hidden deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
+        {/each}
+
+
         <div class="deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
 
-        {#each { length: $md ? 6 : 3 } as _}
-            <div class="deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
+        {#each { length: 2 } as _}
+        <div class="block md:hidden deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
+        {/each}
+
+        {#each { length: 6 } as _}
+            <div class="hidden md:block deco-circle self-center w-7/12 aspect-square rounded-full bg-amande mx-auto mb-[1em]"/>
         {/each}
 
        
     </div>
 
-    <svg class="absolute w-full h-[2px] -top-[15px] my-auto mx-0 bottom-0 overflow-visible" bind:this={SVG} version="1.2" baseProfile="tiny" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" overflow="visible" xml:space="preserve" viewBox="0 0 1920 2">
-        
+    <svg class="absolute w-full scale-[2.2] -left-1/4 md:left-auto rotate-90 md:scale-100 md:rotate-0 h-[2px] -top-[15px] my-auto mx-0 bottom-0 overflow-visible" bind:this={SVG} version="1.2" baseProfile="tiny" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" overflow="visible" xml:space="preserve" viewBox="0 0 1920 2">
         
         <mask id="mask-line" maskUnits="userSpaceOnUse">
-            <line id="chiffre-line-masked" fill="none" stroke="white" x1="0" y1="49.25%" x2="1920" y2="49.25%"/>
+            <line id="chiffre-line-masked" fill="none" stroke="white" stroke-width="20" 
+                x1="0" y1="49.25%" x2="1920" y2="49.25%"
+            />
         </mask>
 
-        <line mask="url(#mask-line)" id="chiffre-line" fill="none" stroke="#D6FC8A" stroke-miterlimit="10" stroke-dasharray="9" x1="0" y1="49.25%" x2="100%" y2="49.25%"/>
+        <line mask="url(#mask-line)" id="chiffre-line" fill="none" stroke="#D6FC8A" stroke-miterlimit="10" stroke-dasharray="9" 
+            x1="0" y1="49.25%" x2="100%" y2="49.25%"
+        />
         
     </svg>
     
@@ -179,7 +210,7 @@
 <style lang="postcss">
     
     .chiffres-wrapper {
-        @apply left-1/2 -translate-y-1/2 -translate-x-1/2 h-[5vw];
+        @apply items-start md:items-center top-[10%] md:top-[120%] left-[105%] md:left-1/2 md:-translate-y-1/2 md:-translate-x-1/2 h-[5vw];
     }
     
     circle {
@@ -210,7 +241,6 @@
     .circle-1:after {
         background-image: url('/chiffres-cles/collaborateurs.png');
     }
-
     /* .chiffres-cles {
         height:55%;
         top:39.3%;

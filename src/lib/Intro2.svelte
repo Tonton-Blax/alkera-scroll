@@ -1,5 +1,4 @@
 <script>
-	import { fly, scale } from 'svelte/transition';
     import { browser } from '$app/environment';
     import gsap from 'gsap';
     import MotionPathPlugin from 'gsap/dist/MotionPathPlugin.js';
@@ -7,9 +6,9 @@
     import DrawSVGPlugin from "$lib/gsap/DrawSVGPlugin";
     import ScrollTrigger from 'gsap/dist/ScrollTrigger.js';
     import { RoughEase } from "gsap/EasePack";
+    import { md } from './utils';
 
     export let order = 4;
-
     let SVG;
     let baseDuration = 0.1;
     /** @type {string | undefined} */
@@ -62,25 +61,20 @@
     },
     anticipatePin: true 
     */
-    if (browser)
+    if (browser) {
         gsap.registerPlugin(MotionPathPlugin, DrawSVGPlugin,ScrollTrigger, RoughEase);
+        // @ts-ignore
+        ScrollTrigger.normalizeScroll(true);
+    }
 
     onMount(async() => {
-        const el = document.querySelector('#section-intro');
         gsap.set('#le-point, #le-cercle-1, .secteur-hover', { transformOrigin:'50% 50%' })
         gsap.to('.secteur-hover', { rotateZ: 360, repeat: -1, duration: 7, ease:'none' })
-
-        const secteurIn =  gsap.to(`.secteur-hover[data-secteur='${el.dataset.secteur}']`,{
-            opacity: 1,
-            r:75,
-            ease: "Bounce.easeOut",
-            rotate: 360,
-        })
         
         /** @type {gsap.core.Animation} */
         let secteurHover;
 
-        /** @type {gsap.core.Time} */
+        /** @type {gsap.core.Timeline} */
         let secteurHoverInitial = gsap.timeline({paused:true})
         .to(`.secteur-hover[data-secteur='group1']`,{ opacity: 1, r:75, ease: "Elastic.easeOut", stagger: 0.2 })
         .to(`.secteur-hover[data-secteur='group1']`,{ opacity: 0, r:60, ease: "Elastic.easeIn", delay: 0.2, stagger: 0.2 }, '>');
@@ -94,7 +88,7 @@
                 trigger: '#section-intro',
                 scrub: 5,
                 pin: '#section-intro',
-                start: 'center center',
+                start: '0px',
                 end: '+=400%',
                 preventOverlaps: true,
                 anticipatePin: 1,
@@ -113,7 +107,7 @@
         } }, '>' )
         .from('#tites-secteurs', { yPercent: 40, opacity: 0, duration: baseDuration * 2, stagger: { each: 0.3 / 9  } }, 'apparition-secteur' )
         .from('.secteur-circle', { scale: 0, transformOrigin: '50% 50%', duration: baseDuration * 2, stagger: { each: 0.3 / 9  }}, 'apparition-secteur' )
-        .to({}, { duration: baseDuration * 5 }, '>' )
+        .to({}, { duration: baseDuration * 1.5 }, '>' )
         //await tick();
         document.querySelectorAll('.secteur-circle')?.forEach(el => {
             secteurHoverInitial?.kill();
@@ -150,8 +144,8 @@
 
         <div id="bloc-text" 
             class="absolute 
-                w-[65vw] text-[4vw] leading-[6vw] right-[17vw] h-1/2 top-0
-                md:w-[30%] md:text-[1.35vw] md:leading-[3vw] md:right-[12.5%] md:h-fit md:top-auto
+                w-[65vw] text-[4vw] leading-[6vw] right-[17vw] h-1/2 bottom-[5%]
+                md:w-[30%] md:text-[1.35vw] md:leading-[3vw] md:right-[12.5%] md:h-fit md:bottom-auto md:top-auto
                 max-h-fit self-center my-auto overflow-hidden font-light flex">
             <span class="bloc-text-contenu self-center text-feuille">
                 <br>&nbsp;
@@ -166,12 +160,13 @@
     
         <svg bind:this={SVG} 
             color-interpolation-filters="sRGB"
+            shape-rendering="{$md ? 'crispEdges' : 'optimizeSpeed'}"
             class="w-full h-fit md:h-auto mx-auto overflow-visible
-            absolute scale-[2.2] origin-[10%_30vh] bottom-0 
-            md:-mt-[4%]  md:relative md:bottom-auto md:scale-100  md:origin-center" 
+            absolute scale-[2.2] origin-[10%_30vh] top-1/3
+            md:-mt-[4%]  md:relative md:bottom-auto md:scale-100  md:origin-center md:top-[unset]" 
             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1920 1050"
         >
-    
+            {#if $md}
             <mask id="mask-part-1" class="mask-part" maskUnits="userSpaceOnUse">
                 <path class="mask-outline-secteur-2" fill="none" stroke="white" d="M335.7,343.15h452.29 c55.61,0,100.69,45.08,100.69,100.69v0c0,55.61-45.08,100.69-100.69,100.69H288.21"/>        
             </mask>
@@ -179,6 +174,7 @@
             <mask id="mask-part-2" class="mask-part" maskUnits="userSpaceOnUse">
                 <path class="mask-outline-secteur-1" fill="none" stroke="white" d="M732.25,745.91H288.21 c-55.61,0-100.69-45.08-100.69-100.69v0c0-55.61,45.08-100.69,100.69-100.69"/>
             </mask>
+            {/if}
 
             <path class="path-part part-1" mask="url(#mask-part-1)" fill="none" stroke="#12473B" stroke-linecap="round" stroke-miterlimit="10" stroke-dasharray="9" d="M335.7,343.15h452.29 c55.61,0,100.69,45.08,100.69,100.69v0c0,55.61-45.08,100.69-100.69,100.69H288.21"/>
             <path class="path-part part-2" mask="url(#mask-part-2)" fill="none" stroke="#12473B" stroke-linecap="round" stroke-miterlimit="10" stroke-dasharray="9" d="M732.25,745.91H288.21 c-55.61,0-100.69-45.08-100.69-100.69v0c0-55.61,45.08-100.69,100.69-100.69"/>
@@ -212,7 +208,7 @@
                     transform-origin="{secteur.xy[j][0]} {secteur.xy[j][1]}"
                 />
                 <text id="tites-secteurs"
-                    text-anchor="middle" class="fill-feuille"
+                    text-anchor="middle" class="fill-feuille text-[25px] md:text-[18px]"
                     x="{secteur.xy[j][0]}" y="{secteur.xy[j][1]+100}"
                 >
                     {secteur.secteurs[j]}
@@ -232,7 +228,7 @@
                 id="logo-alkera-et-texte"
                 class="w-full h-auto overflow-visible"
                 color-interpolation-filters="sRGB"
-                shape-rendering="geometricPrecision"
+                shape-rendering=" geometricPrecision"
                 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="300px" y="300px" viewBox="0 10 300 300"
             >
             
@@ -267,7 +263,7 @@
                 </p>
             </div>
             <svg
-                class="absolute bottom-[5vw] w-[5vw] md:w-[2vw] h-auto left-0 right-0 mx-auto my-0" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
+                class="absolute bottom-[15vw] md:bottom-[5vw] w-[5vw] md:w-[2vw] h-auto left-0 right-0 mx-auto my-0" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
                 id="scroll-down" x="0" y="0" version="1.1" viewBox="0 0 54 79.4"
             >
                 <path stroke-width=1 stroke-miterlimit=10 fill="none" stroke="#D6FC8A" d="M27 78.9C12.4 78.9.5 67 .5 52.4V27C.5 12.4 12.4.5 27 .5S53.5 12.3 53.5 27v25.4C53.5 67 41.6 78.9 27 78.9zM27 20v27.2"/>
@@ -320,27 +316,17 @@
         opacity: 0;
     }
 
-  
-    /* #bloc-text:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 1;
-        background-image: linear-gradient( #D6FC8AFF 0%, #D6FC8A00 20% );
-    } */
-    
-    #bloc-text:after {
-        content: '';
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 100%;
-        background-image: linear-gradient( #D6FC8A00 80%, #D6FC8AFF 100% );
+    @media screen and (min-width: 768px) {
+        #bloc-text:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background-image: linear-gradient( #D6FC8A00 80%, #D6FC8AFF 100% );
+        }
     }
 
     .bloc-text-contenu::-webkit-scrollbar {

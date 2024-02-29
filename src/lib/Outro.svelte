@@ -1,4 +1,5 @@
 <script>
+    import { browser } from '$app/environment';
 	import gsap from 'gsap';
 	import TextPlugin from 'gsap/TextPlugin';
 	import ScrollTrigger from 'gsap/dist/ScrollTrigger.js';
@@ -21,6 +22,11 @@
 		'Contribuer au développement des compétences, encourager la diversité et la mixité, et améliorer le bien-être de nos collaborateurs'
 	]
 
+	if (browser) {
+        gsap.registerPlugin(TextPlugin, ScrollTrigger);
+        ScrollTrigger.normalizeScroll(true);
+    }
+	
 	onMount(async() => {
 		gsap.registerPlugin(TextPlugin, ScrollTrigger);
 

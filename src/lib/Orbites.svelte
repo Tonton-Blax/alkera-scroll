@@ -1,4 +1,14 @@
 <script>
+    /* 
+        TODO:
+        On va faire apparaitre le filet au moment ou le volet se barre
+        Si on retient le onScroll :
+         - Le volet se barre on clickOutside ou onScroll
+         - On vire la logique du click noyau
+         - On baisse le bloc de texte pour l'aligner sur le haut des boules dernier orbite
+        Les filets passent au dessus des pictos
+
+    */
     import { browser } from '$app/environment';
     import gsap from 'gsap';
     import MotionPathPlugin from 'gsap/dist/MotionPathPlugin.js';

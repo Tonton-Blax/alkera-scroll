@@ -6,6 +6,15 @@
     import { onMount, tick } from 'svelte';
     export let order=1;
 
+	/**
+	 * TODO:
+	 * LE pavé de texte apparaît en même temps que tout le monde et à la première sous-section
+	 * On arrive sur le 1er état
+	 * On déclenche les autres états onScroll ou OnClick feuvert
+	 * Typo du rond de droite en vert forêt
+	 * 
+	*/
+
 	let activeTopic = 0;
 
 

@@ -1,4 +1,9 @@
 <script>
+    /* 
+        TODO: Filets qui passent au dessus des pictos
+        Centrer les blocs de pictos verticalement
+        
+    */
     import { browser } from '$app/environment';
     import gsap from 'gsap';
     import { onMount } from 'svelte';

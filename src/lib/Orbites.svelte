@@ -10,6 +10,7 @@
 
     $: if (browser && readyLine)
         gsap.to('#arrow-cursor', { ...(arrowPosition ? { y: arrowPosition, opacity: 1 } : { opacity : 0 }) });
+    let ellipseRatio = 1;
 
     const orbitesTextIntro = `En tant qu'acteur multi-spécialiste de la gestion des risques, notre mission est d’apporter des solutions d’indemnisation sur l’ensemble de la chaîne de sinistres. Grâce à nos 17 entités de spécialité, nous construisons pour nos clients des solutions sur-mesure en fonction de leur stratégie et de leurs besoins.`;
 
@@ -30,6 +31,9 @@
 
     /** @type {gsap.core.Timeline} */
     let tlOrbits;
+
+    /** @type {ResizeObserver | undefined} */
+    let resizeObserver;
 
     const tspanSpacing = 31.5;
     const initialArrowPosition = 89 + tspanSpacing;
@@ -141,6 +145,10 @@
     }
     onMount(async() => {
 
+        resizeObserver = new ResizeObserver(() => { 
+            initialize();
+        }); 
+
         tlOrbits = gsap.timeline({
             scrollTrigger:  {
                 // @ts-ignore
@@ -158,6 +166,13 @@
                 pin: '#sections-wrapper',
                 preventOverlaps: true,
                 anticipatePin: 1,
+                onEnter: () => {
+                    planetsEl && resizeObserver?.observe(document.body);
+                },
+                onLeave: () => {
+                    resizeObserver?.disconnect();
+                    resizeObserver = undefined;
+                }
             }
         })
         .to('#big-mask-orbits', { autoAlpha: 0, duration: 0.5 }, 0.85)
@@ -184,10 +199,6 @@
         .to({}, { duration: .45 }, .85)
         
   
-        let resizeObserver = new ResizeObserver(() => { 
-            initialize();
-        }); 
-
         function initialize () {
             entites.forEach(async (entite, i) => {
                 const initialProgress = entite.order / orbits[entite.orbit].planets.length;
@@ -218,7 +229,7 @@
   
         initialize();
 
-        resizeObserver.observe(document.body); 
+        //resizeObserver.observe(document.body); 
 
         planetsEl?.addEventListener("mouseenter", slowTimeScale);
         planetsEl?.addEventListener("mouseleave", fastTimeScale);
@@ -243,7 +254,10 @@
 </script>
 
 
-<section id="section-orbits" class="w-screen bg-amande aspect-[unset] md:aspect-video h-screen md:h-auto overflow-hidden" bind:this={orbitsEl}>
+<section id="section-orbits" class="w-screen bg-amande aspect-[unset] md:aspect-video h-screen md:h-auto overflow-hidden" 
+    bind:this={orbitsEl}
+>
+<div class="block md:contents">
     <div id="big-mask-orbits" class="hidden md:flex bg-white w-[100vw] aspect-video absolute z-[2]  items-center leading-loose">
         <div class="w-[30%] text-feuille ml-auto mr-[11.5vw] font-light skew-x-[-16.34deg] text-[1.35vw]">
             {orbitesTextIntro}
@@ -283,7 +297,8 @@
         color-interpolation-filters="sRGB"
         id="orbites"
         class="relative top-auto md:translate-y-0 h-full max-h-screen w-auto mx-auto overflow-visible" 
-        xmlns="http://www.w3.org/2000/svg" xml:space="preserve" x="0" y="0" version="1.1" viewBox="0 0 {initialWidth} {initialHeight+(resizeOrbit * 2)}"
+        xmlns="http://www.w3.org/2000/svg" xml:space="preserve" x="0" y="0" version="1.1"
+        viewBox="0 0 {initialWidth} {initialHeight+(resizeOrbit * 2)}"
     >
 
         <g id="arrow-cursor" x="0" y="0" transform="translate(-125 89)" opacity="0" >
@@ -340,15 +355,25 @@
 
         </text>
         
-        <ellipse bind:this={internalOrbit} id="internal" class="ellipse" cx="659.02" cy="{406.32 + resizeOrbit}" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="310.39" ry="147.85" transform="rotate(-16.342 659.08 406.403)"/>
-        <ellipse bind:this={middleOrbit} id="middle" class="ellipse" cx="667.44" cy="{435.04 + resizeOrbit}" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="493.5" ry="237.51" transform="rotate(-16.342 667.5 435.124)"/>
-        <ellipse bind:this={externalOrbit} id="external" class="ellipse" cx="680.25" cy="{478.73 + resizeOrbit}" fill="none" stroke="#12473B" stroke-miterlimit="10" rx="701.55" ry="332.01" transform="rotate(-16.342 680.308 478.821)"/>
+        <ellipse bind:this={internalOrbit} id="internal" class="ellipse"
+            cx="659.02" cy="{406.32 + resizeOrbit}" rx="{310.39 * ellipseRatio}" ry="{147.85 * ellipseRatio}" 
+            fill="none" stroke="#12473B" stroke-miterlimit="10" transform="rotate(-16.342 659.08 406.403)"
+        />
+        <ellipse bind:this={middleOrbit} id="middle" class="ellipse"
+            cx="667.44" cy="{435.04 + resizeOrbit}" rx="{493.5 * ellipseRatio}" ry="{237.51 * ellipseRatio}" 
+            fill="none" stroke="#12473B" stroke-miterlimit="10" transform="rotate(-16.342 667.5 435.124)"
+        />
+        <ellipse bind:this={externalOrbit} id="external" class="ellipse"
+            cx="680.25" cy="{478.73 + resizeOrbit}" rx="{701.55 * ellipseRatio}" ry="{332.01 * ellipseRatio}" 
+            fill="none" stroke="#12473B" stroke-miterlimit="10" transform="rotate(-16.342 680.308 478.821)"
+        />
 
         <path id="orbit-dash-line-reveal" fill="none" stroke="#12473B" stroke-dasharray="8.1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width=".675" 
             d="m521.57.34 318.71 1086.08"
         />
 
     </svg>
+</div>
 </section>
 
 
@@ -415,11 +440,14 @@
         align-items: center;
     }
     #orbites {
-        display: grid;
+        display: inline-flex;
         align-items: center;
         width: 100%;
-        height: 100%;
     }
+    /* #orbites :global(path) {
+        display: inline-flex;
+        position: absolute;
+    } */
 }
 
 

@@ -16,6 +16,8 @@
     /** @type {HTMLElement} */
     export let sectionEl;
 
+    export let imgPath = '';
+
     const secteurs = [
         {   id: 'group1', 
             secteurs : [ 'Audit', 'Conseil', 'Prévention' ], 
@@ -144,14 +146,14 @@
 </script>
 <section id="section-intro" class="min-w-screen w-full h-screen overflow-y-hidden" bind:this={sectionEl}>
 
-    <div id="intro-part-2" class="z-[12] absolute w-full h-full opacity-0 flex flex-row">
+    <div id="intro-part-2" class="z-[12] absolute w-full h-full opacity-0 flex flex-row bg-amande">
 
         <div id="bloc-text" 
             class="absolute 
                 w-[65vw] text-[4vw] leading-[6vw] right-[17vw] h-1/2 bottom-[5%]
-                md:w-[30%] md:text-[1.35vw] md:leading-[3vw] md:right-[12.5%] md:h-fit md:bottom-auto md:top-auto
+                md:w-[30%] md:text-[1.35vw] md:leading-[2.6vw] md:right-[14%] md:h-fit md:bottom-auto md:top-auto
                 max-h-fit self-center my-auto overflow-hidden font-light flex">
-            <span class="bloc-text-contenu self-center text-feuille">
+            <span class="bloc-text-contenu self-start md:self-center text-feuille">
                 <br>&nbsp;
                 <br>
                 Depuis plus de 25 ans, le Groupe Alkera développe une expertise complète et reconnue sur l’ensemble de la chaîne du sinistre en France et l’international.
@@ -164,6 +166,7 @@
     
         <svg 
             color-interpolation-filters="sRGB"
+            shape-rendering="{$md ? 'geometricPrecision' : 'optimizeSpeed'}"
             class="w-full h-fit md:h-auto mx-auto overflow-visible
             absolute scale-[2.2] origin-[10%_30vh] top-1/3
             md:-mt-[4%]  md:relative md:bottom-auto md:scale-100  md:origin-center md:top-[unset]" 
@@ -194,7 +197,7 @@
                 />
                 
                 <filter id="secteur-image-{index}{j}" x="0%" y="0%" width="100%" height="100%">
-                    <feImage xlink:href="intro/{secteur.imagePrefix}0{j+1}.png"/>
+                    <feImage xlink:href="{imgPath}/intro/{secteur.imagePrefix}0{j+1}.png"/>
                     <feComposite in2="SourceGraphic" operator="over" />
                 </filter>
 
@@ -255,11 +258,11 @@
 
             </svg>
 
-            <div class="text-amande z-[0] text-center overflow-visible relative -top-[24vw] md:-top-[12vw] w-[150%] self-center">
+            <div class="text-amande z-[0] text-center overflow-visible relative -top-[24vw] md:-top-[10vw] w-[150%] self-center">
                 <p class="text-[7vw] md:text-[3.24vw] font-thin whitespace-nowrap">
                     L'imprévu s'arrête là.
                 </p>
-                <p class="text-[3vw] md:text-[1.3vw] font-light px-[20%] mt-[2vw]">
+                <p class="text-[3vw] md:text-[1.3vw] font-light px-[20%] mt-[2vw] leading-[5vw] md:leading-[2.2vw]">
                     Le Groupe Alkera accompagne assureurs, courtiers et entreprises dans la gestion globale des risques et des sinistres.
                 </p>
             </div>            
@@ -273,6 +276,11 @@
 
 
 <style lang="postcss">
+
+
+    *  {
+        font-family: "field-gothic-wide",sans-serif;
+    }
  
     #le-cercle-1, #le-point  {
         shape-rendering: optimizeSpeed;

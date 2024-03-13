@@ -7,6 +7,8 @@
     /** @type {App.Anims} */
 	export let anims;
 
+	export let imgPath = '';
+
 	/** @type {HTMLElement} */
     export let sectionEl;
 
@@ -41,7 +43,7 @@
 		outroTl = gsap.timeline({ 
 			defaults: { ease: 'none' },
         })
-		.to('.bloc-text-contenu', 
+		.to('.outro-bloc-text-contenu', 
 			{ yPercent: -100, duration: 1, ease: 'Power4.out' }, 
 		).to(textContentTl, { progress:1 },0)
 
@@ -90,17 +92,17 @@
 >
 	<div class="w-full h-3/4 self-center flex">
 
-		<div class="h-full w-[5%] flex justify-end">
+		<div class="h-full w-[12%] flex justify-end">
 			<div class="flex flex-col justify-center items-start w-full space-y-[1.1vw]">
 				&nbsp;
 			</div>
 		</div>
 
-		<div class="relative w-[33.3%] h-full pr-[2vw]">
+		<div class="relative w-[26%] h-full pr-[2vw]">
 			<div id="bloc-text" 
 				class="absolute h-full text-[1.1vw] leading-[2.4vw] my-auto overflow-hidden font-light flex"
 			>
-				<span class="bloc-text-contenu flex items-center h-full text-feuille translate-y-full">
+				<span class="outro-bloc-text-contenu flex items-center h-full text-feuille translate-y-full">
 					Témoins au quotidien d’une
 					sinistralité climatique qui devient,
 					chaque année, toujours plus
@@ -118,10 +120,15 @@
 		</div>
 
 		<!-- cercle central -->
-		<div class="h-full w-[33.3%] flex p-[6vw]">
-			<div class="w-full h-fit aspect-square self-center bg-feuille rounded-full bg-[url('/outro/alkera-sengage.png')] bg-contain"></div>
+		<div class="h-full w-[24%] flex p-[2vw]">
+			<div 
+				id="cercle-central" 
+				class="w-full h-fit aspect-square bg-feuille self-center rounded-full bg-contain"
+			>
+				<img src="{imgPath}/outro/alkera-sengage.png" alt="alkera-sengage" class="w-full h-full object-cover">
+			</div>
 		</div>
-		<div class="relative h-full w-[33.3%] flex p-[6vw] items-center">
+		<div class="relative h-full w-[26%] flex p-[3.2vw] items-center">
 			
 			<div id="trait-gauche" class="alkera-line foret absolute -left-1/4 origin-center h-px w-[42.8%] z-[0]"></div>
 			<div id="outro-text"
@@ -135,7 +142,7 @@
 		<!-- section droite -->
 		
 
-		<div class="h-full w-[5%] flex justify-end">
+		<div class="h-full w-[12%] flex justify-end">
 			<div class="flex flex-col justify-center items-start w-full space-y-[1.1vw]">
 				{#each textContent as topic,i}
 					<button 
@@ -149,7 +156,12 @@
 </section>
 
 <style>
-	  #bloc-text:after {
+	
+    *  {
+        font-family: "field-gothic-wide",sans-serif;
+    }
+
+	#bloc-text:after {
         content: '';
         position: absolute;
         top: 0;
@@ -160,10 +172,10 @@
         background-image: linear-gradient( #D6FC8A00 80%, white 100% );
     }
 
-    .bloc-text-contenu::-webkit-scrollbar {
+    .outro-bloc-text-contenu::-webkit-scrollbar {
         display: none;
     }
-    .bloc-text-contenu {
+    .outro-bloc-text-contenu {
         -ms-overflow-style: none;  /* IE and Edge */
         scrollbar-width: none;  /* Firefox */
     }

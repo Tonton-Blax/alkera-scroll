@@ -8,6 +8,8 @@
     /** @type {App.Anims} */
 	export let anims;
 
+    export let imgPath = '';
+
     /** @type {gsap.core.Timeline} */
     let tlOrbits;
 
@@ -17,11 +19,15 @@
     /** @type {HTMLElement} */
     export let sectionEl;
 
+    /** @type {HTMLElement} */
+    let footer;
+
     let mounted = false;
 
     $: if (mounted && readyLine) {
         gsap.to('#arrow-cursor', { y: arrowPosition, opacity: 1 } );
     }
+    $: currentGroup = groups?.findIndex(g=>g.id===`groupe-${toGroup || 'initial'}`)
 
     let ellipseRatio = 1;
 
@@ -50,16 +56,22 @@
 
     let readyLine = false;
 
-    const SCALE_FACTOR = 0.105;
+    //const SCALE_FACTOR = 0.105;
+    const SCALE_FACTOR = 0.09;
 
     /** @type {undefined | App.Metier} */
     let toGroup;
+
+    /** @type {HTMLElement[]}*/
+    let groups;
 
     /** @type {App.Metier} */
     let fromGroup = 'initial';
 
     /** @type {number} */
     let intervalIdle;
+
+    let userClicked = false;
 
     const duration = 80;
 
@@ -148,8 +160,14 @@
 
     onMount(async() => {
         gsap.registerPlugin(DrawSVGPlugin);
+        
+        groups = gsap.utils.toArray('[data-y-arrow]');
+
         mounted = true;
         resizeObserver = new ResizeObserver(() => { 
+            if (footer)
+                footer = document.querySelector('footer');
+
             initialize();
         });
         readyLine = true;
@@ -219,41 +237,47 @@
     });
 
     /** @param {number} direction */
-    function handleNext (direction) {
+    let handleNext = (direction) => {
 
         if (maskAnim?.isActive())
             return true;
-        
-        if(maskAnim && maskAnim.progress() < 0.1) {
-            !maskAnim?.isActive() && maskAnim.play();
-            return true;
+
+        if(maskAnim && !maskAnim.progress()) {
+            if (direction === 1)  {
+                !maskAnim?.isActive() && maskAnim.play();
+                return true;            
+            }
+            return false;
         }
 
-        if (fromGroup !== 'initial')
-            return false;
-
         const orbitingTl = gsap.getById("orbiting");
+
         if (orbitingTl?.isActive())
             return true;
 
-        const groups = gsap.utils.toArray('[data-y-arrow]');        
-        const currentGroup = groups.findIndex(g=>g.id===`groupe-${toGroup || 'initial'}`);
-
         if (typeof currentGroup !== 'number') return false;
 
-        if (direction === 1 && currentGroup + 1 < groups.length) {
-            changeGroup(groups[currentGroup+1].id.split('-')[1]);
-            if (currentGroup + 1 === groups.length - 1) {
-                anims.vars.handleNext = null;
-                return false;
+        if ((userClicked ||( currentGroup + 1 > groups.length - 1))) {
+            if (direction === -1) {
+                maskAnim.reverse();
+                return true;
             }
+            return false;
+        }
+
+        if (userClicked)
+            return false;
+
+        if (direction === 1 && currentGroup + 1 < groups.length) {            
+            changeGroup(/** @type {App.Metier} */ (groups[currentGroup+1].id.split('-')[1]));
             return true;
         }
+
         if (direction === -1 && currentGroup - 1 >= 0) {
-            changeGroup(groups[currentGroup-1].id.split('-')[1]);
+            changeGroup(/** @type {App.Metier} */  (groups[currentGroup-1].id.split('-')[1]));
             return true;
         }
-        else return false;
+        
     }
 
     function slowTimeScale () {
@@ -264,7 +288,9 @@
     }
 
     /** @param {App.Metier} metier*/
-    function changeGroup (metier) {
+    function changeGroup (metier, click) {
+        if (click)
+            userClicked = true;
         clearInterval(intervalIdle);
         // @ts-ignore
         arrowPosition = document.querySelector(`#groupe-${metier}`).dataset.yArrow || initialArrowPosition;
@@ -284,8 +310,6 @@
             return 
 
         gsap.to(maskAnim, {progress:1});
-        maskAnim?.invalidate().kill();
-        maskAnim = null;
 	}
 
 </script>
@@ -306,7 +330,7 @@
     >
         <defs>
             <pattern id="image-pattern" patternContentUnits="objectBoundingBox" width="100%" height="100%">
-              <image href="orbits/alkera-logo.jpg" preserveAspectRatio = "none" width = "1" height = "1" />
+              <image href="{imgPath}/orbits/alkera-logo.jpg" preserveAspectRatio = "none" width = "1" height = "1" />
             </pattern>
         </defs>
         <circle id="noyau" fill="url(#image-pattern)" cx="653.65" cy="{393.04 + resizeOrbit}" r="90.81"/>
@@ -341,9 +365,11 @@
             transform="{$md ? `translate(-100 ${initialArrowPosition - 18})` : `translate(${initialWidth/2} ${initialHeight*1.5})scale(2.5)`}"
             text-anchor="{$md ? 'start':'middle'}"
             on:mouseover={(e) => {
-                if (!e.target?.dataset?.yArrow || !!toGroup)
+                /** @type {HTMLElement} */
+                const target = /** @type {HTMLElement} */ (e.target);
+                if (target?.dataset?.yArrow || !!toGroup)
                     return;
-                arrowPosition = e.target?.dataset?.yArrow
+                arrowPosition = Number(target?.dataset?.yArrow)
             }} 
             
         >
@@ -352,28 +378,28 @@
             >
                 Nos secteurs d’activité
             </tspan>
-            <tspan on:click={()=>changeGroup("audit")} 
+            <tspan on:click={()=>changeGroup("audit",true)} 
                 opacity="0" x="0" y="{tspanSpacing * 1}" id="groupe-audit" data-y-arrow="{initialArrowPosition}" 
                 class:fill-pervenche={toGroup === 'audit'} 
                 class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
             >
                 Audit, conseil et prévention
             </tspan>
-            <tspan on:click={()=>changeGroup("gestion")} 
+            <tspan on:click={()=>changeGroup("gestion",true)} 
                 opacity="0" x="0" y="{tspanSpacing * 2}" id="groupe-gestion" data-y-arrow="{initialArrowPosition + tspanSpacing}" 
                 class:fill-pervenche={toGroup === 'gestion'} 
                 class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
             >
                 Expertise
             </tspan>
-            <tspan on:click={()=>changeGroup("assistance")} 
+            <tspan on:click={()=>changeGroup("assistance",true)} 
                 opacity="0" x="0" y="{tspanSpacing * 3}" id="groupe-assistance" data-y-arrow="{(initialArrowPosition + tspanSpacing * 2)}" 
                 class:fill-pervenche={toGroup === 'assistance'} 
                 class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
             >
                 Assistance et réparation
             </tspan>
-            <tspan on:click={()=>changeGroup("delegation")} 
+            <tspan on:click={()=>changeGroup("delegation",true)} 
                 opacity="0" x="0" y="{tspanSpacing * 4}" id="groupe-delegation" data-y-arrow="{initialArrowPosition + (tspanSpacing * 3)}" 
                 class:fill-pervenche={toGroup === 'delegation'} 
                 class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
@@ -398,7 +424,7 @@
                 " 
             style="
                 width:{orbits[entite.orbit].minMaxSizes[1] * SCALE_FACTOR}%; 
-                background-image:url({`/orbits/${entite.id.toLowerCase()}.png`});
+                background-image:url({`${imgPath}/orbits/${entite.id.toLowerCase()}.png`});
             "
             data-orbit={entite.orbit}
         />
@@ -409,6 +435,10 @@
 
 
 <style lang="postcss">
+
+*  {
+    font-family: "field-gothic-wide",sans-serif;
+}
 
 .box {
     overflow: visible;

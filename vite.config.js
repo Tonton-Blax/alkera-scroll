@@ -20,16 +20,9 @@ export default defineConfig({
     sourcemap:false,
     minify: true,
     lib: {
-      entry: resolve(__dirname, 'src/main.js'),
+      entry: resolve(__dirname, 'src/index.js'),
       formats: ['es']
     },
     outDir: './dist/js',
-    // rollupOptions: {
-    //   output: {
-    //     format: "module",
-    //     dir: resolve('./dist/js'),
-    //     entryFileNames: "alkera-map.js",
-    //   },
-    // },
   },
 })

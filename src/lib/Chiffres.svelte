@@ -3,11 +3,16 @@
     import { onMount } from 'svelte';
     import DrawSVGPlugin from "$lib/gsap/DrawSVGPlugin";
     import { md } from './utils';
-
+    /* BUREAUX DOMS CENTRES 
+        INTERLETTRAGE DES LABELS DES CHIFRES: 0.05ch
+    */
+    
     /** @type {App.Anims} */
 	export let anims;
     /** @type {HTMLElement} */
     export let sectionEl;
+
+    export let imgPath = '';
 
     let screenWidth = 1920;
 
@@ -82,7 +87,17 @@
 
 </script>
 
-<section id="section-chiffres" class="min-w-screen w-full h-screen bg-feuille relative z-[3] overflow-y-hidden" bind:this={sectionEl}>
+<section 
+    id="section-chiffres" 
+    class="min-w-screen w-full h-screen bg-feuille relative z-[3] overflow-y-hidden" 
+    bind:this={sectionEl}
+    style="
+        --url-cercle1: url('{imgPath}/chiffres-cles/collaborateurs.png');
+        --url-cercle2: url('{imgPath}/chiffres-cles/bureaux.png');
+        --url-cercle3: url('{imgPath}/chiffres-cles/missions.png');
+        --url-cercle4: url('{imgPath}/chiffres-cles/expertises.png');
+    "
+>
 
     <svg class="absolute w-full scale-[2.2] -left-1/4 md:left-auto rotate-90 md:scale-100 md:rotate-0 h-[2px] -top-[0px] my-auto mx-0 bottom-0 overflow-visible" 
         version="1.2" baseProfile="tiny" 
@@ -197,6 +212,10 @@
 </section>
 
 <style lang="postcss">
+        
+    *  {
+        font-family: "field-gothic-wide",sans-serif;
+    }
     
     .chiffres-wrapper {
         @apply items-start md:items-center top-[10%] md:top-[120%] left-[105%] md:left-1/2 md:-translate-y-1/2 md:-translate-x-1/2 h-[5vw];
@@ -219,16 +238,16 @@
     }
 
     .circle-4:after {
-        background-image: url('/chiffres-cles/expertises.png');
+        background-image: var(--url-cercle4);
     }
     .circle-3:after {
-        background-image: url('/chiffres-cles/missions.png');
+        background-image: var(--url-cercle3);
     }
     .circle-2:after {
-        background-image: url('/chiffres-cles/bureaux.png');
+        background-image: var(--url-cercle2);
     }
     .circle-1:after {
-        background-image: url('/chiffres-cles/collaborateurs.png');
+        background-image: var(--url-cercle1);
     }
 
 </style>

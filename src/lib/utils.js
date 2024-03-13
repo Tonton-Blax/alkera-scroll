@@ -8,7 +8,6 @@ export function mq(query) {
 	if (typeof window === 'undefined') {
         if (tries < 5) {
             tries++;
-            console.log('No window, trying again in 100ms');
             setTimeout(() => mq(query), 100);
         }
         return readable('');

@@ -1,10 +1,16 @@
 <svelte:window 
-    on:hashchange={handleHashChange} 
-    on:beforeunload={replaceState}
+    on:hashchange={handleHashChange}
+    on:beforeunload={()=>window.scroll(0,0)}
 />
 <script>
+    /**NOTE - 
+     * LE SDCROLLDOWN:
+     * - PLUS TARD
+     * - TAILLE 30%
+     * - REPETITION DU BOUNCE 4s
+    */
     import "./app.css";  
-    import { onDestroy, onMount, tick } from 'svelte';
+    import { onMount, tick } from 'svelte';
     import { Observer } from 'gsap/all';
     import gsap from 'gsap';
     import { scrollyTeller } from '$lib/utils';
@@ -14,8 +20,11 @@
     import Chiffres from "$lib/Chiffres.svelte";
     import Orbites from '$lib/Orbites.svelte';
     
-    export let text;
-    $:console.log(text);
+    export let text = '';
+
+    $: scrollSiblings?.classList?.[!$scrollyTeller ? 'add' : 'remove']('stoff');
+
+    export let imgPath = '';
 
     /** @type {App.Anims} */
     let introAnims;
@@ -38,8 +47,12 @@
     
     /** @type {App.Anims} */
     let outroAnims;
+
     /** @type {HTMLElement} */
     let outroEl;
+
+    /** @type {HTMLElement} */
+    let scrollSiblings;
 
     /** @type {HTMLElement[]} */
     let wrappers;
@@ -66,10 +79,14 @@
     /** @type {Map} */
     let animsMap;
 
+    let isAdmin = false;
+
     onMount(async()=> {
+        window.scroll(0,0);
+        isAdmin = !!location.pathname.includes('/admin') || !!location.search.includes('et_fb');
+        scrollSiblings = document.querySelector('#scroll-siblings');
         gsap.registerPlugin(Observer, ScrollToPlugin);
         header = document.querySelector('header');
-        window.scroll(0,1);
 
         wrappers = gsap.utils.toArray('.section-wrappers');
         sections.push(introEl, ChiffresEl, orbitesEl, outroEl);
@@ -81,9 +98,9 @@
             [outroEl, outroAnims]
         ]);
 
-        const storedHash = localStorage.getItem('alkera-scrollyteller');
-        if (storedHash)
-            urlHash = sections.findIndex(s => s.parentElement?.id === storedHash) + 1;
+        //const storedHash = localStorage.getItem('alkera-scrollyteller');
+        // if (storedHash)
+        //     urlHash = sections.findIndex(s => s.parentElement?.id === storedHash) + 1;
         handleHashChange();
         
         gsap.set(wrappers, { yPercent: 100 });
@@ -95,11 +112,13 @@
             onDown:(o) => {
 
                 if (!$scrollyTeller) {
-                    if (window.scrollY < sections[currentIndex]?.offsetHeight) {
+                    if (window.scrollY < sections[currentIndex]?.offsetHeight / 10) {
+
                         gsap.to(window, { 
-                            scrollTo: sections[currentIndex]?.offsetTop || 0,
-                            ease: "power1.inOut"
+                            scrollTo: sections[currentIndex]?.offsetTop || 0, 
+                            ease: "power1.inOut" 
                         });
+                        
                     } else {
                         gsap.to(window, { scrollTo: window.scrollY - (o.velocityY) });
                         return;
@@ -121,13 +140,7 @@
                 if (!$scrollyTeller) {
 
                     observer.vars.preventDefault = false;
-
-                    const bottom = sections[currentIndex]?.offsetTop + sections[currentIndex]?.offsetHeight
-
-                    if (window.scrollY < sections[currentIndex]?.offsetTop + 2)
-                        gsap.to(window, {  scrollTo: bottom });
-
-                    else gsap.to(window, { scrollTo: window.scrollY - (o.velocityY) });
+                    gsap.to(window, { scrollTo: window.scrollY - (o.velocityY) });
 
                     return;
                 }
@@ -138,15 +151,15 @@
 
                 header?.classList.add('et-fixed-header');
 
-                gsap.to('#scroll-down', { opacity: 0 })
+                gsap.to('#scroll-down', { autoAlpha: 0 })
                 triggerAnimation(animsMap, 1, o.deltaY);
             },
             tolerance,
             onStopDelay: 2,
             onStop: () => {
                 gsap.to('#scroll-down', { 
-                opacity: 1, 
-                '--arrow-scroller-color': sections[currentIndex]?.parentElement?.dataset.colorArrow
+                    autoAlpha: 1, 
+                    '--arrow-scroller-color': sections[currentIndex]?.parentElement?.dataset.colorArrow
                 })
             },
             preventDefault: true
@@ -183,7 +196,7 @@
                 hasImmediateFollowUp && triggerAnimation(animsMap, direction, velocity);
             }
         });
-
+        
         if (currentIndex >= 0) {
             // The first time this function runs, current is -1
             gsap.set(wrappers[currentIndex], { zIndex: 0 });
@@ -192,7 +205,6 @@
         }
 
         gsap.set(wrappers[index], { autoAlpha: 1, zIndex: 1 });
-        
         currentTransition.fromTo(wrappers[index], 
             { yPercent: i => i ? -100 * dFactor : 100 * dFactor }, 
             { yPercent: 0 }, 
@@ -237,8 +249,7 @@
     }
 
     /** @param {HashChangeEvent | null} e */
-    function handleHashChange(e=null) {
-
+    async function handleHashChange(e=null) {
         const url = new URL(e?.newURL || location?.href);
 
         if (!url?.hash)
@@ -247,45 +258,56 @@
         const hash = url.hash.substring(1);
         urlHash = sections.findIndex(s => s.parentElement?.id === hash) + 1;
         urlHash = urlHash > 0 && urlHash <= sections.length ? urlHash : null;
-
         if (urlHash !== null && e !== null)
-            gotoSection(urlHash ? urlHash - 1 : 0, 1, animsMap, tolerance);
+            gotoSection(urlHash ? urlHash - 1 : 0, -1, animsMap, tolerance);
+
     }
     
     function replaceState () {
         if (!$scrollyTeller)
             localStorage.removeItem('alkera-scrollyteller');    
         
-        localStorage.setItem('alkera-scrollyteller', sections[currentIndex].parentElement?.id);
+        localStorage.setItem('alkera-scrollyteller', sections[currentIndex]?.parentElement?.id);
     }
 
     
 
     
 </script>
-<header class="hidden fixed md:flex items-center justify-center w-full h-[83.5px] bg-gray-50 border-b-[1px] border-foret z-[99]">
-    FAKE BAR
-  </header>
-  
-<main class="w-screen h-screen max-h-screen overflow-hidden fixed top-0" id="alkera-scrollyteller">
-    <div class="section-wrappers bg-amande" data-color-arrow="{whichColor}" id="st-bienvenue">
-        <Intro2 bind:anims={introAnims} bind:sectionEl={introEl} />
+
+{#if isAdmin}
+
+    <main class="w-screen h-screen max-h-screen overflow-hidden" 
+        id="alkera-scrollyteller"
+    >
+        <h1 class="text-3xl">Alkera Scrollyteller</h1>
+        <p>Veillez à mettre les containers de cet outil avec un style display:contents</p>
+        <p>Les sections suivantes doivent être positionnées à top:100vh</p>
+    </main>
+{:else}
+
+<main 
+    class="w-screen h-screen max-h-screen overflow-hidden relative top-0" id="alkera-scrollyteller"
+    class:stoff={!$scrollyTeller}
+>
+    <div class="section-wrappers bg-transparent" data-color-arrow="{whichColor}" id="st-bienvenue">
+        <Intro2 bind:anims={introAnims} bind:sectionEl={introEl} {imgPath} />
     </div>
 
-    <div class="section-wrappers bg-foret" data-color-arrow="#D6FC8A" id="st-chiffres">
-        <Chiffres bind:anims={chiffresAnims} bind:sectionEl={ChiffresEl} />
+    <div class="section-wrappers bg-feuille" data-color-arrow="#D6FC8A" id="st-chiffres">
+        <Chiffres bind:anims={chiffresAnims} bind:sectionEl={ChiffresEl} {imgPath} />
     </div>
 
     <div class="section-wrappers bg-amande" data-color-arrow="#12473B" id="st-secteurs">
-        <Orbites bind:anims={orbitesAnims} bind:sectionEl={orbitesEl}/>
+        <Orbites bind:anims={orbitesAnims} bind:sectionEl={orbitesEl} {imgPath} />
     </div>
 
     <div class="section-wrappers bg-white" data-color-arrow="#12473B" id="st-engagements">
-        <Outro bind:anims={outroAnims} bind:sectionEl={outroEl} />
+        <Outro bind:anims={outroAnims} bind:sectionEl={outroEl} {imgPath} />
     </div>
 
     <svg
-        class="fixed bottom-[15vw] md:bottom-[2.2vw] w-[5vw] md:w-[2vw] h-auto left-0 right-0 mx-auto my-0" 
+        class="fixed bottom-[15vw] md:bottom-[2.2vw] w-[5vw] md:w-[1.4vw] h-auto left-0 right-0 mx-auto my-0" 
         xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
         id="scroll-down" x="0" y="0" version="1.1" viewBox="0 0 54 79.4"
     >
@@ -294,8 +316,12 @@
     </svg>
 </main>
 
+<!-- <div id="scroll-siblings" class="relative w-screen h-screen bg-[blue] mt-[100vh]"/> -->
+
+{/if}
 <style lang="postcss">
+    
     .section-wrappers {
-        @apply fixed top-0 invisible w-full h-screen;
+        @apply absolute top-0 invisible w-full h-screen;
     }
 </style>

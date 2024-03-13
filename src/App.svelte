@@ -10,19 +10,18 @@
      * - REPETITION DU BOUNCE 4s
     */
     import "./app.css";  
-    import { onMount, tick } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import { Observer } from 'gsap/all';
     import gsap from 'gsap';
     import { scrollyTeller } from '$lib/utils';
     import ScrollToPlugin from 'gsap/ScrollToPlugin';
+    import { ScrollTrigger } from 'gsap/all';
 	import Outro from '$lib/Outro.svelte';
     import Intro2 from "$lib/Intro2.svelte";
     import Chiffres from "$lib/Chiffres.svelte";
     import Orbites from '$lib/Orbites.svelte';
     
     export let text = '';
-
-    $: scrollSiblings?.classList?.[!$scrollyTeller ? 'add' : 'remove']('stoff');
 
     export let imgPath = '';
 
@@ -50,9 +49,6 @@
 
     /** @type {HTMLElement} */
     let outroEl;
-
-    /** @type {HTMLElement} */
-    let scrollSiblings;
 
     /** @type {HTMLElement[]} */
     let wrappers;
@@ -82,14 +78,12 @@
     let isAdmin = false;
 
     onMount(async()=> {
-        window.scroll(0,0);
         isAdmin = !!location.pathname.includes('/admin') || !!location.search.includes('et_fb');
-        scrollSiblings = document.querySelector('#scroll-siblings');
-        gsap.registerPlugin(Observer, ScrollToPlugin);
+        gsap.registerPlugin(Observer, ScrollToPlugin, ScrollTrigger);
         header = document.querySelector('header');
 
         wrappers = gsap.utils.toArray('.section-wrappers');
-        sections.push(introEl, ChiffresEl, orbitesEl, outroEl);
+        sections = [introEl, ChiffresEl, orbitesEl, outroEl];
 
         animsMap = new Map([
             [introEl, introAnims],
@@ -97,6 +91,23 @@
             [orbitesEl, orbitesAnims],
             [outroEl, outroAnims]
         ]);
+
+        ScrollTrigger.create({
+            trigger: "#alkera-scrollyteller",
+            pin: true,
+            // @ts-ignore
+            anticipatePin: true,
+            start:()=> "top top",
+            end:()=> "top bottom",
+            onEnter: (self) => {
+                $scrollyTeller = true;
+                observer.enable();
+            },
+            onEnterBack: (self) => {
+                $scrollyTeller = true;
+                observer.enable();
+            }
+        });
 
         //const storedHash = localStorage.getItem('alkera-scrollyteller');
         // if (storedHash)
@@ -108,27 +119,9 @@
 
         observer= Observer.create({
             type: "wheel,touch,pointer",
+            preventDefault: true,
             wheelSpeed: -0.1,
             onDown:(o) => {
-
-                if (!$scrollyTeller) {
-                    if (window.scrollY < sections[currentIndex]?.offsetHeight / 10) {
-
-                        gsap.to(window, { 
-                            scrollTo: sections[currentIndex]?.offsetTop || 0, 
-                            ease: "power1.inOut" 
-                        });
-                        
-                    } else {
-                        gsap.to(window, { scrollTo: window.scrollY - (o.velocityY) });
-                        return;
-                    }
-
-                    observer.vars.preventDefault = true;
-                    $scrollyTeller = true;
-                    return;
-                }
-
                 if (transitioning) return;
                 if (currentIndex <= 0) {
                     header?.classList.remove('et-fixed-header');
@@ -139,9 +132,9 @@
             onUp:(o) => {
                 if (!$scrollyTeller) {
 
-                    observer.vars.preventDefault = false;
-                    gsap.to(window, { scrollTo: window.scrollY - (o.velocityY) });
-
+                    // observer.vars.preventDefault = false;
+                    // gsap.to(window, { scrollTo: window.scrollY - (o.velocityY) });
+                    observer.disable();
                     return;
                 }
                 if (transitioning) return;
@@ -162,7 +155,6 @@
                     '--arrow-scroller-color': sections[currentIndex]?.parentElement?.dataset.colorArrow
                 })
             },
-            preventDefault: true
         });
         gotoSection(urlHash ? urlHash - 1 : 0, 1, animsMap, tolerance);
     });
@@ -258,8 +250,10 @@
         const hash = url.hash.substring(1);
         urlHash = sections.findIndex(s => s.parentElement?.id === hash) + 1;
         urlHash = urlHash > 0 && urlHash <= sections.length ? urlHash : null;
-        if (urlHash !== null && e !== null)
+        if (urlHash !== null && e !== null) {
+            console.log('goin')
             gotoSection(urlHash ? urlHash - 1 : 0, -1, animsMap, tolerance);
+        }
 
     }
     
@@ -287,8 +281,7 @@
 {:else}
 
 <main 
-    class="w-screen h-screen max-h-screen overflow-hidden relative top-0" id="alkera-scrollyteller"
-    class:stoff={!$scrollyTeller}
+    class="w-screen h-screen min-h-screen max-h-screen overflow-hidden" id="alkera-scrollyteller"
 >
     <div class="section-wrappers bg-transparent" data-color-arrow="{whichColor}" id="st-bienvenue">
         <Intro2 bind:anims={introAnims} bind:sectionEl={introEl} {imgPath} />
@@ -307,7 +300,7 @@
     </div>
 
     <svg
-        class="fixed bottom-[15vw] md:bottom-[2.2vw] w-[5vw] md:w-[1.4vw] h-auto left-0 right-0 mx-auto my-0" 
+        class="bottom-[15vw] md:bottom-[2.2vw] w-[5vw] md:w-[1.4vw] h-auto left-0 right-0 mx-auto my-0" 
         xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
         id="scroll-down" x="0" y="0" version="1.1" viewBox="0 0 54 79.4"
     >
@@ -316,8 +309,8 @@
     </svg>
 </main>
 
-<!-- <div id="scroll-siblings" class="relative w-screen h-screen bg-[blue] mt-[100vh]"/> -->
-
+<!-- <div id="scroll-siblings" class="w-screen h-screen bg-[blue]"/>
+ -->
 {/if}
 <style lang="postcss">
     

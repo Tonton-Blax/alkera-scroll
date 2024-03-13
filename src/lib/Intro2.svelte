@@ -18,6 +18,8 @@
 
     export let imgPath = '';
 
+    const HREF_PREFIX = '/nos-activites/'
+
     const secteurs = [
         {   id: 'group1', 
             secteurs : [ 'Audit', 'Conseil', 'Prévention' ], 
@@ -29,7 +31,8 @@
             secteurs : [ 'Gestion des risques', 'Expertise' ], 
             indexes : [ 3, 4 ], 
             xy: [ [331.09, 544.53], [537.08, 544.53]], 
-            imagePrefix: 'gestion-risque-expertise-' 
+            imagePrefix: 'gestion-risque-expertise-',
+            url:'expertise'
         },
         {   id: 'group3', 
             secteurs : [ 'Assistance', 'Réparation' ], 
@@ -103,6 +106,12 @@
         //await tick();
         document.querySelectorAll('.secteur-circle')?.forEach(el => {
             secteurHoverInitial?.kill();
+            el.addEventListener('click', (evt) => {
+                const clickedGroup = el.dataset.secteur;
+                const secteur = secteurs.find(secteur => secteur.id === clickedGroup);
+                if (secteur && secteur.url)
+                    window.location.href = HREF_PREFIX + secteur.url;
+            })
             el.addEventListener('mouseenter', (evt) => {
                 hoveredGroup = el.dataset.secteur;
                 secteurHover?.progress?.(1)?.kill();

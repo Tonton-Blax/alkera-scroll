@@ -3,6 +3,7 @@
 	import TextPlugin from 'gsap/TextPlugin';
     import { onMount } from 'svelte';
     import { scrollyTeller } from './utils';
+	import ScrollToPlugin from 'gsap/ScrollToPlugin';
     
     /** @type {App.Anims} */
 	export let anims;
@@ -27,7 +28,7 @@
 	]
 	
 	onMount(async() => {
-		gsap.registerPlugin(TextPlugin);
+		gsap.registerPlugin(TextPlugin, ScrollToPlugin);
 		
 		gsap.set('#trait-gauche', { xPercent: -100 });
 

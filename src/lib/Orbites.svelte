@@ -19,9 +19,6 @@
     /** @type {HTMLElement} */
     export let sectionEl;
 
-    /** @type {HTMLElement} */
-    let footer;
-
     let mounted = false;
 
     $: if (mounted && readyLine) {
@@ -78,26 +75,28 @@
     const resizeOrbit = 50;
     const initialHeight = 988.92;
     const initialWidth = 1360.5;
+
+    const HREF_PREFIX = '/societe/'
         
     /** @type {App.Planet[]} */
     const entites = [
-        { url : '/', id: 'pyrim',                  orbit: 'internal',  order: 1,    groups: ['audit', 'gestion'] },
-        { url : '/', id: 'dynaren',                orbit: 'internal',  order: 2,    groups: ['assistance'] },
-        { url : '/', id: 'am',                     orbit: 'internal',  order: 3,    groups: ['initial','audit','gestion', 'delegation'] },
-        { url : '/', id: 'immolab',                orbit: 'middle',    order: 1,    groups: ['initial','audit'] },
-        { url : '/', id: 'geco',                   orbit: 'middle',    order: 2,    groups: ['delegation'] },
-        { url : '/', id: 'electroren',             orbit: 'middle',    order: 3,    groups: ['assistance'] },
-        { url : '/', id: 'manderley',              orbit: 'middle',    order: 4,    groups: ['gestion'] },
-        { url : '/', id: 'polyexpert_construction',orbit: 'middle',    order: 5,    groups: ['initial','gestion'] },
-        { url : '/', id: 'polyexpert_entreprises', orbit: 'middle',    order: 6,    groups: ['initial','gestion'] },
-        { url : '/', id: 'ekkoia',                 orbit: 'external',  order: 1.65, groups: ['audit'] },
-        { url : '/', id: 'claims_ai',              orbit: 'external',  order: 2.65, groups: ['delegation'] },
-        { url : '/', id: 'batifive',               orbit: 'external',  order: 3.65, groups: ['assistance']  },
-        { url : '/', id: 'polytel',                orbit: 'external',  order: 4.65, groups: ['gestion']  },
-        { url : '/', id: 'polyexpert',             orbit: 'external',  order: 5.65, groups: ['gestion'] },    
-        { url : '/', id: 'mcLaren',                orbit: 'external',  order: 6.65, groups: ['gestion'] },
-        { url : '/', id: 'ciblexperts',            orbit: 'external',  order: 7.65, groups: ['gestion'] },
-        { url : '/', id: 'quantimme',              orbit: 'external',  order: 8.65, groups: ['initial','audit'] }
+        { url :                             '', id: 'pyrim',                  orbit: 'internal',  order: 1,    groups: ['audit', 'gestion'] },
+        { url :                             '', id: 'dynaren',                orbit: 'internal',  order: 2,    groups: ['assistance'] },
+        { url :                             '', id: 'am',                     orbit: 'internal',  order: 3,    groups: ['initial','audit','gestion', 'delegation'] },
+        { url :                             '', id: 'immolab',                orbit: 'middle',    order: 1,    groups: ['initial','audit'] },
+        { url :                             '', id: 'geco',                   orbit: 'middle',    order: 2,    groups: ['delegation'] },
+        { url :                             '', id: 'electroren',             orbit: 'middle',    order: 3,    groups: ['assistance'] },
+        { url : 'manderley',                    id: 'manderley',              orbit: 'middle',    order: 4,    groups: ['gestion'] },
+        { url : 'polyexpert-construction',      id: 'polyexpert_construction',orbit: 'middle',    order: 5,    groups: ['initial','gestion'] },
+        { url : 'polyexpert-entreprise',        id: 'polyexpert_entreprises', orbit: 'middle',    order: 6,    groups: ['initial','gestion'] },
+        { url :                             '', id: 'ekkoia',                 orbit: 'external',  order: 1.65, groups: ['audit'] },
+        { url :                             '', id: 'claims_ai',              orbit: 'external',  order: 2.65, groups: ['delegation'] },
+        { url :                             '', id: 'batifive',               orbit: 'external',  order: 3.65, groups: ['assistance']  },
+        { url :                             '', id: 'polytel',                orbit: 'external',  order: 4.65, groups: ['gestion']  },
+        { url :                             '', id: 'polyexpert',             orbit: 'external',  order: 5.65, groups: ['gestion'] },    
+        { url :                             '', id: 'mcLaren',                orbit: 'external',  order: 6.65, groups: ['gestion'] },
+        { url :                             '', id: 'ciblexperts',            orbit: 'external',  order: 7.65, groups: ['gestion'] },
+        { url :                             '', id: 'quantimme',              orbit: 'external',  order: 8.65, groups: ['initial','audit'] }
     ]
 
     /** @type {App.Orbits} */
@@ -165,9 +164,7 @@
 
         mounted = true;
         resizeObserver = new ResizeObserver(() => { 
-            if (footer)
-                footer = document.querySelector('footer');
-
+            window.scroll(0,1);
             initialize();
         });
         readyLine = true;
@@ -176,7 +173,7 @@
 
         tlOrbits = gsap.timeline()
             .from('.ellipse', {drawSVG:'25% 25%', duration:1, ease:"none", reversed: false, stagger : { each: 0.25, from: 'random'} },0)
-            .from('.planets > div', {
+            .from('.planets > a', {
                 duration: 0.5,
                 opacity: 0,
                 stagger:{ each: 0.05, from: 'random' },
@@ -417,7 +414,8 @@
     <div class="planets" bind:this={planetsEl}>
         {#each entites as entite, index(entite.id)}
 
-        <div
+        <!-- svelte-ignore a11y-missing-content -->
+        <a href="{entite.url? HREF_PREFIX + entite.url :'/'}"
             class="
                 absolute entite-{entite.id} entite-circle bg-feuille rounded-full bg-center bg-cover aspect-square transition-[background-color]
                 {toGroup && entite.groups.includes(toGroup) ? 'activeGroup':'inactiveGroup'}

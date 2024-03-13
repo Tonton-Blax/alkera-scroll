@@ -28,20 +28,6 @@
     );  
 }
 
-
-main.stoff {
-  position:relative;
-  top:0;
-  z-index: auto;
-}
-
-#scroll-siblings.stoff {
-  position: relative;
-  top:auto;
-  margin-top:0;
-  z-index: auto;
-}
-
 #scroll-down {
   stroke-width: 2px;
   overflow:visible; 

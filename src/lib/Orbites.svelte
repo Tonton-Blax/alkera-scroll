@@ -10,6 +10,8 @@
 
     export let imgPath = '';
 
+
+    export let isActive = false; 
     /** @type {gsap.core.Timeline} */
     let tlOrbits;
 
@@ -164,7 +166,8 @@
 
         mounted = true;
         resizeObserver = new ResizeObserver(() => { 
-            window.scroll(0,1);
+            if (isActive)
+                window.scroll(0,1);
             initialize();
         });
         readyLine = true;
@@ -234,47 +237,54 @@
     });
 
     /** @param {number} direction */
-    let handleNext = (direction) => {
+    let handleNext = (direction, velocity) => {
 
-        if (maskAnim?.isActive())
-            return true;
+        const isMaskAnimActive = maskAnim?.isActive();
+        const isOrbitingActive = gsap.getById("orbiting")?.isActive();
 
-        if(maskAnim && !maskAnim.progress()) {
-            if (direction === 1)  {
-                !maskAnim?.isActive() && maskAnim.play();
-                return true;            
-            }
-            return false;
-        }
+        if (isMaskAnimActive || isOrbitingActive) return true;
 
-        const orbitingTl = gsap.getById("orbiting");
-
-        if (orbitingTl?.isActive())
-            return true;
-
-        if (typeof currentGroup !== 'number') return false;
-
-        if ((userClicked ||( currentGroup + 1 > groups.length - 1))) {
-            if (direction === -1) {
-                maskAnim.reverse();
+        if (!maskAnim?.progress()) {
+            if (direction === 1) {
+                !isMaskAnimActive && maskAnim.timeScale(velocity).play();
                 return true;
             }
             return false;
         }
 
-        if (userClicked)
+        if (typeof currentGroup !== 'number') return false;
+
+        const isLastGroup = currentGroup === groups.length - 1;
+        const isFirstGroup = currentGroup === 0;
+
+        if (!userClicked && direction === -1 && isFirstGroup) {
+            maskAnim.timeScale(velocity).reverse();
+            return true;
+        }
+
+        if (userClicked || (currentGroup + 1 > groups.length - 1)) {
+            if (direction === -1) {
+                maskAnim.timeScale(velocity).reverse();
+                return true;
+            }
             return false;
+        }
 
-        if (direction === 1 && currentGroup + 1 < groups.length) {            
-            changeGroup(/** @type {App.Metier} */ (groups[currentGroup+1].id.split('-')[1]));
+        if (userClicked) return false;
+
+        /** @type {App.Metier} */
+        const nextGroupId = /** @type {App.Metier} */ (groups[currentGroup + direction].id.split('-')[1]);
+
+        if (direction === 1 && !isLastGroup) {
+            changeGroup(nextGroupId);
             return true;
         }
 
-        if (direction === -1 && currentGroup - 1 >= 0) {
-            changeGroup(/** @type {App.Metier} */  (groups[currentGroup-1].id.split('-')[1]));
+        if (direction === -1 && !isFirstGroup) {
+            changeGroup(nextGroupId);
             return true;
         }
-        
+
     }
 
     function slowTimeScale () {
@@ -322,7 +332,7 @@
 >
 
     <svg 
-        class="absolute top-auto md:translate-y-0 max-h-screen w-full aspect-video mx-auto overflow-visible z-[3] pointer-events-none user-select-none"
+        class="absolute top-auto md:translate-y-0 max-h-screen w-full aspect-video mx-auto overflow-visible z-[4] pointer-events-none user-select-none"
         xmlns="http://www.w3.org/2000/svg" xml:space="preserve" x="0" y="0" version="1.1" viewBox="0 0 {initialWidth} {initialHeight+(resizeOrbit * 2)}"
     >
         <defs>
@@ -334,7 +344,7 @@
     </svg>
 
     <div id="big-mask-orbits" 
-        class="hidden md:flex bg-white w-full h-full absolute z-[2]  items-center leading-loose"
+        class="hidden md:flex bg-white w-full h-full absolute z-[3]  items-center leading-loose"
     >
         <div class="w-[30%] text-feuille ml-auto mr-[11.5vw] font-light skew-x-[-16.34deg] text-[1.35vw]">
             {orbitesTextIntro}

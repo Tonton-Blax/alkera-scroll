@@ -3,14 +3,8 @@
     on:beforeunload={()=>window.scroll(0,0)}
 />
 <script>
-    /**NOTE - 
-     * LE SDCROLLDOWN:
-     * - PLUS TARD
-     * - TAILLE 30%
-     * - REPETITION DU BOUNCE 4s
-    */
     import "./app.css";  
-    import { onDestroy, onMount } from 'svelte';
+    import { onMount } from 'svelte';
     import { Observer } from 'gsap/all';
     import gsap from 'gsap';
     import { scrollyTeller } from '$lib/utils';
@@ -30,6 +24,9 @@
 
     /** @type {App.Anims} */
     let currentTransition
+
+    /** @type {HTMLElement} */
+    let mainEl;
 
     /** @type {HTMLElement} */
     let introEl;
@@ -59,7 +56,7 @@
     let transitioning = false;
     let shouldAnimate = false;
 
-    const tolerance = 20;
+    const tolerance = 15;
 
     let whichColor = '#D6FC8A';
 
@@ -105,6 +102,7 @@
             },
             onEnterBack: (self) => {
                 $scrollyTeller = true;
+                window.scroll(0,0);
                 observer.enable();
             }
         });
@@ -127,14 +125,12 @@
                     header?.classList.remove('et-fixed-header');
                     whichColor = '#D6FC8A';
                 }           
-                triggerAnimation(animsMap, -1, o.deltaY);
+                triggerAnimation(animsMap, -1, Math.abs(o.deltaY));
             },
             onUp:(o) => {
                 if (!$scrollyTeller) {
-
-                    // observer.vars.preventDefault = false;
-                    // gsap.to(window, { scrollTo: window.scrollY - (o.velocityY) });
                     observer.disable();
+                    gsap.to(window, { scrollTo: -o.velocityY, immediateRender: true });
                     return;
                 }
                 if (transitioning) return;
@@ -143,9 +139,8 @@
                     whichColor = '#12473B'
 
                 header?.classList.add('et-fixed-header');
-
                 gsap.to('#scroll-down', { autoAlpha: 0 })
-                triggerAnimation(animsMap, 1, o.deltaY);
+                triggerAnimation(animsMap, 1, Math.abs(o.deltaY));
             },
             tolerance,
             onStopDelay: 2,
@@ -171,7 +166,7 @@
         if (currentIndex <= 0 && direction === -1)
             return;
 
-        const absVelocity = Math.abs(velocity ?? tolerance);
+        const absVelocity = velocity ?? tolerance;
 
         if (currentTransition?.isActive())
             return;
@@ -199,7 +194,7 @@
         gsap.set(wrappers[index], { autoAlpha: 1, zIndex: 1 });
         currentTransition.fromTo(wrappers[index], 
             { yPercent: i => i ? -100 * dFactor : 100 * dFactor }, 
-            { yPercent: 0 }, 
+            { yPercent: 0, duration: tolerance / absVelocity },
         0)
 
         .fromTo(sections[index], { yPercent: 15 * dFactor }, { yPercent: 0 }, 0)
@@ -220,9 +215,8 @@
             //velocity && anims.timeScale(Math.abs(velocity * 1.5) / tolerance);
             return;
         }
-        
         if (shouldAnimate && anims && !anims.vars.done) {
-            anims.play();
+            anims.timeScale(1 / (tolerance / velocity)).play();
             anims.eventCallback('onComplete', () => {
                 anims.vars.done=true;
                 anims.vars.immediate = false;
@@ -232,7 +226,9 @@
         } else if (!anims.isActive()) {
             
             const handleNextMove = anims.vars?.handleNext;
-            const nextMove = typeof(handleNextMove) === 'function' ? handleNextMove(direction) : null;
+            const nextMove = typeof(handleNextMove) === 'function' 
+                ? handleNextMove(direction, 1 / (tolerance / velocity)) 
+                : null;
             
             if(!nextMove) {
                 gotoSection(currentIndex + direction, direction, animsMap, velocity);
@@ -251,7 +247,6 @@
         urlHash = sections.findIndex(s => s.parentElement?.id === hash) + 1;
         urlHash = urlHash > 0 && urlHash <= sections.length ? urlHash : null;
         if (urlHash !== null && e !== null) {
-            console.log('goin')
             gotoSection(urlHash ? urlHash - 1 : 0, -1, animsMap, tolerance);
         }
 
@@ -280,23 +275,39 @@
     </main>
 {:else}
 
-<main 
+<main bind:this={mainEl}
     class="w-screen h-screen min-h-screen max-h-screen overflow-hidden" id="alkera-scrollyteller"
 >
     <div class="section-wrappers bg-transparent" data-color-arrow="{whichColor}" id="st-bienvenue">
-        <Intro2 bind:anims={introAnims} bind:sectionEl={introEl} {imgPath} />
+        
+        <Intro2 
+            bind:anims={introAnims} bind:sectionEl={introEl} {imgPath} 
+        />
+
     </div>
 
     <div class="section-wrappers bg-feuille" data-color-arrow="#D6FC8A" id="st-chiffres">
-        <Chiffres bind:anims={chiffresAnims} bind:sectionEl={ChiffresEl} {imgPath} />
+        
+        <Chiffres 
+            bind:anims={chiffresAnims} bind:sectionEl={ChiffresEl} {imgPath} 
+        />
+
     </div>
 
     <div class="section-wrappers bg-amande" data-color-arrow="#12473B" id="st-secteurs">
-        <Orbites bind:anims={orbitesAnims} bind:sectionEl={orbitesEl} {imgPath} />
+        
+        <Orbites 
+            bind:anims={orbitesAnims} bind:sectionEl={orbitesEl} {imgPath} isActive={currentIndex===2} 
+        />
+
     </div>
 
     <div class="section-wrappers bg-white" data-color-arrow="#12473B" id="st-engagements">
-        <Outro bind:anims={outroAnims} bind:sectionEl={outroEl} {imgPath} />
+        
+        <Outro 
+            bind:anims={outroAnims} bind:sectionEl={outroEl} {imgPath} 
+        />
+
     </div>
 
     <svg

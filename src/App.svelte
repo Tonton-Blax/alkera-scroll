@@ -72,10 +72,9 @@
     /** @type {Map} */
     let animsMap;
 
-    let isAdmin = false;
+    const sleep = time => new Promise(res => setTimeout(res, time, "done sleeping"));
 
     onMount(async()=> {
-        isAdmin = !!location.pathname.includes('/admin') || !!location.search.includes('et_fb');
         gsap.registerPlugin(Observer, ScrollToPlugin, ScrollTrigger);
         header = document.querySelector('header');
 
@@ -104,7 +103,7 @@
                 $scrollyTeller = true;
                 window.scroll(0,0);
                 observer.enable();
-            }
+            },
         });
 
         //const storedHash = localStorage.getItem('alkera-scrollyteller');
@@ -130,9 +129,14 @@
             onUp:(o) => {
                 if (!$scrollyTeller) {
                     observer.disable();
-                    gsap.to(window, { scrollTo: -o.velocityY, immediateRender: true });
+                    gsap.to(window, { 
+                        scrollTo:{ y: mainEl.offsetHeight },
+                        duration: (tolerance / Math.abs(o.deltaY)) * 0.6,
+                    });
+                    //window.scroll({top: mainEl.offsetHeight, behavior: 'smooth'});
                     return;
                 }
+
                 if (transitioning) return;
 
                 if (currentIndex <= 0)
@@ -151,6 +155,7 @@
                 })
             },
         });
+        await sleep(200);
         gotoSection(urlHash ? urlHash - 1 : 0, 1, animsMap, tolerance);
     });
 
@@ -199,22 +204,15 @@
 
         .fromTo(sections[index], { yPercent: 15 * dFactor }, { yPercent: 0 }, 0)
     }
-
+    
     /** @param {Map<HTMLElement, App.Anims>} animsMap @param {number} direction @param {number | null} velocity */
     function triggerAnimation(animsMap, direction, velocity = tolerance) {
 
-        if (!$scrollyTeller)
-            return;
-
         const anims = animsMap.get(sections[currentIndex]);
-        if (!anims) {
-            return;
-        }
 
-        if (anims.isActive()) {
-            //velocity && anims.timeScale(Math.abs(velocity * 1.5) / tolerance);
+        if (!$scrollyTeller || !anims || anims.isActive())
             return;
-        }
+
         if (shouldAnimate && anims && !anims.vars.done) {
             anims.timeScale(1 / (tolerance / velocity)).play();
             anims.eventCallback('onComplete', () => {
@@ -252,28 +250,15 @@
 
     }
     
-    function replaceState () {
-        if (!$scrollyTeller)
-            localStorage.removeItem('alkera-scrollyteller');    
+    // function replaceState () {
+    //     if (!$scrollyTeller)
+    //         localStorage.removeItem('alkera-scrollyteller');    
         
-        localStorage.setItem('alkera-scrollyteller', sections[currentIndex]?.parentElement?.id);
-    }
+    //     localStorage.setItem('alkera-scrollyteller', sections[currentIndex]?.parentElement?.id);
+    // }
 
-    
-
-    
+        
 </script>
-
-{#if isAdmin}
-
-    <main class="w-screen h-screen max-h-screen overflow-hidden" 
-        id="alkera-scrollyteller"
-    >
-        <h1 class="text-3xl">Alkera Scrollyteller</h1>
-        <p>Veillez à mettre les containers de cet outil avec un style display:contents</p>
-        <p>Les sections suivantes doivent être positionnées à top:100vh</p>
-    </main>
-{:else}
 
 <main bind:this={mainEl}
     class="w-screen h-screen min-h-screen max-h-screen overflow-hidden" id="alkera-scrollyteller"
@@ -311,7 +296,7 @@
     </div>
 
     <svg
-        class="bottom-[15vw] md:bottom-[2.2vw] w-[5vw] md:w-[1.4vw] h-auto left-0 right-0 mx-auto my-0" 
+        class="absolute bottom-[5vw] md:bottom-[3.2vw] w-[4vw] md:w-[1.4vw] h-auto left-0 right-0 mx-auto my-0" 
         xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
         id="scroll-down" x="0" y="0" version="1.1" viewBox="0 0 54 79.4"
     >
@@ -320,12 +305,12 @@
     </svg>
 </main>
 
-<!-- <div id="scroll-siblings" class="w-screen h-screen bg-[blue]"/>
- -->
-{/if}
+<!-- <div id="scroll-siblings" class="w-screen h-screen bg-[blue]"/> -->
+
 <style lang="postcss">
     
     .section-wrappers {
         @apply absolute top-0 invisible w-full h-screen;
     }
+    
 </style>

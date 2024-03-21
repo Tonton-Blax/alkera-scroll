@@ -121,13 +121,13 @@
 		</div>
 
 		<!-- cercle central -->
-		<div class="h-full w-[24%] flex p-[2vw]">
-			<div 
-				id="cercle-central" 
-				class="w-full h-fit aspect-square bg-feuille self-center rounded-full bg-contain"
+		<div class="h-full w-[24%] flex p-[2vw] transition-all">
+			<a 
+				id="cercle-central" href="/le-groupe/nos-engagements-rse#nos-engagements" 
+				class="w-full h-fit aspect-square bg-feuille self-center rounded-full bg-contain outlined"
 			>
 				<img src="{imgPath}/outro/alkera-sengage.png" alt="alkera-sengage" class="w-full h-full object-cover">
-			</div>
+			</a>
 		</div>
 		<div class="relative h-full w-[26%] flex p-[3.2vw] items-center">
 			
@@ -135,9 +135,12 @@
 			<div id="outro-text"
 				class="flex items-center scale-0 px-12 text-center font-semibold text-[1vw] w-full aspect-square overflow-hidden self-center bg-amande rounded-full"
 			>
-				<span class="outro-text-content text-feuille w-full h-full flex items-center text-center">
-					{textContent[activeTopic]}
-				</span>
+				<div class="outro-text-content text-feuille w-full h-full flex flex-col justify-center text-center">
+					<span>{textContent[activeTopic]}</span>
+					<a href="/le-groupe/nos-engagements-rse#nos-engagements" class="uppercase mt-[1vw] font-normal albert text-feuille hover:text-pervenche">
+						en savoir +
+					</a>
+				</div>
 			</div>
 		</div>
 		<!-- section droite -->
@@ -180,5 +183,30 @@
         -ms-overflow-style: none;  /* IE and Edge */
         scrollbar-width: none;  /* Firefox */
     }
+/*
+	.outlined:before {
+		transform:scale(0.5);
+		position: absolute;
+		max-width: inherit;
+		width: 20%;
+		aspect-ratio: 1;
+		content:"";    
+		border-radius:100%;
+		background:transparent;
+		z-index: 999;
+		transition: all 0.5s var(--spring-easing);
+		scale:0.5;
+		outline:dashed 2px;
+		outline-offset:0px;
+		outline-color:transparent;
+	}
+	.outlined:hover:before {
+		outline-offset: 8px;
+		outline-color:theme('colors.feuille');
+		animation: rotation 20s linear infinite;
+		scale:1;
+		cursor: pointer;
+	}
+	*/
 
 </style>

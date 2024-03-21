@@ -91,12 +91,12 @@
         { url : 'manderley',                    id: 'manderley',              orbit: 'middle',    order: 4,    groups: ['gestion'] },
         { url : 'polyexpert-construction',      id: 'polyexpert_construction',orbit: 'middle',    order: 5,    groups: ['initial','gestion'] },
         { url : 'polyexpert-entreprise',        id: 'polyexpert_entreprises', orbit: 'middle',    order: 6,    groups: ['initial','gestion'] },
-        { url :                             '', id: 'ekkoia',                 orbit: 'external',  order: 1.65, groups: ['audit'] },
+        { url : 'claims-ai',                    id: 'ekkoia',                 orbit: 'external',  order: 1.65, groups: ['audit'] },
         { url :                             '', id: 'claims_ai',              orbit: 'external',  order: 2.65, groups: ['delegation'] },
         { url :                             '', id: 'batifive',               orbit: 'external',  order: 3.65, groups: ['assistance']  },
         { url :                             '', id: 'polytel',                orbit: 'external',  order: 4.65, groups: ['gestion']  },
         { url :                             '', id: 'polyexpert',             orbit: 'external',  order: 5.65, groups: ['gestion'] },    
-        { url :                             '', id: 'mcLaren',                orbit: 'external',  order: 6.65, groups: ['gestion'] },
+        { url : 'mclarens',                     id: 'mcLaren',                orbit: 'external',  order: 6.65, groups: ['gestion'] },
         { url :                             '', id: 'ciblexperts',            orbit: 'external',  order: 7.65, groups: ['gestion'] },
         { url :                             '', id: 'quantimme',              orbit: 'external',  order: 8.65, groups: ['initial','audit'] }
     ]
@@ -236,17 +236,18 @@
         resizeObserver?.unobserve(document.body);
     });
 
-    /** @param {number} direction */
-    let handleNext = (direction, velocity) => {
+    /** @param {number} direction @returns {boolean} */
+    let handleNext = (direction) => {
 
         const isMaskAnimActive = maskAnim?.isActive();
-        const isOrbitingActive = gsap.getById("orbiting")?.isActive();
+        const animOrbit = gsap.getById("orbiting");
+        const isOrbitingActive = animOrbit?.isActive() && animOrbit?.progress() < 0.5;
 
         if (isMaskAnimActive || isOrbitingActive) return true;
 
         if (!maskAnim?.progress()) {
             if (direction === 1) {
-                !isMaskAnimActive && maskAnim.timeScale(velocity).play();
+                !isMaskAnimActive && maskAnim.play();
                 return true;
             }
             return false;
@@ -258,13 +259,13 @@
         const isFirstGroup = currentGroup === 0;
 
         if (!userClicked && direction === -1 && isFirstGroup) {
-            maskAnim.timeScale(velocity).reverse();
+            maskAnim.reverse();
             return true;
         }
 
         if (userClicked || (currentGroup + 1 > groups.length - 1)) {
             if (direction === -1) {
-                maskAnim.timeScale(velocity).reverse();
+                maskAnim.reverse();
                 return true;
             }
             return false;
@@ -425,7 +426,7 @@
         {#each entites as entite, index(entite.id)}
 
         <!-- svelte-ignore a11y-missing-content -->
-        <a href="{entite.url? HREF_PREFIX + entite.url :'/'}"
+        <a href="{HREF_PREFIX + (entite.url || entite.id)}"
             class="
                 absolute entite-{entite.id} entite-circle bg-feuille rounded-full bg-center bg-cover aspect-square transition-[background-color]
                 {toGroup && entite.groups.includes(toGroup) ? 'activeGroup':'inactiveGroup'}
@@ -495,10 +496,6 @@
     outline-color: theme('colors.pervenche');
 }
 
-@keyframes rotation {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(359.9deg); }
-}
 @media screen and (max-width: 768px) {
     #orbit-dash-line-reveal {
         display: none;

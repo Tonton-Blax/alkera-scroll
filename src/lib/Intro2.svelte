@@ -25,32 +25,36 @@
             secteurs : [ 'Audit', 'Conseil', 'Prévention' ], 
             indexes : [ 0, 1, 2 ], 
             xy: [ [331.03, 338.55], [537.08, 338.55], [743.06, 338.55]], 
-            imagePrefix: 'audit-conseil-gestion-' 
+            imagePrefix: 'audit-conseil-gestion-',
+            url: HREF_PREFIX + 'audit-conseil-et-prevention/'
         },
         {   id: 'group2', 
             secteurs : [ 'Gestion des risques', 'Expertise' ], 
             indexes : [ 3, 4 ], 
             xy: [ [331.09, 544.53], [537.08, 544.53]], 
             imagePrefix: 'gestion-risque-expertise-',
-            url:'expertise'
+            url: HREF_PREFIX + 'expertise' 
         },
         {   id: 'group3', 
             secteurs : [ 'Assistance', 'Réparation' ], 
             indexes : [ 5,6 ], 
             xy: [ [743.06, 544.53], [331.09, 750.52] ], 
-            imagePrefix: 'assistance-reparation-' 
+            imagePrefix: 'assistance-reparation-',
+            url: HREF_PREFIX + 'assistance-reparation' 
         },
         {   id: 'group4', 
             secteurs : [ 'Délégation' ], 
             indexes : [ 7 ], 
             xy: [ [537.08, 750.52] ], 
-            imagePrefix: 'delegation-'  
+            imagePrefix: 'delegation-',
+            url: HREF_PREFIX + 'delegation'
         },
         {   id: 'group5', 
             secteurs : [ 'Implantations' ], 
             indexes : [ 8 ], 
             xy: [ [743.06, 750.52] ], 
-            imagePrefix: 'international-'  
+            imagePrefix: 'international-',
+            url: '/le-groupe/nos-implantations/'
         },
     ]
 
@@ -106,12 +110,7 @@
         //await tick();
         document.querySelectorAll('.secteur-circle')?.forEach(el => {
             secteurHoverInitial?.kill();
-            el.addEventListener('click', (evt) => {
-                const clickedGroup = el.dataset.secteur;
-                const secteur = secteurs.find(secteur => secteur.id === clickedGroup);
-                if (secteur && secteur.url)
-                    window.location.href = HREF_PREFIX + secteur.url;
-            })
+            
             el.addEventListener('mouseenter', (evt) => {
                 hoveredGroup = el.dataset.secteur;
                 secteurHover?.progress?.(1)?.kill();
@@ -135,7 +134,7 @@
         })
     })
 
-    /** @param {number} direction */
+    /** @param {number} direction @returns {boolean} */
     function handleNext (direction) {
         if (anims.isActive())
             return false;
@@ -210,6 +209,7 @@
                     <feComposite in2="SourceGraphic" operator="over" />
                 </filter>
 
+                <a href="{secteur.url}">
                 <circle 
                     data-secteur={secteur.id}
                     class="secteur-circle"
@@ -219,7 +219,9 @@
                     filter="url(#secteur-image-{index}{j})"
                     transform="scale(1)"
                     transform-origin="{secteur.xy[j][0]} {secteur.xy[j][1]}"
-                />
+                >
+                </circle>
+                </a>
                 <text id="tites-secteurs"
                     text-anchor="middle" class="fill-feuille text-[25px] md:text-[18px]"
                     x="{secteur.xy[j][0]}" y="{secteur.xy[j][1]+100}"

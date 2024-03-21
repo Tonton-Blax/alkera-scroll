@@ -53,6 +53,9 @@
       transform: translateY(-15px);
   }
 }
+.albert {
+  font-family: "Albert Sans", sans-serif!important;
+}
 
 .alkera-line {
   background-size: 1px 100%, 100% 1px, 1px 100% , 100% 1px;
@@ -66,6 +69,11 @@
   background-image: repeating-linear-gradient(0deg, theme('colors.amande'), theme('colors.amande') 3px, transparent 3px, transparent 9px, #333333 9px), repeating-linear-gradient(90deg, #333333, #333333 3px, transparent 3px, transparent 9px, #333333 9px), repeating-linear-gradient(180deg, #333333, #333333 3px, transparent 3px, transparent 9px, #333333 9px), repeating-linear-gradient(270deg, #333333, #333333 3px, transparent 3px, transparent 9px, #333333 9px);
 }
 
+
+@keyframes rotation {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(359.9deg); }
+}
     
 @font-face {
 font-family:"field-gothic-wide";

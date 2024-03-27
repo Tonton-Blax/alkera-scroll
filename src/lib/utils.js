@@ -1,8 +1,6 @@
 import { readable, writable } from 'svelte/store';
 
-export const scrollyTeller = writable(true);
-
-/** @param {string}  */
+/** @param {string} query  */
 export function mq(query) {
     let tries = 0;
 	if (typeof window === 'undefined') {

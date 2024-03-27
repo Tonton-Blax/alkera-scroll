@@ -1,13 +1,11 @@
 <svelte:window 
     on:hashchange={handleHashChange}
-    on:beforeunload={()=>window.scroll(0,0)}
 />
 <script>
     import "./app.css";  
     import { onMount } from 'svelte';
     import { Observer } from 'gsap/all';
     import gsap from 'gsap';
-    import { scrollyTeller } from '$lib/utils';
     import ScrollToPlugin from 'gsap/ScrollToPlugin';
     import { ScrollTrigger } from 'gsap/all';
 	import Outro from '$lib/Outro.svelte';
@@ -16,6 +14,8 @@
     import Orbites from '$lib/Orbites.svelte';
     
     export let text = '';
+
+    let scrollyTeller = true;
 
     export let imgPath = '';
 
@@ -56,7 +56,7 @@
     let transitioning = false;
     let shouldAnimate = false;
 
-    const tolerance = 15;
+    const tolerance = 10;
 
     let whichColor = '#D6FC8A';
 
@@ -75,7 +75,7 @@
     const sleep = time => new Promise(res => setTimeout(res, time, "done sleeping"));
 
     onMount(async()=> {
-        gsap.registerPlugin(Observer, ScrollToPlugin, ScrollTrigger);
+        gsap.registerPlugin(Observer, ScrollToPlugin, ScrollTrigger)
         header = document.querySelector('header');
 
         wrappers = gsap.utils.toArray('.section-wrappers');
@@ -96,11 +96,11 @@
             start:()=> "top top",
             end:()=> "top bottom",
             onEnter: (self) => {
-                $scrollyTeller = true;
+                scrollyTeller = true;
                 observer.enable();
             },
             onEnterBack: (self) => {
-                $scrollyTeller = true;
+                scrollyTeller = true;
                 window.scroll(0,0);
                 observer.enable();
             },
@@ -118,34 +118,8 @@
             type: "wheel,touch,pointer",
             preventDefault: true,
             wheelSpeed: -0.1,
-            onDown:(o) => {
-                if (transitioning) return;
-                if (currentIndex <= 0) {
-                    header?.classList.remove('et-fixed-header');
-                    whichColor = '#D6FC8A';
-                }           
-                triggerAnimation(animsMap, -1, Math.abs(o.deltaY));
-            },
-            onUp:(o) => {
-                if (!$scrollyTeller) {
-                    observer.disable();
-                    gsap.to(window, { 
-                        scrollTo:{ y: mainEl.offsetHeight },
-                        duration: (tolerance / Math.abs(o.deltaY)) * 0.6,
-                    });
-                    //window.scroll({top: mainEl.offsetHeight, behavior: 'smooth'});
-                    return;
-                }
-
-                if (transitioning) return;
-
-                if (currentIndex <= 0)
-                    whichColor = '#12473B'
-
-                header?.classList.add('et-fixed-header');
-                gsap.to('#scroll-down', { autoAlpha: 0 })
-                triggerAnimation(animsMap, 1, Math.abs(o.deltaY));
-            },
+            onDown: onDown,
+            onUp: onUp,
             tolerance,
             onStopDelay: 2,
             onStop: () => {
@@ -157,12 +131,44 @@
         });
         await sleep(200);
         gotoSection(urlHash ? urlHash - 1 : 0, 1, animsMap, tolerance);
+        if(ScrollTrigger.isInViewport('#alkera-scrollyteller', 0.7)) {
+            window.scroll(0,0)
+        } else leaveScrollyteller(false)
     });
+
+    /** @param {globalThis.Observer | null} o */
+    function onUp(o=null) {
+        if (transitioning) return;
+
+        if (currentIndex <= 0)
+            whichColor = '#12473B'
+
+        header?.classList.add('et-fixed-header');
+        gsap.to('#scroll-down', { autoAlpha: 0 })
+        triggerAnimation(animsMap, 1, Math.abs(o?.deltaY || 20));
+    }
+
+    /** @param {globalThis.Observer | null} o */
+    function onDown(o=null) {
+        if (transitioning) return;
+        if (currentIndex <= 0) {
+            header?.classList.remove('et-fixed-header');
+            whichColor = '#D6FC8A';
+        }           
+        triggerAnimation(animsMap, -1, Math.abs(o?.deltaY || 20));
+    }
+
+    /** @param {boolean | any} scroll */
+    function leaveScrollyteller(scroll = false) {
+        observer?.disable();
+        scrollyTeller = false;
+        //scroll && window.scroll({top: mainEl.offsetHeight, behavior: 'smooth'});
+    }
 
     /** @param {number} index @param {number} direction @param {Map<HTMLElement, App.Anims> | null} animsMap @param {number | null} velocity */
     function gotoSection(index, direction, animsMap = null, velocity = null) {
     
-        if (!$scrollyTeller)
+        if (!scrollyTeller)
             return;
 
         let fromTop = direction === -1;
@@ -210,7 +216,7 @@
 
         const anims = animsMap.get(sections[currentIndex]);
 
-        if (!$scrollyTeller || !anims || anims.isActive())
+        if (!scrollyTeller || !anims || anims.isActive())
             return;
 
         if (shouldAnimate && anims && !anims.vars.done) {
@@ -223,12 +229,12 @@
 
         } else if (!anims.isActive()) {
             
-            const handleNextMove = anims.vars?.handleNext;
-            const nextMove = typeof(handleNextMove) === 'function' 
-                ? handleNextMove(direction, 1 / (tolerance / velocity)) 
-                : null;
             
-            if(!nextMove) {
+            const hasNextMove = typeof(anims.vars?.handleNext) === 'function' 
+                ? anims.vars.handleNext(direction, 1 / (tolerance / velocity)) 
+                : false;
+            
+            if(!hasNextMove) {
                 gotoSection(currentIndex + direction, direction, animsMap, velocity);
             }
         }
@@ -250,14 +256,13 @@
 
     }
     
-    // function replaceState () {
-    //     if (!$scrollyTeller)
-    //         localStorage.removeItem('alkera-scrollyteller');    
+    function replaceState () {
+        if (!scrollyTeller)
+            localStorage.removeItem('alkera-scrollyteller');    
         
-    //     localStorage.setItem('alkera-scrollyteller', sections[currentIndex]?.parentElement?.id);
-    // }
-
-        
+        localStorage.setItem('alkera-scrollyteller', sections[currentIndex]?.parentElement?.id);
+    }
+    
 </script>
 
 <main bind:this={mainEl}
@@ -290,11 +295,12 @@
     <div class="section-wrappers bg-white" data-color-arrow="#12473B" id="st-engagements">
         
         <Outro 
-            bind:anims={outroAnims} bind:sectionEl={outroEl} {imgPath} 
+            bind:anims={outroAnims} bind:sectionEl={outroEl} {imgPath}
+            on:end={leaveScrollyteller}
         />
 
     </div>
-
+    <button class="contents" on:click={()=>onUp()}>
     <svg
         class="absolute bottom-[5vw] md:bottom-[3.2vw] w-[4vw] md:w-[1.4vw] h-auto left-0 right-0 mx-auto my-0" 
         xmlns="http://www.w3.org/2000/svg" xml:space="preserve" 
@@ -303,14 +309,16 @@
         <path class="fleche" stroke-miterlimit=10 fill="none" d="M27 78.9C12.4 78.9.5 67 .5 52.4V27C.5 12.4 12.4.5 27 .5S53.5 12.3 53.5 27v25.4C53.5 67 41.6 78.9 27 78.9zM27 20v27.2"/>
         <path class="cadre" d="M18.6 44.7 27 59.2l8.4-14.5z"/>
     </svg>
+    </button>
 </main>
 
-<!-- <div id="scroll-siblings" class="w-screen h-screen bg-[blue]"/> -->
+<!-- <div id="scroll-siblings" class="w-screen h-screen bg-[blue] bg-[url('/intro/assistance-reparation-02.png')]"/>
+<div id="scroll-siblings-2" class="w-screen aspect-video bg-[red] bg-[url('/intro/assistance-reparation-02.png')]"/> -->
 
 <style lang="postcss">
     
     .section-wrappers {
-        @apply absolute top-0 invisible w-full h-screen;
+        @apply absolute top-0 invisible w-full h-screen max-h-screen;
     }
     
 </style>

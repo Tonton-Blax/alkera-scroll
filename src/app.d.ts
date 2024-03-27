@@ -3,7 +3,7 @@
 declare global {
 	namespace App {
 
-		type Metier = undefined | 'audit' | 'gestion' | 'assistance' | 'delegation' | 'initial';
+		type Metier = undefined | 'audit' | 'expertise' | 'assistance' | 'delegation' | 'initial';
 		type OrbitName = 'internal' | 'middle' | 'external';
 
 		type Anims = gsap.core.Timeline;

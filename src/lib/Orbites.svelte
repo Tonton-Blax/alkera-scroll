@@ -26,6 +26,7 @@
     $: if (mounted && readyLine) {
         gsap.to('#arrow-cursor', { y: arrowPosition, opacity: 1 } );
     }
+
     $: currentGroup = groups?.findIndex(g=>g.id===`groupe-${toGroup || 'initial'}`)
 
     let ellipseRatio = 1;
@@ -67,9 +68,6 @@
     /** @type {App.Metier} */
     let fromGroup = 'initial';
 
-    /** @type {number} */
-    let intervalIdle;
-
     let userClicked = false;
 
     const duration = 80;
@@ -82,23 +80,25 @@
         
     /** @type {App.Planet[]} */
     const entites = [
-        { url :                             '', id: 'pyrim',                  orbit: 'internal',  order: 1,    groups: ['audit', 'gestion'] },
-        { url :                             '', id: 'dynaren',                orbit: 'internal',  order: 2,    groups: ['assistance'] },
-        { url :                             '', id: 'am',                     orbit: 'internal',  order: 3,    groups: ['initial','audit','gestion', 'delegation'] },
-        { url :                             '', id: 'immolab',                orbit: 'middle',    order: 1,    groups: ['initial','audit'] },
-        { url :                             '', id: 'geco',                   orbit: 'middle',    order: 2,    groups: ['delegation'] },
+        { url : 'claims-ai',                    id: 'claims_ai',              orbit: 'internal',  order: 1.3,  groups: ['delegation'] },
+        { url : 'mclarens',                     id: 'mcLaren',                orbit: 'internal',  order: 2.3,  groups: ['expertise'] },
+        { url : 'manderley',                    id: 'manderley',              orbit: 'internal',  order: 3.3,  groups: ['expertise','audit','assistance'] },
+        { url :                             '', id: 'pyrim',                  orbit: 'middle',    order: 1,    groups: ['audit', 'expertise'] },
+        { url :                             '', id: 'immolab',                orbit: 'middle',    order: 2,    groups: ['initial','audit'] },
         { url :                             '', id: 'electroren',             orbit: 'middle',    order: 3,    groups: ['assistance'] },
-        { url : 'manderley',                    id: 'manderley',              orbit: 'middle',    order: 4,    groups: ['gestion'] },
-        { url : 'polyexpert-construction',      id: 'polyexpert_construction',orbit: 'middle',    order: 5,    groups: ['initial','gestion'] },
-        { url : 'polyexpert-entreprise',        id: 'polyexpert_entreprises', orbit: 'middle',    order: 6,    groups: ['initial','gestion'] },
-        { url : 'claims-ai',                    id: 'ekkoia',                 orbit: 'external',  order: 1.65, groups: ['audit'] },
-        { url :                             '', id: 'claims_ai',              orbit: 'external',  order: 2.65, groups: ['delegation'] },
-        { url :                             '', id: 'batifive',               orbit: 'external',  order: 3.65, groups: ['assistance']  },
-        { url :                             '', id: 'polytel',                orbit: 'external',  order: 4.65, groups: ['gestion']  },
-        { url :                             '', id: 'polyexpert',             orbit: 'external',  order: 5.65, groups: ['gestion'] },    
-        { url : 'mclarens',                     id: 'mcLaren',                orbit: 'external',  order: 6.65, groups: ['gestion'] },
-        { url :                             '', id: 'ciblexperts',            orbit: 'external',  order: 7.65, groups: ['gestion'] },
-        { url :                             '', id: 'quantimme',              orbit: 'external',  order: 8.65, groups: ['initial','audit'] }
+        { url :                             '', id: 'am_recours',             orbit: 'middle',    order: 4,    groups: ['delegation'] },
+        { url :                             '', id: 'polytel',                orbit: 'middle',    order: 5,    groups: ['expertise']  },
+        { url : 'polyexpert-construction',      id: 'polyexpert_construction',orbit: 'middle',    order: 6,    groups: ['initial','expertise'] },
+        { url :                             '', id: 'am_group',               orbit: 'external',  order: 1,    groups: ['expertise','audit'] },
+        { url :                             '', id: 'quantimme',              orbit: 'external',  order: 2,    groups: ['initial','audit'] },
+        { url :                             '' ,id: 'ekkoia',                 orbit: 'external',  order: 3,    groups: ['audit'] },
+        { url :                             '', id: 'batifive',               orbit: 'external',  order: 4,    groups: ['assistance']  },
+        { url :                             '', id: 'dynaren',                orbit: 'external',  order: 5,    groups: ['assistance'] },
+        { url :                             '', id: 'geco',                   orbit: 'external',  order: 6,    groups: ['delegation'] },
+        { url : 'polyexpert-entreprise',        id: 'polyexpert_entreprises', orbit: 'external',  order: 7,    groups: ['initial','expertise'] },
+        { url :                             '', id: 'polyexpert',             orbit: 'external',  order: 8,    groups: ['expertise'] },    
+        { url :                             '', id: 'ciblexperts',            orbit: 'external',  order: 9,    groups: ['expertise'] },
+
     ]
 
     /** @type {App.Orbits} */
@@ -107,7 +107,7 @@
         'internal': {
             el: internalOrbit,
             offsetGroup : {
-                audit: 0.843, gestion: 0.87, assistance: 0.285, delegation: 0.01, initial:0.00001,
+                audit: 0.895, expertise: 0.07, assistance: 0.89, delegation: 0.6, initial:0.5,
             },
             minMaxSizes: [ 32.35, 51.55 ],
             planets: entites.filter(e => e.orbit === 'internal'),
@@ -117,7 +117,7 @@
         'middle': {
             el: middleOrbit,
             offsetGroup : { 
-                audit: 0.843, gestion: 0.17, assistance: 0.55, delegation: 0.73, initial:0.00001,
+                audit: 0.73, expertise: 0.04, assistance: 0.53, delegation: 0.3, initial:0.5,
             },
             minMaxSizes: [ 25.48, 60.94 ],
             planets: entites.filter(e => e.orbit === 'middle'),
@@ -127,7 +127,7 @@
         'external': {
             el: externalOrbit,
             offsetGroup : {
-                audit: 0.843, gestion: 0.245, assistance: 0.5, delegation: 0.65, initial:0.00001,
+                audit: 0.79, expertise: 0.07, assistance: 0.53, delegation: 0.38, initial:0.5,
             },
             minMaxSizes: [ 21.49, 73.75 ],
             planets:entites.filter(e => e.orbit === 'external'),
@@ -148,7 +148,7 @@
             const { tl } = entite;
             if (!tl) return;
             const orbit = orbits[entite.orbit];
-            const nextProgress = tl?.labels.initialPosition + orbit.offsetGroup[metier];
+            let nextProgress = tl?.labels.initialPosition + orbit.offsetGroup[metier];
             gsap.to(tl, {
                 id: 'orbiting',
                 progress: `+=${gsap.utils.wrap(0, 1, nextProgress - tl.progress())}`, 
@@ -236,57 +236,51 @@
         resizeObserver?.unobserve(document.body);
     });
 
-    /** @param {number} direction @returns {boolean} */
-    let handleNext = (direction) => {
+   /** @param {number} direction @returns {boolean} */
+let handleNext = (direction) => {
+    const isMaskAnimActive = maskAnim?.isActive();
+    const animOrbit = gsap.getById("orbiting");
+    const isOrbitingActive = animOrbit?.isActive() && animOrbit?.progress() < 0.5;
+    /** @type {App.Metier}*/
+    const nextGroupId = /** @type {App.Metier}*/(groups[currentGroup + direction]?.id.split('-')[1]);
 
-        const isMaskAnimActive = maskAnim?.isActive();
-        const animOrbit = gsap.getById("orbiting");
-        const isOrbitingActive = animOrbit?.isActive() && animOrbit?.progress() < 0.5;
+    if (isMaskAnimActive || isOrbitingActive) return true;
 
-        if (isMaskAnimActive || isOrbitingActive) return true;
-
-        if (!maskAnim?.progress()) {
-            if (direction === 1) {
-                !isMaskAnimActive && maskAnim.play();
-                return true;
-            }
-            return false;
+    if (!maskAnim?.progress()) {
+        if (direction === 1 && !isMaskAnimActive) {
+            maskAnim.play();
+            changeGroup(nextGroupId);
+            return true;
         }
+        return false;
+    }
 
-        if (typeof currentGroup !== 'number') return false;
+    if (typeof currentGroup !== 'number') return false;
+    const isLastGroup = currentGroup === groups.length - 1;
+    const isFirstGroup = currentGroup === 0;
 
-        const isLastGroup = currentGroup === groups.length - 1;
-        const isFirstGroup = currentGroup === 0;
+    if (!userClicked && direction === -1 && isFirstGroup) {
+        maskAnim.reverse();
+        return true;
+    }
 
-        if (!userClicked && direction === -1 && isFirstGroup) {
+    if (userClicked || currentGroup + 1 > groups.length - 1) {
+        if (direction === -1) {
             maskAnim.reverse();
             return true;
         }
-
-        if (userClicked || (currentGroup + 1 > groups.length - 1)) {
-            if (direction === -1) {
-                maskAnim.reverse();
-                return true;
-            }
-            return false;
-        }
-
-        if (userClicked) return false;
-
-        /** @type {App.Metier} */
-        const nextGroupId = /** @type {App.Metier} */ (groups[currentGroup + direction].id.split('-')[1]);
-
-        if (direction === 1 && !isLastGroup) {
-            changeGroup(nextGroupId);
-            return true;
-        }
-
-        if (direction === -1 && !isFirstGroup) {
-            changeGroup(nextGroupId);
-            return true;
-        }
-
+        //FIN
+        !userClicked && setTimeout(() => changeGroup(/** @type {App.Metier}*/ (groups[0].id?.split('-')[1]) ?? 'audit'), 1000);
+        return false;
     }
+
+    if (userClicked || nextGroupId === undefined) return false;
+
+    if ((direction === 1 && !isLastGroup) || (direction === -1 && !isFirstGroup)) {
+        changeGroup(nextGroupId);
+        return true;
+    }
+}
 
     function slowTimeScale () {
         entites.forEach(({tl}) => tl && gsap.fromTo(tl, {timeScale : 1 }, {timeScale: 0.20 , ease: "Power3.circInOut", duration: 1 }));
@@ -295,29 +289,32 @@
         entites.forEach(({tl}) => tl && gsap.fromTo(tl, {timeScale : .20 }, {timeScale: 1 , ease: "Power3.circInOut", duration: 1 }));
     }
 
-    /** @param {App.Metier} metier*/
-    function changeGroup (metier, click) {
-        if (click)
-            userClicked = true;
-        clearInterval(intervalIdle);
+    /** @param {App.Metier} metier @param {boolean} click */
+    function changeGroup (metier, click) {            
         // @ts-ignore
+        if (!metier) 
+            metier = /** @type {App.Metier} */ (groups[0].id?.split('-')[1]) ?? 'audit';
+
         arrowPosition = document.querySelector(`#groupe-${metier}`).dataset.yArrow || initialArrowPosition;
         fromGroup = toGroup || 'initial';
         toGroup = metier;   
         setGroupPosition(toGroup);
+        if (click)
+            userClicked = true;
     }
 
     /** @param {MouseEvent} clickEvent */
     function handleClickSection(clickEvent){
-        
-        if (!maskAnim)
+        if (
+            !maskAnim || maskAnim.progress() === 1
+            // @ts-ignore
+            || ['big-mask-orbits','big-mask-text'].includes(clickEvent.target?.id)
+        )
             return;
 
-		// @ts-ignore
-		if(clickEvent.target?.id && clickEvent.target.id === 'big-mask-orbits')
-            return 
-
-        gsap.to(maskAnim, {progress:1});
+        clickEvent.preventDefault();
+        maskAnim.play();
+        changeGroup(/** @type {App.Metier} */ (groups[0].id?.split('-')[1]) ?? 'audit');
 	}
 
 </script>
@@ -347,7 +344,7 @@
     <div id="big-mask-orbits" 
         class="hidden md:flex bg-white w-full h-full absolute z-[3]  items-center leading-loose"
     >
-        <div class="w-[30%] text-feuille ml-auto mr-[11.5vw] font-light skew-x-[-16.34deg] text-[1.35vw]">
+        <div id="big-mask-text" class="w-[30%] text-feuille ml-auto mr-[11.5vw] font-light skew-x-[-16.34deg] text-[1.35vw]">
             {orbitesTextIntro}
         </div>
     </div>
@@ -386,34 +383,37 @@
             >
                 Nos secteurs d’activité
             </tspan>
-            <tspan on:click={()=>changeGroup("audit",true)} 
+            <tspan on:click|stopPropagation={()=>changeGroup("audit",true)} 
                 opacity="0" x="0" y="{tspanSpacing * 1}" id="groupe-audit" data-y-arrow="{initialArrowPosition}" 
                 class:fill-pervenche={toGroup === 'audit'} 
                 class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
             >
                 Audit, conseil et prévention
             </tspan>
-            <tspan on:click={()=>changeGroup("gestion",true)} 
-                opacity="0" x="0" y="{tspanSpacing * 2}" id="groupe-gestion" data-y-arrow="{initialArrowPosition + tspanSpacing}" 
-                class:fill-pervenche={toGroup === 'gestion'} 
+            <tspan on:click|stopPropagation={()=>changeGroup("expertise",true)} 
+                opacity="0" x="0" y="{tspanSpacing * 2}" id="groupe-expertise" data-y-arrow="{initialArrowPosition + tspanSpacing}" 
+                class:fill-pervenche={toGroup === 'expertise'} 
                 class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
             >
                 Expertise
             </tspan>
-            <tspan on:click={()=>changeGroup("assistance",true)} 
-                opacity="0" x="0" y="{tspanSpacing * 3}" id="groupe-assistance" data-y-arrow="{(initialArrowPosition + tspanSpacing * 2)}" 
-                class:fill-pervenche={toGroup === 'assistance'} 
-                class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
-            >
-                Assistance et réparation
-            </tspan>
-            <tspan on:click={()=>changeGroup("delegation",true)} 
-                opacity="0" x="0" y="{tspanSpacing * 4}" id="groupe-delegation" data-y-arrow="{initialArrowPosition + (tspanSpacing * 3)}" 
+
+            <tspan on:click|stopPropagation={()=>changeGroup("delegation",true)} 
+                opacity="0" x="0" y="{tspanSpacing * 3}" id="groupe-delegation" data-y-arrow="{initialArrowPosition + (tspanSpacing * 2)}" 
                 class:fill-pervenche={toGroup === 'delegation'} 
                 class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
             >
                 Délégation
             </tspan>
+
+            <tspan on:click|stopPropagation={()=>changeGroup("assistance",true)} 
+                opacity="0" x="0" y="{tspanSpacing * 4}" id="groupe-assistance" data-y-arrow="{(initialArrowPosition + tspanSpacing * 3)}" 
+                class:fill-pervenche={toGroup === 'assistance'} 
+                class="hover:fill-pervenche hover:cursor-pointer transition-all orbit-menu-entries"
+            >
+                Assistance et réparation
+            </tspan>
+           
 
         </text>
 

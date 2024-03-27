@@ -1,9 +1,10 @@
 <script>
 	import gsap from 'gsap';
 	import TextPlugin from 'gsap/TextPlugin';
-    import { onMount } from 'svelte';
-    import { scrollyTeller } from './utils';
+    import { createEventDispatcher, onMount } from 'svelte';
 	import ScrollToPlugin from 'gsap/ScrollToPlugin';
+	
+	const dispatch = createEventDispatcher();
     
     /** @type {App.Anims} */
 	export let anims;
@@ -71,7 +72,7 @@
 				changeTopic(activeTopic + 1)
 				return true;
 			} else {
-				$scrollyTeller = false;
+				dispatch('end');
 				return false;
 			}
 
@@ -138,7 +139,7 @@
 				<div class="outro-text-content text-feuille w-full h-full flex flex-col justify-center text-center">
 					<span>{textContent[activeTopic]}</span>
 					<a href="/le-groupe/nos-engagements-rse#nos-engagements" class="uppercase mt-[1vw] font-normal albert text-feuille hover:text-pervenche">
-						en savoir +
+						en savoir +	
 					</a>
 				</div>
 			</div>

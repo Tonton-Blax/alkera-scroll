@@ -103,7 +103,6 @@
         .from('.mask-outline-secteur-1', {drawSVG: '100% 100%', duration: baseDuration * 2 }, '>' )
         .from('#tites-secteurs', { yPercent: 40, opacity: 0, duration: baseDuration * 2, stagger: { each: 1.5 / 9  } }, 'apparition-secteur' )
         .from('.secteur-circle', { scale: 0, transformOrigin: '50% 50%', duration: baseDuration * 2, stagger: { each: 1.5 / 9  }}, 'apparition-secteur' )
-        .call(gsap.to, [secteurHoverInitial, { progress: 1, duration: 3}], '-=1')
 
         anims.vars = { handleNext }
 
@@ -134,6 +133,7 @@
         })
     })
 
+
     /** @param {number} direction @returns {boolean} */
     function handleNext (direction) {
         if (anims.isActive())
@@ -150,6 +150,8 @@
         }
         return false;            
 	}
+
+    
 
 </script>
 <section id="section-intro" class="min-w-screen w-full h-screen overflow-y-hidden" bind:this={sectionEl}>
@@ -174,7 +176,7 @@
     
         <svg 
             color-interpolation-filters="sRGB"
-            shape-rendering="{$md ? 'geometricPrecision' : 'optimizeSpeed'}"
+            shape-rendering="{$md ? 'auto' : 'optimizeSpeed'}"
             class="w-full h-fit md:h-auto mx-auto overflow-visible
             absolute scale-[2.2] origin-[10%_30vh] top-1/3
             md:-mt-[4%]  md:relative md:bottom-auto md:scale-100  md:origin-center md:top-[unset]" 
@@ -243,7 +245,7 @@
                 id="logo-alkera-et-texte"
                 class="w-full h-auto overflow-visible"
                 color-interpolation-filters="sRGB"
-                shape-rendering=" geometricPrecision"
+                shape-rendering="geometricPrecision"
                 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="300px" y="300px" viewBox="0 10 300 300"
             >
             
@@ -293,9 +295,13 @@
         font-family: "field-gothic-wide",sans-serif;
     }
  
-    #le-cercle-1, #le-point  {
+    #le-cercle-1  {
         shape-rendering: optimizeSpeed;
         color-rendering: optimizeSpeed;
+    }
+ 
+    #le-point  {
+        will-change: scale;
     }
 
        

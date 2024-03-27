@@ -63,7 +63,7 @@
   background-repeat: no-repeat;
 }
 .alkera-line.foret {
-  background-image: repeating-linear-gradient(0deg, theme('colors.feuille'), theme('colors.feuille') 3px, transparent 3px, transparent 9px, #333333 9px), repeating-linear-gradient(90deg, #333333, #333333 3px, transparent 3px, transparent 9px, #333333 9px), repeating-linear-gradient(180deg, #333333, #333333 3px, transparent 3px, transparent 9px, #333333 9px), repeating-linear-gradient(270deg, #333333, #333333 3px, transparent 3px, transparent 9px, #333333 9px);
+  background-image: repeating-linear-gradient(0deg, theme('colors.feuille'), theme('colors.feuille') 3px, transparent 3px, transparent 9px, theme('colors.feuille') 9px), repeating-linear-gradient(90deg, theme('colors.feuille'), theme('colors.feuille') 3px, transparent 3px, transparent 9px, theme('colors.feuille') 9px), repeating-linear-gradient(180deg, theme('colors.feuille'), theme('colors.feuille') 3px, transparent 3px, transparent 9px, theme('colors.feuille') 9px), repeating-linear-gradient(270deg, theme('colors.feuille'), theme('colors.feuille') 3px, transparent 3px, transparent 9px, theme('colors.feuille') 9px);
 }
 .alkera-line.amande {
   background-image: repeating-linear-gradient(0deg, theme('colors.amande'), theme('colors.amande') 3px, transparent 3px, transparent 9px, #333333 9px), repeating-linear-gradient(90deg, #333333, #333333 3px, transparent 3px, transparent 9px, #333333 9px), repeating-linear-gradient(180deg, #333333, #333333 3px, transparent 3px, transparent 9px, #333333 9px), repeating-linear-gradient(270deg, #333333, #333333 3px, transparent 3px, transparent 9px, #333333 9px);
